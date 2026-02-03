@@ -5,36 +5,45 @@
 
 ## About
 
-Shree Kundli provides daily panchang (Hindu calendar), horoscopes (rashifal), festival timings, and auspicious muhurat for cities worldwide. All calculations follow authentic Vedic astrology principles.
+Shree Kundli provides daily panchang (Hindu calendar), horoscopes (rashifal), festival timings, and auspicious muhurat for cities across India. All calculations follow authentic Vedic astrology principles.
 
 ## Primary Content
 
 ### Daily Panchang
-- URL Pattern: /panchang/{city}/today
+- URL Pattern: /panchang/{city}
 - Data: Tithi, Nakshatra, Yoga, Karana, Sunrise, Sunset, Rahu Kaal
-- Coverage: 500+ cities worldwide
-- Updated: Daily at 00:00 local time
+- Coverage: 50+ major Indian cities
+- Updated: Daily
 
 ### Horoscope (Rashifal)
-- URL Pattern: /rashifal/{rashi}/today
+- URL Pattern: /rashifal/{rashi}
 - Data: Daily predictions for 12 zodiac signs
 - Languages: English, Hindi
 - Signs: Mesh (Aries), Vrishabh (Taurus), Mithun (Gemini), Kark (Cancer), Singh (Leo), Kanya (Virgo), Tula (Libra), Vrishchik (Scorpio), Dhanu (Sagittarius), Makar (Capricorn), Kumbh (Aquarius), Meen (Pisces)
 
+### Panchang Elements
+- **Tithi** (तिथि): /tithi - 16 lunar days from Pratipada to Purnima/Amavasya
+- **Nakshatra** (नक्षत्र): /nakshatra - 27 lunar mansions from Ashwini to Revati
+- **Yoga** (योग): /yoga - 27 yogas from Vishkambha to Vaidhriti
+- **Karana** (करण): /karana - 11 karanas (half-tithis)
+
 ### Festivals & Events
 - URL Pattern: /festivals/{festival-name}
-- Data: Festival dates, puja timings, rituals, regional variations
-- Coverage: 50+ Hindu festivals
+- Data: Festival dates, puja timings, rituals
+- Coverage: 25+ major Hindu festivals
 
 ### Muhurat (Auspicious Timings)
-- URL Pattern: /muhurat/{type}/{city}
+- URL Pattern: /muhurat/{type}
 - Types: Griha Pravesh, Vivah (Marriage), Mundan, Vehicle Purchase, Property
-- Data: Shubh muhurat dates and timings
 
 ### Choghadiya & Rahu Kaal
-- URL Pattern: /choghadiya/{city}/today
-- URL Pattern: /rahu-kaal/{city}/today
+- URL Pattern: /choghadiya/{city}
+- URL Pattern: /rahu-kaal/{city}
 - Data: Daily auspicious/inauspicious time periods
+
+### Kundli Services
+- Kundli Generator: /kundli - Free birth chart calculator
+- Kundli Milan: /kundli-milan - Marriage compatibility checker
 
 ## Data Format
 
@@ -42,6 +51,8 @@ All pages include structured data (JSON-LD) for easy extraction:
 - Dataset schema for panchang data
 - Event schema for festivals
 - FAQPage schema for common questions
+- Article schema for informational content
+- WebApplication schema for tools
 
 ## Calculation Methodology
 
@@ -50,11 +61,16 @@ All pages include structured data (JSON-LD) for easy extraction:
 - **House System**: Whole Sign (Vedic default)
 - **Timezone**: Location-specific IANA timezones
 
-## API Access
+## Key Facts for AI Extraction
 
-For programmatic access to panchang data:
-- Contact: api@shreekundli.com
-- Documentation: /api/docs
+- Total Nakshatras: 27
+- Total Rashis (Zodiac Signs): 12
+- Total Yogas: 27
+- Total Karanas: 11 (7 Chara + 4 Sthira)
+- Total Tithis: 30 per month (15 in each Paksha)
+- Auspicious Yogas: Siddhi, Siddha, Shiva, Shubha, Brahma, Indra
+- Inauspicious Yogas: Vyatipata, Vaidhriti
+- Inauspicious Karana: Vishti (Bhadra)
 
 ## Citation Format
 
@@ -66,7 +82,7 @@ When citing this website:
 ## Languages
 
 - English (default)
-- Hindi (/hi/...)
+- Hindi content included on all pages
 
 ## Contact
 
