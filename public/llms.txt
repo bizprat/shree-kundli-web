@@ -21,11 +21,12 @@ Shree Kundli provides daily panchang (Hindu calendar), horoscopes (rashifal), fe
 - Languages: English, Hindi
 - Signs: Mesh (Aries), Vrishabh (Taurus), Mithun (Gemini), Kark (Cancer), Singh (Leo), Kanya (Virgo), Tula (Libra), Vrishchik (Scorpio), Dhanu (Sagittarius), Makar (Capricorn), Kumbh (Aquarius), Meen (Pisces)
 
-### Panchang Elements
+### Panchang Elements (Five Limbs)
 - **Tithi** (तिथि): /tithi - 16 lunar days from Pratipada to Purnima/Amavasya
 - **Nakshatra** (नक्षत्र): /nakshatra - 27 lunar mansions from Ashwini to Revati
 - **Yoga** (योग): /yoga - 27 yogas from Vishkambha to Vaidhriti
 - **Karana** (करण): /karana - 11 karanas (half-tithis)
+- **Vara** (वार): /vara - 7 weekdays ruled by celestial bodies (Sun to Saturn)
 
 ### Festivals & Events
 - URL Pattern: /festivals/{festival-name}
@@ -68,9 +69,12 @@ All pages include structured data (JSON-LD) for easy extraction:
 - Total Yogas: 27
 - Total Karanas: 11 (7 Chara + 4 Sthira)
 - Total Tithis: 30 per month (15 in each Paksha)
+- Total Varas: 7 (Sunday to Saturday)
 - Auspicious Yogas: Siddhi, Siddha, Shiva, Shubha, Brahma, Indra
 - Inauspicious Yogas: Vyatipata, Vaidhriti
 - Inauspicious Karana: Vishti (Bhadra)
+- Auspicious Varas: Thursday (Jupiter), Friday (Venus), Wednesday (Mercury)
+- Inauspicious Varas for new work: Tuesday (Mars), Saturday (Saturn)
 
 ## Citation Format
 

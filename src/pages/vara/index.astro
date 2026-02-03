@@ -1,0 +1,431 @@
+---
+/**
+ * Vara Hub Page
+ *
+ * Overview of all varas (weekdays) with:
+ * - Quick answer for vara queries
+ * - Grid of all 7 weekdays
+ * - JSON-LD ItemList schema for SEO
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load varas data
+import varasData from '../../data/varas.json';
+
+interface Vara {
+  id: number;
+  name: string;
+  nameHindi: string;
+  nameEnglish: string;
+  slug: string;
+  planet: string;
+  planetHindi: string;
+  planetSanskrit: string;
+  deity: string;
+  deityHindi: string;
+  color: string;
+  colorHindi: string;
+  element: string;
+  direction: string;
+  metal: string;
+  gemstone: string;
+  nature: string;
+  goodFor: string[];
+  notGoodFor: string[];
+  fasting: string;
+  mantra: string;
+  description: string;
+}
+
+const varas = varasData as Vara[];
+
+// Page meta
+const title = 'Vara (वार) - Days of the Week in Vedic Astrology | Complete Guide | Shree Kundli';
+const description = 'Learn about all 7 Varas (weekdays) in Hindu Panchang. Sunday to Saturday - know the ruling planet, deity, auspicious activities, and fasting significance for each day.';
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Vara' },
+];
+
+// Schema for vara list
+const varaListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Varas - Days of the Week in Vedic Astrology',
+  description: 'Complete guide to all varas (weekdays) used in Vedic astrology and Hindu Panchang',
+  numberOfItems: varas.length,
+  itemListElement: varas.map((vara, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Article',
+      name: `${vara.name} (${vara.nameHindi})`,
+      alternateName: vara.nameHindi,
+      description: vara.description,
+      url: `/vara/${vara.slug}`,
+    },
+  })),
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Vara in Hindu Calendar?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Vara is the Sanskrit term for weekday and is one of the five elements (Panchangas) of the Hindu calendar. Each vara is ruled by a celestial body (graha) and has specific characteristics that influence auspiciousness of activities. The seven varas are named after the Sun, Moon, Mars, Mercury, Jupiter, Venus, and Saturn.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which Vara is most auspicious?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Guruvara (Thursday) ruled by Jupiter is considered the most auspicious for religious ceremonies, education, marriage, and starting new ventures. Shukravara (Friday) is excellent for marriages and celebrations. Budhavara (Wednesday) is ideal for business and education. The auspiciousness also depends on other Panchang elements.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which planets rule each day of the week?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Sunday (Ravivara) - Sun, Monday (Somavara) - Moon, Tuesday (Mangalavara) - Mars, Wednesday (Budhavara) - Mercury, Thursday (Guruvara) - Jupiter, Friday (Shukravara) - Venus, Saturday (Shanivara) - Saturn. Each planet influences the characteristics and suitable activities for that day.',
+      },
+    },
+  ],
+};
+
+// Planet colors for styling
+const planetColors: Record<string, string> = {
+  'Sun': 'bg-orange-500/10 text-orange-600 border-orange-500/20',
+  'Moon': 'bg-slate-500/10 text-slate-600 border-slate-500/20',
+  'Mars': 'bg-red-500/10 text-red-600 border-red-500/20',
+  'Mercury': 'bg-green-500/10 text-green-600 border-green-500/20',
+  'Jupiter': 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+  'Venus': 'bg-pink-500/10 text-pink-600 border-pink-500/20',
+  'Saturn': 'bg-blue-900/10 text-blue-900 border-blue-900/20',
+};
+
+// Planet symbols
+const planetSymbols: Record<string, string> = {
+  'Sun': '☀️',
+  'Moon': '🌙',
+  'Mars': '♂️',
+  'Mercury': '☿️',
+  'Jupiter': '♃',
+  'Venus': '♀️',
+  'Saturn': '♄',
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(varaListSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Vara - वार
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        Days of the Week in Vedic Astrology
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+            What is Vara?
+          </h2>
+          <p class="text-neutral/80 leading-relaxed">
+            <strong>Vara (वार)</strong> is the Sanskrit word for weekday and is one of the five elements (Panchangas) of the Hindu calendar.
+            Each day is ruled by a <em>Graha</em> (celestial body) and has specific characteristics that determine suitable activities.
+            The <strong>7 Varas</strong> follow the same planetary order found in many ancient civilizations.
+          </p>
+          <div class="grid grid-cols-7 gap-2 mt-4">
+            {varas.map((vara) => (
+              <div class="text-center p-2 bg-base-100 rounded-lg">
+                <p class="text-2xl">{planetSymbols[vara.planet]}</p>
+                <p class="text-xs text-neutral/60 mt-1">{vara.nameEnglish.slice(0, 3)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vara Grid -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
+        All 7 Varas (Days of the Week)
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {varas.map((vara) => (
+          <a
+            href={`/vara/${vara.slug}`}
+            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all"
+          >
+            <div class="card-body p-4">
+              <div class="flex items-start gap-4">
+                <!-- Planet Symbol -->
+                <div class={`w-14 h-14 flex items-center justify-center rounded-xl text-2xl border ${planetColors[vara.planet]}`}>
+                  {planetSymbols[vara.planet]}
+                </div>
+
+                <!-- Info -->
+                <div class="grow min-w-0">
+                  <div class="flex items-center gap-2">
+                    <h3 class="font-heading text-lg font-semibold text-primary">
+                      {vara.nameHindi}
+                    </h3>
+                  </div>
+                  <p class="text-sm text-neutral/70">{vara.name} ({vara.nameEnglish})</p>
+                  <div class="flex items-center gap-2 mt-2 text-sm">
+                    <span class={`px-2 py-0.5 rounded border text-xs ${planetColors[vara.planet]}`}>
+                      {vara.planetHindi}
+                    </span>
+                    <span class="text-neutral/30">•</span>
+                    <span class="text-neutral/60 text-xs">{vara.deity.split(',')[0]}</span>
+                  </div>
+                </div>
+
+                <!-- Arrow -->
+                <svg
+                  class="w-5 h-5 text-neutral/40 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Planetary Rulers -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Planetary Rulers of Each Day
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Sanskrit Name</th>
+              <th>Planet (Graha)</th>
+              <th>Element</th>
+              <th>Direction</th>
+            </tr>
+          </thead>
+          <tbody>
+            {varas.map((vara) => (
+              <tr>
+                <td class="font-medium">{vara.nameEnglish}</td>
+                <td>{vara.name} ({vara.nameHindi})</td>
+                <td>
+                  <span class="flex items-center gap-2">
+                    <span>{planetSymbols[vara.planet]}</span>
+                    {vara.planet} ({vara.planetHindi})
+                  </span>
+                </td>
+                <td>{vara.element}</td>
+                <td>{vara.direction}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Auspicious Days -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Most Auspicious Days for Activities
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card bg-yellow-500/5 border border-yellow-500/20">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">♃</span>
+              <h3 class="font-semibold text-primary">Thursday (Guruvara)</h3>
+            </div>
+            <p class="text-sm text-neutral/70">
+              Ruled by Jupiter, the most benefic planet. Ideal for religious ceremonies, education,
+              marriage, starting businesses, and meeting teachers/gurus.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-pink-500/5 border border-pink-500/20">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">♀️</span>
+              <h3 class="font-semibold text-primary">Friday (Shukravara)</h3>
+            </div>
+            <p class="text-sm text-neutral/70">
+              Ruled by Venus. Excellent for marriages, engagements, buying jewelry/clothes,
+              art, music, and all matters of love and beauty.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-green-500/5 border border-green-500/20">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">☿️</span>
+              <h3 class="font-semibold text-primary">Wednesday (Budhavara)</h3>
+            </div>
+            <p class="text-sm text-neutral/70">
+              Ruled by Mercury. Best for education, business dealings, communication,
+              writing, publishing, and financial transactions.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-slate-500/5 border border-slate-500/20">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">🌙</span>
+              <h3 class="font-semibold text-primary">Monday (Somavara)</h3>
+            </div>
+            <p class="text-sm text-neutral/70">
+              Ruled by Moon. Sacred to Lord Shiva. Good for travel, agriculture,
+              starting relationships, and water-related activities.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Days to be Careful -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Days Requiring Caution
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card bg-red-500/5 border border-red-500/20">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">♂️</span>
+              <h3 class="font-semibold text-primary">Tuesday (Mangalavara)</h3>
+            </div>
+            <p class="text-sm text-neutral/70">
+              Ruled by Mars. Avoid starting new ventures, marriages, and auspicious ceremonies.
+              Good for property dealings, surgery, and overcoming enemies.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-blue-900/5 border border-blue-900/20">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-3xl">♄</span>
+              <h3 class="font-semibold text-primary">Saturday (Shanivara)</h3>
+            </div>
+            <p class="text-sm text-neutral/70">
+              Ruled by Saturn. Avoid starting new ventures, travel, and auspicious events.
+              Good for charity, serving elders, and Shani remedies.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fasting Days -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Popular Fasting Days (Vrat)
+      </h2>
+      <div class="card bg-base-200/50">
+        <div class="card-body p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+            <div>
+              <p class="font-semibold text-slate-600 mb-1">Somvar Vrat (Monday)</p>
+              <p class="text-neutral/60">For Lord Shiva - peace & relationships</p>
+            </div>
+            <div>
+              <p class="font-semibold text-red-600 mb-1">Mangalvar Vrat (Tuesday)</p>
+              <p class="text-neutral/60">For Hanuman - courage & protection</p>
+            </div>
+            <div>
+              <p class="font-semibold text-yellow-600 mb-1">Guruvar Vrat (Thursday)</p>
+              <p class="text-neutral/60">For Vishnu/Brihaspati - wisdom & fortune</p>
+            </div>
+            <div>
+              <p class="font-semibold text-blue-900 mb-1">Shanivar Vrat (Saturday)</p>
+              <p class="text-neutral/60">For Shani - karma & longevity</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Vara in Hindu Calendar?
+          </div>
+          <div class="collapse-content">
+            <p>Vara is the Sanskrit term for weekday and is one of the five elements (Panchangas) of the Hindu calendar. Each vara is ruled by a celestial body (graha) and has specific characteristics that influence the auspiciousness of activities. The seven varas are named after the Sun, Moon, Mars, Mercury, Jupiter, Venus, and Saturn.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Which Vara is most auspicious?
+          </div>
+          <div class="collapse-content">
+            <p>Guruvara (Thursday) ruled by Jupiter is considered the most auspicious for religious ceremonies, education, marriage, and starting new ventures. Shukravara (Friday) is excellent for marriages and celebrations. The auspiciousness also depends on other Panchang elements like Tithi, Nakshatra, Yoga, and Karana.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Why is Tuesday considered inauspicious?
+          </div>
+          <div class="collapse-content">
+            <p>Tuesday (Mangalavara) is ruled by Mars, a malefic planet associated with aggression and conflict. It is avoided for auspicious ceremonies like marriages and starting new businesses. However, it is good for property dealings, surgery, and activities requiring courage. Tuesday fasting is popular to please Lord Hanuman.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Which day is best for which activity?
+          </div>
+          <div class="collapse-content">
+            <p>Sunday - Government work, health; Monday - Travel, relationships, Shiva worship; Tuesday - Property, surgery; Wednesday - Education, business, communication; Thursday - Marriage, religious events, new ventures; Friday - Marriage, art, jewelry; Saturday - Charity, ancestor worship. Always consider other Panchang elements for best results.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
