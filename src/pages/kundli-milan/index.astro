@@ -1,0 +1,532 @@
+---
+/**
+ * Kundli Milan (Matching) Page
+ *
+ * Marriage compatibility checker with:
+ * - Dual birth details form (bride & groom)
+ * - Guna Milan explanation
+ * - FAQ schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load cities
+import citiesData from '../../data/cities-sample.json';
+
+interface City {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  state: string;
+  stateHindi: string;
+}
+
+const cities = citiesData as City[];
+
+// Page meta
+const title = 'Kundli Milan - Free Horoscope Matching | Guna Milan for Marriage | Shree Kundli';
+const description = 'Free Kundli Milan (horoscope matching) for marriage compatibility. Check Guna Milan score, Mangal Dosha, and Nadi Dosha. कुंडली मिलान - गुण मिलान।';
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Kundli Milan' },
+];
+
+// Schema
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Kundli Milan',
+  alternateName: 'Horoscope Matching Calculator',
+  description: 'Free online Kundli Milan (horoscope matching) for marriage compatibility',
+  applicationCategory: 'LifestyleApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  featureList: [
+    'Ashtakoota Guna Milan',
+    'Mangal Dosha check',
+    'Nadi Dosha analysis',
+    'Compatibility score',
+    'Marriage suitability',
+  ],
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Kundli Milan?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Kundli Milan, also known as horoscope matching or Guna Milan, is the process of comparing two birth charts to determine marriage compatibility. It analyzes 8 aspects (Ashtakoota) totaling 36 points to predict harmony in married life.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many Gunas should match for marriage?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Out of 36 total Gunas, 18 or more matching Gunas (50%+) is considered acceptable for marriage. 25+ Gunas is considered very good, while below 18 may indicate potential challenges. However, other factors like Mangal Dosha should also be considered.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is Mangal Dosha?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Mangal Dosha (Manglik) occurs when Mars is placed in 1st, 4th, 7th, 8th, or 12th house from Lagna, Moon, or Venus. It is believed to cause disharmony in marriage. When both partners have Mangal Dosha, it is considered cancelled.',
+      },
+    },
+  ],
+};
+
+// 8 Koota for Guna Milan
+const kootas = [
+  { name: 'Varna', nameHindi: 'वर्ण', points: 1, description: 'Spiritual compatibility and ego levels' },
+  { name: 'Vashya', nameHindi: 'वश्य', points: 2, description: 'Mutual attraction and control in relationship' },
+  { name: 'Tara', nameHindi: 'तारा', points: 3, description: 'Birth star compatibility and destiny' },
+  { name: 'Yoni', nameHindi: 'योनि', points: 4, description: 'Physical and sexual compatibility' },
+  { name: 'Graha Maitri', nameHindi: 'ग्रह मैत्री', points: 5, description: 'Mental compatibility and friendship' },
+  { name: 'Gana', nameHindi: 'गण', points: 6, description: 'Temperament and behavior compatibility' },
+  { name: 'Bhakoot', nameHindi: 'भकूट', points: 7, description: 'Love, family welfare and finances' },
+  { name: 'Nadi', nameHindi: 'नाड़ी', points: 8, description: 'Health, genes and progeny' },
+];
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(webAppSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Kundli Milan - कुंडली मिलान
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        Horoscope Matching for Marriage Compatibility
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-3">
+            What is Kundli Milan?
+          </h2>
+          <p class="text-neutral/80 leading-relaxed">
+            <strong>Kundli Milan</strong> (कुंडली मिलान), also known as <em>Guna Milan</em> or horoscope matching,
+            is the Vedic astrology method to assess marriage compatibility. It compares the birth charts of
+            prospective bride and groom using <strong>Ashtakoota</strong> (8 aspects) system, scoring up to
+            <strong>36 Gunas</strong>. A score of 18+ is considered acceptable for marriage.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Matching Form -->
+    <section>
+      <div class="card bg-base-100 border border-base-200 shadow-lg">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4 flex items-center gap-2">
+            <span class="text-2xl">💕</span>
+            Enter Birth Details for Matching
+          </h2>
+
+          <form id="milan-form" class="space-y-8">
+            <!-- Groom Details -->
+            <div class="p-4 bg-blue-500/5 rounded-lg border border-blue-500/20">
+              <h3 class="font-semibold text-blue-600 mb-4 flex items-center gap-2">
+                <span class="text-xl">👤</span>
+                Groom Details (वर विवरण)
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                  <label class="label" for="groom-name">
+                    <span class="label-text">Full Name</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="groom-name"
+                    name="groom-name"
+                    placeholder="Groom's full name"
+                    class="input input-bordered w-full"
+                    required
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label" for="groom-dob">
+                    <span class="label-text">Date of Birth</span>
+                  </label>
+                  <input
+                    type="date"
+                    id="groom-dob"
+                    name="groom-dob"
+                    class="input input-bordered w-full"
+                    required
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label" for="groom-tob">
+                    <span class="label-text">Time of Birth</span>
+                  </label>
+                  <input
+                    type="time"
+                    id="groom-tob"
+                    name="groom-tob"
+                    class="input input-bordered w-full"
+                    required
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label" for="groom-pob">
+                    <span class="label-text">Place of Birth</span>
+                  </label>
+                  <select id="groom-pob" name="groom-pob" class="select select-bordered w-full" required>
+                    <option value="">Select city...</option>
+                    {cities.map((city) => (
+                      <option value={city.id}>
+                        {city.name}, {city.state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bride Details -->
+            <div class="p-4 bg-pink-500/5 rounded-lg border border-pink-500/20">
+              <h3 class="font-semibold text-pink-600 mb-4 flex items-center gap-2">
+                <span class="text-xl">👤</span>
+                Bride Details (वधू विवरण)
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                  <label class="label" for="bride-name">
+                    <span class="label-text">Full Name</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="bride-name"
+                    name="bride-name"
+                    placeholder="Bride's full name"
+                    class="input input-bordered w-full"
+                    required
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label" for="bride-dob">
+                    <span class="label-text">Date of Birth</span>
+                  </label>
+                  <input
+                    type="date"
+                    id="bride-dob"
+                    name="bride-dob"
+                    class="input input-bordered w-full"
+                    required
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label" for="bride-tob">
+                    <span class="label-text">Time of Birth</span>
+                  </label>
+                  <input
+                    type="time"
+                    id="bride-tob"
+                    name="bride-tob"
+                    class="input input-bordered w-full"
+                    required
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label" for="bride-pob">
+                    <span class="label-text">Place of Birth</span>
+                  </label>
+                  <select id="bride-pob" name="bride-pob" class="select select-bordered w-full" required>
+                    <option value="">Select city...</option>
+                    {cities.map((city) => (
+                      <option value={city.id}>
+                        {city.name}, {city.state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+              <button type="submit" class="btn btn-primary btn-lg w-full gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                Check Compatibility (मिलान करें)
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Result Placeholder -->
+    <section id="milan-result" class="hidden">
+      <div class="card bg-base-100 border border-primary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+            Compatibility Result
+          </h2>
+          <div class="alert alert-info mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div>
+              <h3 class="font-bold">Kundli Milan</h3>
+              <p class="text-sm">API integration coming soon. Birth details have been captured for matching.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-3 bg-blue-500/5 rounded-lg">
+              <p class="text-sm font-medium text-blue-600 mb-1">Groom</p>
+              <p id="result-groom" class="text-sm"></p>
+            </div>
+            <div class="p-3 bg-pink-500/5 rounded-lg">
+              <p class="text-sm font-medium text-pink-600 mb-1">Bride</p>
+              <p id="result-bride" class="text-sm"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ashtakoota Guna Milan -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Ashtakoota Guna Milan (36 Gunas)
+      </h2>
+      <p class="text-neutral/70 mb-4">
+        The Ashtakoota system analyzes 8 aspects of compatibility, totaling 36 points (Gunas).
+      </p>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>Koota</th>
+              <th>Hindi</th>
+              <th>Points</th>
+              <th>Significance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {kootas.map((koota) => (
+              <tr>
+                <td class="font-medium">{koota.name}</td>
+                <td>{koota.nameHindi}</td>
+                <td class="font-semibold text-primary">{koota.points}</td>
+                <td class="text-sm text-neutral/70">{koota.description}</td>
+              </tr>
+            ))}
+            <tr class="bg-secondary/10">
+              <td class="font-bold" colspan="2">Total</td>
+              <td class="font-bold text-primary">36</td>
+              <td class="text-sm">Maximum possible Gunas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Score Interpretation -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Guna Score Interpretation
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card bg-red-500/10 border border-red-500/20">
+          <div class="card-body p-4 text-center">
+            <p class="text-2xl font-bold text-red-600">0-17</p>
+            <p class="text-sm font-medium">Not Recommended</p>
+            <p class="text-xs text-neutral/60">Significant challenges likely</p>
+          </div>
+        </div>
+        <div class="card bg-amber-500/10 border border-amber-500/20">
+          <div class="card-body p-4 text-center">
+            <p class="text-2xl font-bold text-amber-600">18-24</p>
+            <p class="text-sm font-medium">Average Match</p>
+            <p class="text-xs text-neutral/60">Acceptable with considerations</p>
+          </div>
+        </div>
+        <div class="card bg-green-500/10 border border-green-500/20">
+          <div class="card-body p-4 text-center">
+            <p class="text-2xl font-bold text-green-600">25-32</p>
+            <p class="text-sm font-medium">Good Match</p>
+            <p class="text-xs text-neutral/60">Favorable for marriage</p>
+          </div>
+        </div>
+        <div class="card bg-emerald-500/10 border border-emerald-500/20">
+          <div class="card-body p-4 text-center">
+            <p class="text-2xl font-bold text-emerald-600">33-36</p>
+            <p class="text-sm font-medium">Excellent Match</p>
+            <p class="text-xs text-neutral/60">Highly recommended</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dosha Information -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Important Doshas in Kundli Milan
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card bg-red-500/5 border border-red-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-red-600 mb-2">Mangal Dosha (मांगलिक दोष)</h3>
+            <p class="text-sm text-neutral/70 mb-2">
+              Occurs when Mars is in 1st, 4th, 7th, 8th, or 12th house. Can cause disharmony if only one partner has it.
+            </p>
+            <p class="text-xs text-green-600">
+              <strong>Remedy:</strong> Both partners having Mangal Dosha cancels the effect.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-amber-500/5 border border-amber-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-amber-600 mb-2">Nadi Dosha (नाड़ी दोष)</h3>
+            <p class="text-sm text-neutral/70 mb-2">
+              Occurs when both have same Nadi (Aadi, Madhya, or Antya). Can affect progeny and health.
+            </p>
+            <p class="text-xs text-green-600">
+              <strong>Remedy:</strong> Specific pujas and gemstones can mitigate effects.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Kundli Milan?
+          </div>
+          <div class="collapse-content">
+            <p>Kundli Milan, also known as horoscope matching or Guna Milan, is the process of comparing two birth charts to determine marriage compatibility. It analyzes 8 aspects (Ashtakoota) totaling 36 points to predict harmony in married life.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            How many Gunas should match for marriage?
+          </div>
+          <div class="collapse-content">
+            <p>Out of 36 total Gunas, 18 or more matching Gunas (50%+) is considered acceptable for marriage. 25+ Gunas is considered very good, while below 18 may indicate potential challenges.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What is Mangal Dosha?
+          </div>
+          <div class="collapse-content">
+            <p>Mangal Dosha (Manglik) occurs when Mars is placed in 1st, 4th, 7th, 8th, or 12th house from Lagna, Moon, or Venus. It is believed to cause disharmony in marriage. When both partners have Mangal Dosha, it is considered cancelled.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Is Kundli Milan necessary for marriage?
+          </div>
+          <div class="collapse-content">
+            <p>While Kundli Milan is a traditional practice, many couples marry successfully regardless of scores. It should be considered as guidance, not a definitive predictor. Mutual understanding, respect, and compatibility in real life matter equally.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Links -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Related Services
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="/kundli" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">📜</span>
+            <p class="font-semibold text-primary">Kundli</p>
+            <p class="text-xs text-neutral/60">Birth chart</p>
+          </div>
+        </a>
+        <a href="/muhurat" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">💒</span>
+            <p class="font-semibold text-primary">Muhurat</p>
+            <p class="text-xs text-neutral/60">Wedding dates</p>
+          </div>
+        </a>
+        <a href="/nakshatra" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">🌟</span>
+            <p class="font-semibold text-primary">Nakshatra</p>
+            <p class="text-xs text-neutral/60">Birth star</p>
+          </div>
+        </a>
+        <a href="/rashifal" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">⭐</span>
+            <p class="font-semibold text-primary">Rashifal</p>
+            <p class="text-xs text-neutral/60">Horoscope</p>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Form submission handler using safe DOM methods
+    document.getElementById('milan-form')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this as HTMLFormElement);
+      const groomName = formData.get('groom-name') as string;
+      const groomDob = formData.get('groom-dob') as string;
+      const brideName = formData.get('bride-name') as string;
+      const brideDob = formData.get('bride-dob') as string;
+
+      // Show result section
+      const resultSection = document.getElementById('milan-result');
+      if (resultSection) {
+        resultSection.classList.remove('hidden');
+
+        // Safely update text content
+        const groomEl = document.getElementById('result-groom');
+        const brideEl = document.getElementById('result-bride');
+
+        if (groomEl) groomEl.textContent = `${groomName} (DOB: ${groomDob})`;
+        if (brideEl) brideEl.textContent = `${brideName} (DOB: ${brideDob})`;
+
+        // Scroll to result
+        resultSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  </script>
+</Layout>

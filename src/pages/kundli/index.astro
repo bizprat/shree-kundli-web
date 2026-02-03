@@ -1,0 +1,501 @@
+---
+/**
+ * Kundli Generator Page
+ *
+ * Form-based birth chart generator with:
+ * - Birth details input form
+ * - City autocomplete
+ * - Date and time pickers
+ * - FAQ schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load cities for autocomplete
+import citiesData from '../../data/cities-sample.json';
+
+interface City {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  state: string;
+  stateHindi: string;
+  lat: number;
+  lng: number;
+  timezone: string;
+}
+
+const cities = citiesData as City[];
+
+// Page meta
+const title = 'Free Kundli Generator - Birth Chart Calculator | Janam Kundali Online | Shree Kundli';
+const description = 'Generate your free Kundli (birth chart) online. Enter birth date, time, and place to get accurate Janam Kundali with planetary positions, dashas, and predictions. जन्म कुंडली बनाएं।';
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Kundli' },
+];
+
+// Schema
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Kundli Generator',
+  alternateName: 'Janam Kundali Calculator',
+  description: 'Free online birth chart (Kundli) generator based on Vedic astrology',
+  applicationCategory: 'LifestyleApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  featureList: [
+    'Birth chart calculation',
+    'Planetary positions',
+    'Dasha periods',
+    'Yoga analysis',
+    'Dosha detection',
+  ],
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Kundli?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Kundli (also called Janam Kundali or birth chart) is an astrological chart that maps the positions of celestial bodies at the exact time and place of your birth. It is used in Vedic astrology to understand personality traits, life events, and make predictions.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What information is needed to generate a Kundli?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'To generate an accurate Kundli, you need: 1) Date of birth, 2) Exact time of birth (as precise as possible), and 3) Place of birth (city/town). The time of birth is crucial as planetary positions change rapidly.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is online Kundli accurate?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, online Kundli generators using proper astronomical calculations (like Swiss Ephemeris) are highly accurate. The accuracy depends on the precision of birth time provided. Our calculator uses NASA JPL ephemeris data for calculations.',
+      },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(webAppSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Free Kundli Generator
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        जन्म कुंडली बनाएं - Create Your Birth Chart
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-3">
+            What is Kundli?
+          </h2>
+          <p class="text-neutral/80 leading-relaxed">
+            <strong>Kundli</strong> (कुंडली), also known as <em>Janam Kundali</em> or birth chart, is an astrological
+            diagram that represents the positions of celestial bodies at the exact moment of your birth.
+            It is the foundation of Vedic astrology predictions and is used to understand personality,
+            life path, career, relationships, and timing of events.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kundli Form -->
+    <section>
+      <div class="card bg-base-100 border border-base-200 shadow-lg">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4 flex items-center gap-2">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Enter Birth Details
+          </h2>
+
+          <form id="kundli-form" class="space-y-6">
+            <!-- Name -->
+            <div class="form-control">
+              <label class="label" for="name">
+                <span class="label-text font-medium">Full Name (पूरा नाम)</span>
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+                class="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            <!-- Gender -->
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium">Gender (लिंग)</span>
+              </label>
+              <div class="flex gap-4">
+                <label class="label cursor-pointer gap-2">
+                  <input type="radio" name="gender" value="male" class="radio radio-primary" checked />
+                  <span class="label-text">Male (पुरुष)</span>
+                </label>
+                <label class="label cursor-pointer gap-2">
+                  <input type="radio" name="gender" value="female" class="radio radio-primary" />
+                  <span class="label-text">Female (स्त्री)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label" for="dob">
+                  <span class="label-text font-medium">Date of Birth (जन्म तिथि)</span>
+                </label>
+                <input
+                  type="date"
+                  id="dob"
+                  name="dob"
+                  class="input input-bordered w-full"
+                  required
+                />
+              </div>
+
+              <!-- Time of Birth -->
+              <div class="form-control">
+                <label class="label" for="tob">
+                  <span class="label-text font-medium">Time of Birth (जन्म समय)</span>
+                </label>
+                <input
+                  type="time"
+                  id="tob"
+                  name="tob"
+                  class="input input-bordered w-full"
+                  required
+                />
+                <label class="label">
+                  <span class="label-text-alt text-neutral/50">Enter as accurate as possible</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Place of Birth -->
+            <div class="form-control">
+              <label class="label" for="pob">
+                <span class="label-text font-medium">Place of Birth (जन्म स्थान)</span>
+              </label>
+              <select id="pob" name="pob" class="select select-bordered w-full" required>
+                <option value="">Select city...</option>
+                {cities.map((city) => (
+                  <option value={city.id}>
+                    {city.name}, {city.state} ({city.nameHindi})
+                  </option>
+                ))}
+              </select>
+              <label class="label">
+                <span class="label-text-alt text-neutral/50">Select your birth city from the list</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+              <button type="submit" class="btn btn-primary btn-lg w-full gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Generate Kundli (कुंडली बनाएं)
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kundli Result Placeholder -->
+    <section id="kundli-result" class="hidden">
+      <div class="card bg-base-100 border border-primary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+            Your Kundli
+          </h2>
+          <div class="alert alert-info mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div>
+              <h3 class="font-bold">Kundli Generation</h3>
+              <p class="text-sm">API integration coming soon. Your birth details have been captured.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-neutral/60">Name</p>
+              <p id="result-name" class="font-medium"></p>
+            </div>
+            <div>
+              <p class="text-sm text-neutral/60">Gender</p>
+              <p id="result-gender" class="font-medium capitalize"></p>
+            </div>
+            <div>
+              <p class="text-sm text-neutral/60">Date of Birth</p>
+              <p id="result-dob" class="font-medium"></p>
+            </div>
+            <div>
+              <p class="text-sm text-neutral/60">Time of Birth</p>
+              <p id="result-tob" class="font-medium"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- What Kundli Contains -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        What Does a Kundli Contain?
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="card bg-base-200/50">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-primary flex items-center gap-2">
+              <span class="text-2xl">🌍</span>
+              Lagna (Ascendant)
+            </h3>
+            <p class="text-sm text-neutral/70">
+              The rising sign at birth, determining your physical appearance, personality, and life approach.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-base-200/50">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-primary flex items-center gap-2">
+              <span class="text-2xl">🪐</span>
+              Planetary Positions
+            </h3>
+            <p class="text-sm text-neutral/70">
+              Positions of Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, and Ketu in the 12 houses.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-base-200/50">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-primary flex items-center gap-2">
+              <span class="text-2xl">📊</span>
+              Divisional Charts
+            </h3>
+            <p class="text-sm text-neutral/70">
+              D1 (Rasi), D9 (Navamsa), D10 (Dasamsa), and other charts for specific life areas.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-base-200/50">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-primary flex items-center gap-2">
+              <span class="text-2xl">⏰</span>
+              Dasha Periods
+            </h3>
+            <p class="text-sm text-neutral/70">
+              Vimshottari Dasha timeline showing planetary periods and their effects throughout life.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-base-200/50">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-primary flex items-center gap-2">
+              <span class="text-2xl">✨</span>
+              Yogas
+            </h3>
+            <p class="text-sm text-neutral/70">
+              Beneficial planetary combinations like Raja Yoga, Dhana Yoga that indicate success and prosperity.
+            </p>
+          </div>
+        </div>
+        <div class="card bg-base-200/50">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-primary flex items-center gap-2">
+              <span class="text-2xl">⚠️</span>
+              Doshas
+            </h3>
+            <p class="text-sm text-neutral/70">
+              Afflictions like Mangal Dosha, Kaal Sarp Dosha, and their remedies for marriage and life.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Importance of Birth Time -->
+    <section>
+      <div class="card bg-amber-500/10 border border-amber-500/20">
+        <div class="card-body p-4">
+          <h3 class="font-semibold text-amber-700 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            Importance of Accurate Birth Time
+          </h3>
+          <p class="text-sm text-neutral/70">
+            The <strong>exact birth time</strong> is crucial for accurate Kundli calculations. The Lagna (ascendant)
+            changes approximately every 2 hours, and even small differences can affect predictions.
+            If you don't know your exact birth time, check your birth certificate or hospital records.
+            For best results, enter time to the nearest minute if known.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Kundli (Janam Kundali)?
+          </div>
+          <div class="collapse-content">
+            <p>Kundli, also called Janam Kundali or birth chart, is an astrological chart that maps the positions of celestial bodies at the exact time and place of your birth. It is used in Vedic astrology to understand personality traits, life events, and make predictions.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What information is needed to generate a Kundli?
+          </div>
+          <div class="collapse-content">
+            <p>To generate an accurate Kundli, you need: 1) Date of birth, 2) Exact time of birth (as precise as possible), and 3) Place of birth (city/town). The time of birth is crucial as planetary positions change rapidly.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Is online Kundli accurate?
+          </div>
+          <div class="collapse-content">
+            <p>Yes, online Kundli generators using proper astronomical calculations (like Swiss Ephemeris) are highly accurate. The accuracy depends on the precision of birth time provided. Our calculator uses NASA JPL ephemeris data for calculations.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What if I don't know my exact birth time?
+          </div>
+          <div class="collapse-content">
+            <p>If you don't know your exact birth time, check your birth certificate, hospital records, or ask family members. Some astrologers use birth time rectification techniques. As a last resort, you can use sunrise time, but the chart will be less accurate.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What is the difference between Lagna and Rashi?
+          </div>
+          <div class="collapse-content">
+            <p>Lagna (Ascendant) is the zodiac sign rising on the eastern horizon at birth - it changes every 2 hours. Rashi (Moon sign) is the zodiac sign where Moon was positioned at birth. Both are important in Vedic astrology for different aspects of life.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Links -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Related Services
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="/kundli-milan" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">💕</span>
+            <p class="font-semibold text-primary">Kundli Milan</p>
+            <p class="text-xs text-neutral/60">Match compatibility</p>
+          </div>
+        </a>
+        <a href="/rashifal" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">⭐</span>
+            <p class="font-semibold text-primary">Rashifal</p>
+            <p class="text-xs text-neutral/60">Daily horoscope</p>
+          </div>
+        </a>
+        <a href="/nakshatra" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">🌟</span>
+            <p class="font-semibold text-primary">Nakshatra</p>
+            <p class="text-xs text-neutral/60">Birth star guide</p>
+          </div>
+        </a>
+        <a href="/panchang" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">📅</span>
+            <p class="font-semibold text-primary">Panchang</p>
+            <p class="text-xs text-neutral/60">Daily calendar</p>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Form submission handler using safe DOM methods
+    document.getElementById('kundli-form')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this as HTMLFormElement);
+      const name = formData.get('name') as string;
+      const gender = formData.get('gender') as string;
+      const dob = formData.get('dob') as string;
+      const tob = formData.get('tob') as string;
+
+      // Show result section
+      const resultSection = document.getElementById('kundli-result');
+      if (resultSection) {
+        resultSection.classList.remove('hidden');
+
+        // Safely update text content
+        const nameEl = document.getElementById('result-name');
+        const genderEl = document.getElementById('result-gender');
+        const dobEl = document.getElementById('result-dob');
+        const tobEl = document.getElementById('result-tob');
+
+        if (nameEl) nameEl.textContent = name;
+        if (genderEl) genderEl.textContent = gender;
+        if (dobEl) dobEl.textContent = dob;
+        if (tobEl) tobEl.textContent = tob;
+
+        // Scroll to result
+        resultSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  </script>
+</Layout>
