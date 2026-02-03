@@ -1,0 +1,316 @@
+---
+/**
+ * Individual Festival Page
+ *
+ * Dynamic page for each festival with:
+ * - Answer-first puja timing and date
+ * - Event schema for Google
+ * - FAQ schema for common questions
+ * - Rituals and significance
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load festivals data
+import festivalsData from '../../data/festivals.json';
+
+interface FestivalPanchang {
+  tithi?: string;
+  paksha?: string;
+  masa?: string;
+  note?: string;
+}
+
+interface Festival {
+  id: string;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  description: string;
+  descriptionHindi: string;
+  type: 'major' | 'regional' | 'observance';
+  category: string;
+  rituals: string[];
+  panchang: FestivalPanchang;
+  trafficPriority: number;
+  regions: string[];
+}
+
+const festivals = festivalsData as Festival[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const festivalsModule = await import('../../data/festivals.json');
+  const festivals = festivalsModule.default as Festival[];
+
+  return festivals.map((festival) => ({
+    params: { slug: festival.slug },
+    props: { festival },
+  }));
+}
+
+// Get festival from props
+const { festival } = Astro.props as { festival: Festival };
+
+// Page meta
+const title = `${festival.name} 2026 - Date, Puja Timing & Vidhi | ${festival.nameHindi} | Shree Kundli`;
+const description = `${festival.name} (${festival.nameHindi}) - ${festival.description} Find puja muhurat, rituals, and significance.`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Festivals', url: '/festivals' },
+  { name: festival.name },
+];
+
+// Get panchang display text
+const panchangText = festival.panchang.tithi
+  ? `${festival.panchang.tithi} of ${festival.panchang.paksha} Paksha in ${festival.panchang.masa} month`
+  : festival.panchang.note || 'Date varies by tradition';
+
+// Event schema
+const eventSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: festival.name,
+  alternateName: festival.nameHindi,
+  description: festival.description,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: 'India',
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'IN',
+    },
+  },
+  organizer: {
+    '@type': 'Organization',
+    name: 'Hindu Religious Observance',
+  },
+  about: {
+    '@type': 'Thing',
+    name: 'Hindu Festival',
+    sameAs: `https://en.wikipedia.org/wiki/${festival.name.replace(/\s+/g, '_')}`,
+  },
+  inLanguage: ['en', 'hi'],
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `When is ${festival.name} in 2026?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${festival.name} (${festival.nameHindi}) is celebrated on ${panchangText}. The exact date varies each year based on the Hindu lunar calendar.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What is ${festival.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: festival.description,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `How is ${festival.name} celebrated?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${festival.name} is celebrated with various rituals including: ${festival.rituals.join(', ')}.`,
+      },
+    },
+  ],
+};
+
+// Find related festivals (same category or type)
+const relatedFestivals = festivals
+  .filter((f) => f.id !== festival.id && (f.category === festival.category || f.type === festival.type))
+  .slice(0, 4);
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(eventSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header>
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+            {festival.name}
+          </h1>
+          <p class="text-xl text-neutral/70 mt-1">{festival.nameHindi}</p>
+        </div>
+        <span class={`badge badge-lg ${festival.type === 'major' ? 'badge-secondary' : festival.type === 'regional' ? 'badge-accent' : 'badge-ghost'}`}>
+          {festival.type}
+        </span>
+      </div>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Panchang Info -->
+            <div class="space-y-3">
+              <h2 class="font-semibold text-primary text-lg">When is {festival.name}?</h2>
+              {festival.panchang.tithi ? (
+                <div class="space-y-2">
+                  <div class="flex justify-between">
+                    <span class="text-neutral/60">Tithi</span>
+                    <span class="font-medium">{festival.panchang.tithi}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-neutral/60">Paksha</span>
+                    <span class="font-medium">{festival.panchang.paksha} Paksha</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-neutral/60">Hindu Month</span>
+                    <span class="font-medium">{festival.panchang.masa}</span>
+                  </div>
+                </div>
+              ) : (
+                <p class="text-neutral/70">{festival.panchang.note || 'Date varies by tradition'}</p>
+              )}
+            </div>
+
+            <!-- Category & Regions -->
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-neutral/60">Category</span>
+                <span class="font-medium capitalize">{festival.category}</span>
+              </div>
+              {festival.regions.length > 0 && festival.regions[0] !== 'all' && (
+                <div class="flex justify-between">
+                  <span class="text-neutral/60">Regions</span>
+                  <span class="font-medium capitalize">{festival.regions.join(', ')}</span>
+                </div>
+              )}
+              {festival.regions[0] === 'all' && (
+                <div class="flex justify-between">
+                  <span class="text-neutral/60">Celebration</span>
+                  <span class="font-medium">Pan-India</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Description -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        About {festival.name}
+      </h2>
+      <div class="prose prose-neutral max-w-none">
+        <p class="text-lg leading-relaxed">{festival.description}</p>
+        <p class="text-neutral/70 mt-2">{festival.descriptionHindi}</p>
+      </div>
+    </section>
+
+    <!-- Rituals -->
+    {festival.rituals.length > 0 && (
+      <section>
+        <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+          Rituals & Traditions
+        </h2>
+        <ul class="space-y-3">
+          {festival.rituals.map((ritual, index) => (
+            <li class="flex items-start gap-3">
+              <span class="shrink-0 w-6 h-6 rounded-full bg-secondary/20 text-secondary flex items-center justify-center text-sm font-medium">
+                {index + 1}
+              </span>
+              <div>
+                <p class="font-medium">{ritual}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            When is {festival.name} celebrated?
+          </div>
+          <div class="collapse-content">
+            <p>{festival.name} ({festival.nameHindi}) is celebrated on {panchangText}. The exact Gregorian date varies each year based on the Hindu lunar calendar.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What is {festival.name}?
+          </div>
+          <div class="collapse-content">
+            <p>{festival.description}</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            How is {festival.name} celebrated?
+          </div>
+          <div class="collapse-content">
+            <p>{festival.name} is celebrated with various rituals including: {festival.rituals.join(', ')}.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Festivals -->
+    {relatedFestivals.length > 0 && (
+      <section>
+        <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+          Related Festivals
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {relatedFestivals.map((related) => (
+            <a
+              href={`/festivals/${related.slug}`}
+              class="card bg-base-100 border border-base-200 hover:border-secondary/30 transition-colors"
+            >
+              <div class="card-body p-4">
+                <h3 class="font-semibold text-primary">{related.name}</h3>
+                <p class="text-sm text-neutral/60">{related.nameHindi}</p>
+                <p class="text-sm text-neutral/70 mt-1 line-clamp-2">
+                  {related.description}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Back to Calendar -->
+    <div class="pt-4">
+      <a href="/festivals" class="btn btn-outline min-h-12">
+        ← Back to Festival Calendar
+      </a>
+    </div>
+  </div>
+</Layout>

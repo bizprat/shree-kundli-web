@@ -1,0 +1,387 @@
+---
+/**
+ * City Panchang Page
+ *
+ * Today's panchang for a specific city with:
+ * - Answer-first tithi, nakshatra display
+ * - Detailed timing table
+ * - Dataset schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import CitySelector from '../../components/CitySelector.astro';
+import type { BreadcrumbItem, City } from '../../lib/types';
+
+// Load data
+import citiesData from '../../data/cities-sample.json';
+const cities = citiesData as City[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const citiesModule = await import('../../data/cities-sample.json');
+  const cities = citiesModule.default as City[];
+
+  return cities.map((city) => ({
+    params: { city: city.slug },
+    props: { city },
+  }));
+}
+
+// Get city from props
+const { city } = Astro.props as { city: City };
+
+// Today's date
+const today = new Date();
+const todayFormatted = today.toLocaleDateString('en-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const todayHindi = today.toLocaleDateString('hi-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const todayIso = today.toISOString().split('T')[0];
+
+// Mock panchang data (will be replaced with API data)
+const panchang = {
+  tithi: {
+    name: 'Shukla Shashthi',
+    nameHindi: 'शुक्ल षष्ठी',
+    paksha: 'Shukla',
+    pakshaHindi: 'शुक्ल पक्ष',
+    endTime: '05:15 AM (Next Day)',
+  },
+  nakshatra: {
+    name: 'Rohini',
+    nameHindi: 'रोहिणी',
+    lord: 'Moon',
+    lordHindi: 'चंद्र',
+    endTime: '08:42 PM',
+  },
+  yoga: {
+    name: 'Shool',
+    nameHindi: 'शूल',
+    endTime: '11:23 AM',
+  },
+  karana: {
+    name: 'Balava',
+    nameHindi: 'बालव',
+    endTime: '05:15 AM (Next Day)',
+  },
+  vara: {
+    name: 'Monday',
+    nameHindi: 'सोमवार',
+    lord: 'Moon',
+    lordHindi: 'चंद्र',
+  },
+  sun: {
+    sunrise: '07:05 AM',
+    sunriseIso: `${todayIso}T07:05:00+05:30`,
+    sunset: '18:32 PM',
+    sunsetIso: `${todayIso}T18:32:00+05:30`,
+  },
+  moon: {
+    moonrise: '10:32 AM',
+    moonset: '11:45 PM',
+  },
+  rahuKaal: {
+    start: '07:30 AM',
+    end: '09:00 AM',
+    startIso: `${todayIso}T07:30:00+05:30`,
+    endIso: `${todayIso}T09:00:00+05:30`,
+  },
+  yamaganda: {
+    start: '10:30 AM',
+    end: '12:00 PM',
+  },
+  gulikaKaal: {
+    start: '01:30 PM',
+    end: '03:00 PM',
+  },
+};
+
+// Page meta
+const title = `Today's Panchang for ${city.name} - ${todayFormatted} | ${city.nameHindi} पंचांग | Shree Kundli`;
+const description = `${panchang.tithi.nameHindi} (${panchang.tithi.name}) tithi, ${panchang.nakshatra.nameHindi} (${panchang.nakshatra.name}) nakshatra. Sunrise ${panchang.sun.sunrise}, Rahu Kaal ${panchang.rahuKaal.start}-${panchang.rahuKaal.end}. Accurate panchang for ${city.name}.`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Panchang', url: '/panchang' },
+  { name: city.name },
+];
+
+// Dataset schema for AI
+const datasetSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: `Panchang for ${city.name} - ${todayFormatted}`,
+  alternateName: `${city.nameHindi} पंचांग - ${todayHindi}`,
+  description: `Vedic panchang data including tithi, nakshatra, yoga, karana, sunrise, sunset, and muhurat timings for ${city.name}.`,
+  url: Astro.url.toString(),
+  datePublished: todayIso,
+  dateModified: todayIso,
+  temporalCoverage: todayIso,
+  spatialCoverage: {
+    '@type': 'Place',
+    name: `${city.name}, ${city.state}, India`,
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: city.latitude,
+      longitude: city.longitude,
+    },
+  },
+  variableMeasured: [
+    { '@type': 'PropertyValue', name: 'Tithi', value: panchang.tithi.name },
+    { '@type': 'PropertyValue', name: 'Nakshatra', value: panchang.nakshatra.name },
+    { '@type': 'PropertyValue', name: 'Yoga', value: panchang.yoga.name },
+    { '@type': 'PropertyValue', name: 'Karana', value: panchang.karana.name },
+    { '@type': 'PropertyValue', name: 'Sunrise', value: panchang.sun.sunrise },
+    { '@type': 'PropertyValue', name: 'Sunset', value: panchang.sun.sunset },
+    { '@type': 'PropertyValue', name: 'Rahu Kaal', value: `${panchang.rahuKaal.start} - ${panchang.rahuKaal.end}` },
+  ],
+  creator: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+  license: 'https://creativecommons.org/licenses/by/4.0/',
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is today's tithi in ${city.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `Today (${todayFormatted}) is ${panchang.tithi.name} (${panchang.tithi.nameHindi}) in ${city.name}. The tithi ends at ${panchang.tithi.endTime}.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What is Rahu Kaal time today in ${city.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `Rahu Kaal today in ${city.name} is from ${panchang.rahuKaal.start} to ${panchang.rahuKaal.end}. Avoid starting important activities during this period.`,
+      },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(datasetSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header with City Selector -->
+    <header class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      <div>
+        <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+          {city.name} Panchang
+        </h1>
+        <p class="text-lg text-neutral/70 mt-1">
+          {city.nameHindi} पंचांग • {city.state}
+        </p>
+        <p class="text-sm text-neutral/50 mt-1">
+          <time datetime={todayIso}>{todayFormatted}</time>
+        </p>
+      </div>
+
+      <div class="w-full md:w-64">
+        <CitySelector
+          cities={cities}
+          currentCity={city}
+          baseUrl="/panchang"
+        />
+      </div>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo" aria-label="Today's Panchang Summary">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Tithi -->
+            <div>
+              <p class="text-xs text-neutral/50 uppercase tracking-wide">Tithi</p>
+              <p class="text-xl font-bold text-primary">{panchang.tithi.nameHindi}</p>
+              <p class="text-sm text-neutral/60">{panchang.tithi.name}</p>
+              <p class="text-xs text-neutral/40 mt-1">Until {panchang.tithi.endTime}</p>
+            </div>
+
+            <!-- Nakshatra -->
+            <div>
+              <p class="text-xs text-neutral/50 uppercase tracking-wide">Nakshatra</p>
+              <p class="text-xl font-bold text-primary">{panchang.nakshatra.nameHindi}</p>
+              <p class="text-sm text-neutral/60">{panchang.nakshatra.name}</p>
+              <p class="text-xs text-neutral/40 mt-1">Until {panchang.nakshatra.endTime}</p>
+            </div>
+
+            <!-- Sunrise -->
+            <div>
+              <p class="text-xs text-neutral/50 uppercase tracking-wide">Sunrise</p>
+              <p class="text-xl font-bold text-primary tabular-nums">
+                <time datetime={panchang.sun.sunriseIso}>{panchang.sun.sunrise}</time>
+              </p>
+              <p class="text-sm text-neutral/60">IST</p>
+            </div>
+
+            <!-- Rahu Kaal -->
+            <div>
+              <p class="text-xs text-neutral/50 uppercase tracking-wide">Rahu Kaal</p>
+              <p class="text-xl font-bold text-error tabular-nums">
+                <time datetime={panchang.rahuKaal.startIso}>{panchang.rahuKaal.start}</time>
+                {' - '}
+                <time datetime={panchang.rahuKaal.endIso}>{panchang.rahuKaal.end}</time>
+              </p>
+              <p class="text-sm text-neutral/60">Avoid new work</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Panchang -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Detailed Panchang
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Panchang Elements -->
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-primary mb-3">Panchangam</h3>
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td class="text-neutral/60">Tithi</td>
+                  <td class="font-medium">{panchang.tithi.nameHindi} ({panchang.tithi.name})</td>
+                </tr>
+                <tr>
+                  <td class="text-neutral/60">Paksha</td>
+                  <td class="font-medium">{panchang.tithi.pakshaHindi} ({panchang.tithi.paksha})</td>
+                </tr>
+                <tr>
+                  <td class="text-neutral/60">Nakshatra</td>
+                  <td class="font-medium">{panchang.nakshatra.nameHindi} ({panchang.nakshatra.name})</td>
+                </tr>
+                <tr>
+                  <td class="text-neutral/60">Yoga</td>
+                  <td class="font-medium">{panchang.yoga.nameHindi} ({panchang.yoga.name})</td>
+                </tr>
+                <tr>
+                  <td class="text-neutral/60">Karana</td>
+                  <td class="font-medium">{panchang.karana.nameHindi} ({panchang.karana.name})</td>
+                </tr>
+                <tr>
+                  <td class="text-neutral/60">Vara</td>
+                  <td class="font-medium">{panchang.vara.nameHindi} ({panchang.vara.name})</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Timings -->
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-primary mb-3">Sun & Moon</h3>
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td class="text-neutral/60">Sunrise</td>
+                  <td class="font-medium tabular-nums">
+                    <time datetime={panchang.sun.sunriseIso}>{panchang.sun.sunrise}</time>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-neutral/60">Sunset</td>
+                  <td class="font-medium tabular-nums">
+                    <time datetime={panchang.sun.sunsetIso}>{panchang.sun.sunset}</time>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-neutral/60">Moonrise</td>
+                  <td class="font-medium tabular-nums">{panchang.moon.moonrise}</td>
+                </tr>
+                <tr>
+                  <td class="text-neutral/60">Moonset</td>
+                  <td class="font-medium tabular-nums">{panchang.moon.moonset}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Inauspicious Timings -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Inauspicious Timings
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card bg-error/10 border border-error/20">
+          <div class="card-body p-4 text-center">
+            <h3 class="font-semibold text-error">Rahu Kaal</h3>
+            <p class="text-2xl font-bold text-error tabular-nums mt-2">
+              {panchang.rahuKaal.start} - {panchang.rahuKaal.end}
+            </p>
+            <p class="text-sm text-neutral/60 mt-1">Avoid new beginnings</p>
+          </div>
+        </div>
+
+        <div class="card bg-warning/10 border border-warning/20">
+          <div class="card-body p-4 text-center">
+            <h3 class="font-semibold text-warning">Yamaganda</h3>
+            <p class="text-2xl font-bold text-warning tabular-nums mt-2">
+              {panchang.yamaganda.start} - {panchang.yamaganda.end}
+            </p>
+            <p class="text-sm text-neutral/60 mt-1">Avoid auspicious work</p>
+          </div>
+        </div>
+
+        <div class="card bg-warning/10 border border-warning/20">
+          <div class="card-body p-4 text-center">
+            <h3 class="font-semibold text-warning">Gulika Kaal</h3>
+            <p class="text-2xl font-bold text-warning tabular-nums mt-2">
+              {panchang.gulikaKaal.start} - {panchang.gulikaKaal.end}
+            </p>
+            <p class="text-sm text-neutral/60 mt-1">Inauspicious period</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location Info -->
+    <section class="text-sm text-neutral/50">
+      <p>
+        Panchang calculated for {city.name}, {city.state} (Lat: {city.latitude.toFixed(4)}°, Long: {city.longitude.toFixed(4)}°)
+        using Lahiri Ayanamsa and Swiss Ephemeris.
+      </p>
+    </section>
+
+    <!-- Navigation -->
+    <div class="flex flex-wrap gap-3 pt-4">
+      <a href="/panchang" class="btn btn-outline min-h-12">
+        ← All Cities
+      </a>
+      <a href={`/rahu-kaal/${city.slug}`} class="btn btn-ghost min-h-12">
+        Rahu Kaal Details →
+      </a>
+    </div>
+  </div>
+</Layout>

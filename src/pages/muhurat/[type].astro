@@ -1,0 +1,308 @@
+---
+/**
+ * Muhurat Type Page
+ *
+ * Shows details for a specific muhurat type with:
+ * - Considerations and rules
+ * - Good nakshatras
+ * - Tithis to avoid
+ * - City selector for specific timings
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import CitySelector from '../../components/CitySelector.astro';
+import type { BreadcrumbItem, City } from '../../lib/types';
+
+// Load data
+import muhuratsData from '../../data/muhurats.json';
+import citiesData from '../../data/cities-sample.json';
+
+interface MuhuratType {
+  id: string;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  description: string;
+  descriptionHindi: string;
+  priority: number;
+  considerations: string[];
+  goodNakshatras: string[];
+  avoidTithis: number[];
+  idealMonths?: string[];
+  idealDays?: string[];
+}
+
+const muhurats = muhuratsData as MuhuratType[];
+const cities = citiesData as City[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const muhuratsModule = await import('../../data/muhurats.json');
+  const muhurats = muhuratsModule.default as MuhuratType[];
+
+  return muhurats.map((muhurat) => ({
+    params: { type: muhurat.slug },
+    props: { muhurat },
+  }));
+}
+
+// Get muhurat from props
+const { muhurat } = Astro.props as { muhurat: MuhuratType };
+
+// Page meta
+const title = `${muhurat.name} Muhurat 2026 - Auspicious Dates & Timings | ${muhurat.nameHindi} | Shree Kundli`;
+const description = `${muhurat.description} Find shubh muhurat for ${muhurat.name.toLowerCase()} in 2026. ${muhurat.nameHindi} के लिए शुभ मुहूर्त।`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Muhurat', url: '/muhurat' },
+  { name: muhurat.name },
+];
+
+// Schema
+const muhuratSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: `How to find ${muhurat.name} Muhurat`,
+  description: muhurat.description,
+  step: muhurat.considerations.map((consideration, index) => ({
+    '@type': 'HowToStep',
+    position: index + 1,
+    text: consideration,
+  })),
+  tool: [
+    { '@type': 'HowToTool', name: 'Vedic Panchang' },
+    { '@type': 'HowToTool', name: 'Swiss Ephemeris' },
+  ],
+};
+
+// FAQ Schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is ${muhurat.name} Muhurat?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: muhurat.description,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `Which nakshatras are good for ${muhurat.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `The following nakshatras are considered auspicious for ${muhurat.name}: ${muhurat.goodNakshatras.join(', ')}.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `Which tithis should be avoided for ${muhurat.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `Avoid the following tithis: ${muhurat.avoidTithis.join(', ')} (Rikta and other inauspicious tithis).`,
+      },
+    },
+  ],
+};
+
+// Tithi names for display
+const tithiNames: Record<number, string> = {
+  1: 'Pratipada', 2: 'Dwitiya', 3: 'Tritiya', 4: 'Chaturthi',
+  5: 'Panchami', 6: 'Shashthi', 7: 'Saptami', 8: 'Ashtami',
+  9: 'Navami', 10: 'Dashami', 11: 'Ekadashi', 12: 'Dwadashi',
+  13: 'Trayodashi', 14: 'Chaturdashi', 15: 'Purnima', 30: 'Amavasya',
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(muhuratSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header>
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        {muhurat.name} Muhurat 2026
+      </h1>
+      <p class="text-xl text-neutral/70 mt-1">{muhurat.nameHindi} मुहूर्त</p>
+    </header>
+
+    <!-- Quick Answer -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <p class="text-lg leading-relaxed">{muhurat.description}</p>
+          <p class="text-neutral/60 mt-2">{muhurat.descriptionHindi}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- City Selector -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Select City for Specific Timings
+      </h2>
+      <div class="max-w-md">
+        <CitySelector
+          cities={cities}
+          baseUrl={`/muhurat/${muhurat.slug}`}
+          placeholder="Choose your city..."
+        />
+      </div>
+      <p class="text-sm text-neutral/50 mt-2">
+        Select a city to view muhurat dates with exact timings based on your location.
+      </p>
+    </section>
+
+    <!-- Key Considerations -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Key Considerations
+      </h2>
+      <div class="card bg-base-100 border border-base-200">
+        <div class="card-body p-4">
+          <ul class="space-y-3">
+            {muhurat.considerations.map((consideration, index) => (
+              <li class="flex items-start gap-3">
+                <span class="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-medium">
+                  {index + 1}
+                </span>
+                <span>{consideration}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Good Nakshatras & Avoid Tithis -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Good Nakshatras -->
+      <section>
+        <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+          Auspicious Nakshatras
+        </h2>
+        <div class="card bg-success/10 border border-success/20">
+          <div class="card-body p-4">
+            <div class="flex flex-wrap gap-2">
+              {muhurat.goodNakshatras.map((nakshatra) => (
+                <span class="badge badge-success badge-outline">{nakshatra}</span>
+              ))}
+            </div>
+            <p class="text-sm text-neutral/60 mt-3">
+              These nakshatras are favorable for {muhurat.name.toLowerCase()}.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Avoid Tithis -->
+      <section>
+        <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+          Tithis to Avoid
+        </h2>
+        <div class="card bg-error/10 border border-error/20">
+          <div class="card-body p-4">
+            <div class="flex flex-wrap gap-2">
+              {muhurat.avoidTithis.map((tithi) => (
+                <span class="badge badge-error badge-outline">
+                  {tithiNames[tithi] || `Tithi ${tithi}`}
+                </span>
+              ))}
+            </div>
+            <p class="text-sm text-neutral/60 mt-3">
+              Avoid these tithis (Rikta and inauspicious tithis) for {muhurat.name.toLowerCase()}.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Ideal Months/Days -->
+    {(muhurat.idealMonths || muhurat.idealDays) && (
+      <section>
+        <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+          Best Time for {muhurat.name}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {muhurat.idealMonths && (
+            <div class="card bg-base-200/50">
+              <div class="card-body p-4">
+                <h3 class="font-medium text-primary mb-2">Ideal Hindu Months</h3>
+                <div class="flex flex-wrap gap-2">
+                  {muhurat.idealMonths.map((month) => (
+                    <span class="badge badge-secondary badge-outline">{month}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          {muhurat.idealDays && (
+            <div class="card bg-base-200/50">
+              <div class="card-body p-4">
+                <h3 class="font-medium text-primary mb-2">Ideal Weekdays</h3>
+                <div class="flex flex-wrap gap-2">
+                  {muhurat.idealDays.map((day) => (
+                    <span class="badge badge-secondary badge-outline">{day}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    <!-- FAQ -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is {muhurat.name} Muhurat?
+          </div>
+          <div class="collapse-content">
+            <p>{muhurat.description}</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Which nakshatras are good for {muhurat.name}?
+          </div>
+          <div class="collapse-content">
+            <p>The following nakshatras are considered auspicious: {muhurat.goodNakshatras.join(', ')}.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Which tithis should be avoided?
+          </div>
+          <div class="collapse-content">
+            <p>Avoid the following tithis: {muhurat.avoidTithis.map(t => tithiNames[t] || t).join(', ')}. These are considered Rikta (inauspicious) tithis.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Back Link -->
+    <div class="pt-4">
+      <a href="/muhurat" class="btn btn-outline min-h-12">
+        ← Back to All Muhurats
+      </a>
+    </div>
+  </div>
+</Layout>

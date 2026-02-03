@@ -1,0 +1,208 @@
+---
+/**
+ * Muhurat Hub Page
+ *
+ * Lists all muhurat types for ceremonies like:
+ * - Griha Pravesh, Vivah, Mundan
+ * - Vehicle/Property purchase
+ * - Business start, Education
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import FeatureCard from '../../components/FeatureCard.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load muhurats data
+import muhuratsData from '../../data/muhurats.json';
+
+interface MuhuratType {
+  id: string;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  description: string;
+  descriptionHindi: string;
+  priority: number;
+  considerations: string[];
+}
+
+const muhurats = muhuratsData as MuhuratType[];
+
+// Sort by priority
+const sortedMuhurats = [...muhurats].sort((a, b) => b.priority - a.priority);
+
+// Page meta
+const title = 'Shubh Muhurat 2026 - Auspicious Dates & Timings | शुभ मुहूर्त | Shree Kundli';
+const description = 'Find shubh muhurat for griha pravesh, vivah, mundan, vehicle purchase, and more. Accurate auspicious dates and timings for 2026. शुभ मुहूर्त 2026।';
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Muhurat' },
+];
+
+// Schema
+const muhuratListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Shubh Muhurat Types',
+  description: 'List of auspicious timing categories for Hindu ceremonies',
+  numberOfItems: muhurats.length,
+  itemListElement: sortedMuhurats.map((muhurat, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Service',
+      name: muhurat.name,
+      alternateName: muhurat.nameHindi,
+      description: muhurat.description,
+      url: `/muhurat/${muhurat.slug}`,
+    },
+  })),
+};
+
+// Icon mapping for muhurat types
+function getMuhuratIcon(id: string): 'home' | 'heart' | 'star' | 'sun' | 'calendar' | 'clock' {
+  const iconMap: Record<string, 'home' | 'heart' | 'star' | 'sun' | 'calendar' | 'clock'> = {
+    'griha-pravesh': 'home',
+    'vivah': 'heart',
+    'mundan': 'star',
+    'vehicle-purchase': 'sun',
+    'property-purchase': 'home',
+    'naamkaran': 'star',
+    'business-start': 'sun',
+    'education-start': 'star',
+    'gold-purchase': 'star',
+    'travel': 'sun',
+  };
+  return iconMap[id] || 'calendar';
+}
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(muhuratListSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        शुभ मुहूर्त 2026
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        Find auspicious dates and timings for important life events. Select a ceremony type to view shubh muhurat.
+      </p>
+    </header>
+
+    <!-- Quick Answer -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-primary/5 border border-primary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-2">
+            What is Muhurat?
+          </h2>
+          <p class="text-neutral/70">
+            <dfn>Muhurat</dfn> (मुहूर्त) is an auspicious time calculated based on Vedic astrology.
+            Starting important activities during shubh muhurat is believed to bring success and prosperity.
+            Our calculations consider tithi, nakshatra, yoga, karana, and planetary positions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Muhurats -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
+        Popular Muhurat Types
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {sortedMuhurats.filter(m => m.priority >= 4).map((muhurat) => (
+          <FeatureCard
+            title={muhurat.name}
+            titleHindi={muhurat.nameHindi}
+            description={muhurat.description}
+            href={`/muhurat/${muhurat.slug}`}
+            icon={getMuhuratIcon(muhurat.id)}
+            variant={muhurat.priority === 5 ? 'primary' : 'default'}
+          />
+        ))}
+      </div>
+    </section>
+
+    <!-- All Muhurats -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
+        All Muhurat Categories
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {sortedMuhurats.map((muhurat) => (
+          <a
+            href={`/muhurat/${muhurat.slug}`}
+            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-sm transition-all"
+          >
+            <div class="card-body p-4">
+              <h3 class="font-semibold text-primary">{muhurat.name}</h3>
+              <p class="text-sm text-neutral/60">{muhurat.nameHindi}</p>
+              <p class="text-sm text-neutral/70 mt-2 line-clamp-2">
+                {muhurat.description}
+              </p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-xs text-neutral/50">
+                  {muhurat.considerations.length} considerations
+                </span>
+                <svg
+                  class="w-4 h-4 text-secondary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- How Muhurat is Calculated -->
+    <section class="card bg-base-200/50">
+      <div class="card-body p-4 md:p-6">
+        <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+          How is Muhurat Calculated?
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <h3 class="font-medium text-primary mb-2">Factors Considered</h3>
+            <ul class="space-y-1 text-neutral/70">
+              <li>• Tithi (Lunar day)</li>
+              <li>• Nakshatra (Constellation)</li>
+              <li>• Yoga (Luni-solar combination)</li>
+              <li>• Karana (Half of Tithi)</li>
+              <li>• Vara (Weekday)</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-medium text-primary mb-2">Things to Avoid</h3>
+            <ul class="space-y-1 text-neutral/70">
+              <li>• Rahu Kaal period</li>
+              <li>• Yamaganda period</li>
+              <li>• Rikta Tithis (4, 9, 14)</li>
+              <li>• Amavasya (No moon)</li>
+              <li>• Eclipses</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>

@@ -1,0 +1,253 @@
+---
+/**
+ * Festival Calendar Hub Page
+ *
+ * Lists all Hindu festivals for 2026 with:
+ * - Quick answer for "Hindu festivals 2026" queries
+ * - Grouped by category for easy scanning
+ * - JSON-LD ItemList schema for SEO
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load festivals data
+import festivalsData from '../../data/festivals.json';
+
+interface FestivalPanchang {
+  tithi?: string;
+  paksha?: string;
+  masa?: string;
+  note?: string;
+}
+
+interface Festival {
+  id: string;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  description: string;
+  descriptionHindi: string;
+  type: 'major' | 'regional' | 'observance';
+  category: string;
+  rituals: string[];
+  panchang: FestivalPanchang;
+  trafficPriority: number;
+  regions: string[];
+}
+
+const festivals = festivalsData as Festival[];
+
+// Sort festivals by traffic priority (most important first)
+const sortedFestivals = [...festivals].sort(
+  (a, b) => b.trafficPriority - a.trafficPriority
+);
+
+// Get major festivals
+const majorFestivals = sortedFestivals.filter(f => f.type === 'major');
+
+// Group by category
+const festivalsByCategory = sortedFestivals.reduce((acc, festival) => {
+  const category = festival.category;
+  if (!acc[category]) acc[category] = [];
+  acc[category].push(festival);
+  return acc;
+}, {} as Record<string, Festival[]>);
+
+// Page meta
+const title = 'Hindu Festival Calendar 2026 - Dates, Timings & Puja Vidhi | Shree Kundli';
+const description = 'Complete Hindu festival calendar for 2026. Find puja timings and muhurat for Diwali, Holi, Navratri, Ganesh Chaturthi, and 50+ festivals. हिंदू त्योहार कैलेंडर 2026।';
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Festivals' },
+];
+
+// Schema for festival list
+const festivalListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Hindu Festivals 2026',
+  description: 'Complete list of Hindu festivals and observances for 2026',
+  numberOfItems: festivals.length,
+  itemListElement: sortedFestivals.slice(0, 10).map((festival, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Event',
+      name: festival.name,
+      alternateName: festival.nameHindi,
+      description: festival.description,
+      url: `/festivals/${festival.slug}`,
+    },
+  })),
+};
+
+// Category display names
+const categoryNames: Record<string, string> = {
+  national: 'National Festivals',
+  regional: 'Regional Festivals',
+  harvest: 'Harvest Festivals',
+  women: "Women's Festivals",
+};
+
+// Get festival type badge color
+function getTypeBadge(type: string): string {
+  switch (type) {
+    case 'major': return 'badge-secondary';
+    case 'regional': return 'badge-accent';
+    default: return 'badge-ghost';
+  }
+}
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(festivalListSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Hindu Festival Calendar 2026
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        हिंदू त्योहार कैलेंडर 2026 - Complete dates, puja timings, and muhurat for all Hindu festivals
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+            Major Hindu Festivals in 2026
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {majorFestivals
+              .slice(0, 6)
+              .map((festival) => (
+                <a
+                  href={`/festivals/${festival.slug}`}
+                  class="flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:shadow-sm transition-shadow"
+                >
+                  <div class="text-center min-w-[60px] p-2 bg-primary/10 rounded">
+                    <p class="text-sm font-semibold text-primary">
+                      {festival.panchang.masa || festival.panchang.note?.split(',')[0] || 'TBD'}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="font-semibold text-primary">{festival.name}</p>
+                    <p class="text-sm text-neutral/60">{festival.nameHindi}</p>
+                  </div>
+                </a>
+              ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Festival List by Category -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
+        All Festivals by Category
+      </h2>
+
+      <div class="space-y-8">
+        {Object.entries(festivalsByCategory).map(([category, categoryFestivals]) => (
+          <div>
+            <h3 class="font-heading text-lg text-primary font-semibold mb-3 sticky top-16 bg-base-100/95 backdrop-blur py-2 z-10">
+              {categoryNames[category] || category.charAt(0).toUpperCase() + category.slice(1)}
+              <span class="text-sm font-normal text-neutral/50 ml-2">
+                ({categoryFestivals.length} festivals)
+              </span>
+            </h3>
+
+            <div class="grid gap-3">
+              {categoryFestivals.map((festival) => (
+                <a
+                  href={`/festivals/${festival.slug}`}
+                  class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-sm transition-all"
+                >
+                  <div class="card-body p-4 flex-row items-center gap-4">
+                    <!-- Panchang Info -->
+                    <div class="text-center min-w-20 p-2 bg-primary/5 rounded-lg">
+                      {festival.panchang.tithi ? (
+                        <>
+                          <p class="text-xs text-neutral/50 uppercase">
+                            {festival.panchang.paksha}
+                          </p>
+                          <p class="text-sm font-bold text-primary">
+                            {festival.panchang.tithi.split(' ')[0]}
+                          </p>
+                          <p class="text-xs text-neutral/50">
+                            {festival.panchang.masa}
+                          </p>
+                        </>
+                      ) : (
+                        <p class="text-xs text-neutral/50">
+                          {festival.panchang.note?.substring(0, 20) || 'Varies'}
+                        </p>
+                      )}
+                    </div>
+
+                    <!-- Content -->
+                    <div class="grow min-w-0">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <h4 class="font-semibold text-primary">{festival.name}</h4>
+                        <span class={`badge badge-sm ${getTypeBadge(festival.type)}`}>
+                          {festival.type}
+                        </span>
+                      </div>
+                      <p class="text-sm text-neutral/60 mt-1">{festival.nameHindi}</p>
+                      <p class="text-sm text-neutral/70 line-clamp-1 mt-1">
+                        {festival.description}
+                      </p>
+                    </div>
+
+                    <!-- Arrow -->
+                    <svg
+                      class="w-5 h-5 text-neutral/40 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Festival Types Legend -->
+    <section class="mt-8 p-4 bg-base-200/50 rounded-lg">
+      <h3 class="font-semibold text-primary mb-3">Festival Types</h3>
+      <div class="flex flex-wrap gap-4 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="badge badge-sm badge-secondary">major</span>
+          <span class="text-neutral/70">Pan-India celebrations</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-sm badge-accent">regional</span>
+          <span class="text-neutral/70">State-specific festivals</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-sm badge-ghost">observance</span>
+          <span class="text-neutral/70">Fasting days & vrats</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
