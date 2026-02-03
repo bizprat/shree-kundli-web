@@ -1,0 +1,82 @@
+# Shree Kundli - robots.txt
+# Allow all crawlers including AI bots
+
+# Traditional Search Engine Crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# OpenAI Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic Crawlers
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity Crawler
+User-agent: PerplexityBot
+Allow: /
+
+# Google AI Crawlers
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Microsoft/Bing AI
+User-agent: bingbot
+Allow: /
+
+# Cohere AI
+User-agent: cohere-ai
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+# Apple
+User-agent: Applebot
+Allow: /
+
+# Default rule for all other bots
+User-agent: *
+Allow: /
+
+# Disallow admin/private paths (none currently)
+# Disallow: /admin/
+# Disallow: /api/
+
+# Sitemaps
+Sitemap: https://shreekundli.com/sitemap-index.xml
+Sitemap: https://shreekundli.com/sitemap-cities.xml
+Sitemap: https://shreekundli.com/sitemap-festivals.xml
+Sitemap: https://shreekundli.com/sitemap-rashifal.xml
+
+# LLM-specific information
+# See /llms.txt for AI crawler instructions and content structure

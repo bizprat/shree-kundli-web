@@ -1,0 +1,356 @@
+[
+  {
+    "id": "diwali",
+    "name": "Diwali",
+    "nameHindi": "दीवाली",
+    "slug": "diwali",
+    "type": "major",
+    "category": "national",
+    "description": "Festival of Lights celebrating the victory of light over darkness",
+    "descriptionHindi": "प्रकाश का पर्व, अंधकार पर प्रकाश की विजय का उत्सव",
+    "rituals": ["Lakshmi Puja", "Diya lighting", "Rangoli", "Fireworks"],
+    "panchang": {
+      "tithi": "Amavasya",
+      "paksha": "Krishna",
+      "masa": "Kartik"
+    },
+    "trafficPriority": 5,
+    "regions": ["all"]
+  },
+  {
+    "id": "holi",
+    "name": "Holi",
+    "nameHindi": "होली",
+    "slug": "holi",
+    "type": "major",
+    "category": "national",
+    "description": "Festival of Colors celebrating spring and love",
+    "descriptionHindi": "रंगों का त्योहार, वसंत और प्रेम का उत्सव",
+    "rituals": ["Holika Dahan", "Playing with colors", "Thandai", "Gujiya"],
+    "panchang": {
+      "tithi": "Purnima",
+      "paksha": "Shukla",
+      "masa": "Phalguna"
+    },
+    "trafficPriority": 5,
+    "regions": ["all"]
+  },
+  {
+    "id": "dussehra",
+    "name": "Dussehra",
+    "nameHindi": "दशहरा",
+    "slug": "dussehra",
+    "type": "major",
+    "category": "national",
+    "description": "Victory of Lord Rama over Ravana, triumph of good over evil",
+    "descriptionHindi": "भगवान राम की रावण पर विजय, बुराई पर अच्छाई की जीत",
+    "rituals": ["Ramlila", "Ravan Dahan", "Durga Visarjan", "Shami Puja"],
+    "panchang": {
+      "tithi": "Dashami",
+      "paksha": "Shukla",
+      "masa": "Ashwin"
+    },
+    "trafficPriority": 5,
+    "regions": ["all"]
+  },
+  {
+    "id": "navratri",
+    "name": "Navratri",
+    "nameHindi": "नवरात्रि",
+    "slug": "navratri",
+    "type": "major",
+    "category": "national",
+    "description": "Nine nights dedicated to Goddess Durga",
+    "descriptionHindi": "माँ दुर्गा को समर्पित नौ रातें",
+    "rituals": ["Durga Puja", "Garba", "Dandiya", "Fasting", "Kanya Pujan"],
+    "panchang": {
+      "tithi": "Pratipada to Navami",
+      "paksha": "Shukla",
+      "masa": "Ashwin"
+    },
+    "trafficPriority": 5,
+    "regions": ["all"]
+  },
+  {
+    "id": "ganesh-chaturthi",
+    "name": "Ganesh Chaturthi",
+    "nameHindi": "गणेश चतुर्थी",
+    "slug": "ganesh-chaturthi",
+    "type": "major",
+    "category": "national",
+    "description": "Birthday of Lord Ganesha",
+    "descriptionHindi": "भगवान गणेश का जन्मोत्सव",
+    "rituals": ["Ganesh Sthapana", "Modak offering", "Visarjan"],
+    "panchang": {
+      "tithi": "Chaturthi",
+      "paksha": "Shukla",
+      "masa": "Bhadrapada"
+    },
+    "trafficPriority": 5,
+    "regions": ["all"]
+  },
+  {
+    "id": "janmashtami",
+    "name": "Krishna Janmashtami",
+    "nameHindi": "कृष्ण जन्माष्टमी",
+    "slug": "janmashtami",
+    "type": "major",
+    "category": "national",
+    "description": "Birth anniversary of Lord Krishna",
+    "descriptionHindi": "भगवान कृष्ण का जन्मोत्सव",
+    "rituals": ["Midnight puja", "Dahi Handi", "Fasting", "Jhula"],
+    "panchang": {
+      "tithi": "Ashtami",
+      "paksha": "Krishna",
+      "masa": "Bhadrapada"
+    },
+    "trafficPriority": 5,
+    "regions": ["all"]
+  },
+  {
+    "id": "raksha-bandhan",
+    "name": "Raksha Bandhan",
+    "nameHindi": "रक्षा बंधन",
+    "slug": "raksha-bandhan",
+    "type": "major",
+    "category": "national",
+    "description": "Festival celebrating the bond between brothers and sisters",
+    "descriptionHindi": "भाई-बहन के प्रेम का पर्व",
+    "rituals": ["Tying Rakhi", "Gift exchange", "Aarti", "Sweets"],
+    "panchang": {
+      "tithi": "Purnima",
+      "paksha": "Shukla",
+      "masa": "Shravana"
+    },
+    "trafficPriority": 4,
+    "regions": ["all"]
+  },
+  {
+    "id": "maha-shivaratri",
+    "name": "Maha Shivaratri",
+    "nameHindi": "महाशिवरात्रि",
+    "slug": "maha-shivaratri",
+    "type": "major",
+    "category": "national",
+    "description": "Great night of Lord Shiva",
+    "descriptionHindi": "भगवान शिव की महान रात्रि",
+    "rituals": ["Shiva Puja", "Fasting", "Night vigil", "Abhishek"],
+    "panchang": {
+      "tithi": "Chaturdashi",
+      "paksha": "Krishna",
+      "masa": "Magha"
+    },
+    "trafficPriority": 4,
+    "regions": ["all"]
+  },
+  {
+    "id": "makar-sankranti",
+    "name": "Makar Sankranti",
+    "nameHindi": "मकर संक्रांति",
+    "slug": "makar-sankranti",
+    "type": "major",
+    "category": "harvest",
+    "description": "Sun enters Capricorn, harvest festival",
+    "descriptionHindi": "सूर्य का मकर राशि में प्रवेश, फसल का त्योहार",
+    "rituals": ["Kite flying", "Til-Gur", "Holy bath", "Charity"],
+    "panchang": {
+      "note": "Solar calendar based, usually January 14-15"
+    },
+    "trafficPriority": 4,
+    "regions": ["all"]
+  },
+  {
+    "id": "karwa-chauth",
+    "name": "Karwa Chauth",
+    "nameHindi": "करवा चौथ",
+    "slug": "karwa-chauth",
+    "type": "major",
+    "category": "women",
+    "description": "Married women fast for husband's long life",
+    "descriptionHindi": "विवाहित महिलाओं का पति की लंबी आयु के लिए व्रत",
+    "rituals": ["Fasting", "Moon viewing", "Sargi", "Puja"],
+    "panchang": {
+      "tithi": "Chaturthi",
+      "paksha": "Krishna",
+      "masa": "Kartik"
+    },
+    "trafficPriority": 4,
+    "regions": ["north"]
+  },
+  {
+    "id": "ram-navami",
+    "name": "Ram Navami",
+    "nameHindi": "राम नवमी",
+    "slug": "ram-navami",
+    "type": "major",
+    "category": "national",
+    "description": "Birth anniversary of Lord Rama",
+    "descriptionHindi": "भगवान राम का जन्मोत्सव",
+    "rituals": ["Ram Puja", "Ramayan recitation", "Procession"],
+    "panchang": {
+      "tithi": "Navami",
+      "paksha": "Shukla",
+      "masa": "Chaitra"
+    },
+    "trafficPriority": 4,
+    "regions": ["all"]
+  },
+  {
+    "id": "hanuman-jayanti",
+    "name": "Hanuman Jayanti",
+    "nameHindi": "हनुमान जयंती",
+    "slug": "hanuman-jayanti",
+    "type": "major",
+    "category": "national",
+    "description": "Birth anniversary of Lord Hanuman",
+    "descriptionHindi": "भगवान हनुमान का जन्मोत्सव",
+    "rituals": ["Hanuman Puja", "Sundarkand recitation", "Prasad"],
+    "panchang": {
+      "tithi": "Purnima",
+      "paksha": "Shukla",
+      "masa": "Chaitra"
+    },
+    "trafficPriority": 3,
+    "regions": ["all"]
+  },
+  {
+    "id": "guru-purnima",
+    "name": "Guru Purnima",
+    "nameHindi": "गुरु पूर्णिमा",
+    "slug": "guru-purnima",
+    "type": "major",
+    "category": "national",
+    "description": "Day to honor spiritual and academic teachers",
+    "descriptionHindi": "गुरुओं को सम्मान देने का दिन",
+    "rituals": ["Guru Puja", "Offerings", "Seeking blessings"],
+    "panchang": {
+      "tithi": "Purnima",
+      "paksha": "Shukla",
+      "masa": "Ashadha"
+    },
+    "trafficPriority": 3,
+    "regions": ["all"]
+  },
+  {
+    "id": "chhath-puja",
+    "name": "Chhath Puja",
+    "nameHindi": "छठ पूजा",
+    "slug": "chhath-puja",
+    "type": "major",
+    "category": "regional",
+    "description": "Sun worship festival of Bihar and eastern UP",
+    "descriptionHindi": "बिहार और पूर्वी उत्तर प्रदेश का सूर्य पूजा पर्व",
+    "rituals": ["Sun worship", "Holy bath", "Fasting", "Arghya"],
+    "panchang": {
+      "tithi": "Shashthi",
+      "paksha": "Shukla",
+      "masa": "Kartik"
+    },
+    "trafficPriority": 4,
+    "regions": ["east", "bihar", "jharkhand", "up"]
+  },
+  {
+    "id": "durga-puja",
+    "name": "Durga Puja",
+    "nameHindi": "दुर्गा पूजा",
+    "slug": "durga-puja",
+    "type": "major",
+    "category": "regional",
+    "description": "Worship of Goddess Durga, especially in Bengal",
+    "descriptionHindi": "माँ दुर्गा की पूजा, विशेषकर बंगाल में",
+    "rituals": ["Pandal hopping", "Dhunuchi", "Sindoor Khela", "Visarjan"],
+    "panchang": {
+      "tithi": "Saptami to Dashami",
+      "paksha": "Shukla",
+      "masa": "Ashwin"
+    },
+    "trafficPriority": 5,
+    "regions": ["east", "bengal", "odisha", "assam"]
+  },
+  {
+    "id": "onam",
+    "name": "Onam",
+    "nameHindi": "ओणम",
+    "slug": "onam",
+    "type": "major",
+    "category": "regional",
+    "description": "Harvest festival of Kerala",
+    "descriptionHindi": "केरल का फसल उत्सव",
+    "rituals": ["Pookalam", "Onasadya", "Boat race", "Kathakali"],
+    "panchang": {
+      "note": "Malayalam calendar based, Thiruvonam nakshatra"
+    },
+    "trafficPriority": 4,
+    "regions": ["south", "kerala"]
+  },
+  {
+    "id": "pongal",
+    "name": "Pongal",
+    "nameHindi": "पोंगल",
+    "slug": "pongal",
+    "type": "major",
+    "category": "regional",
+    "description": "Tamil harvest festival",
+    "descriptionHindi": "तमिलनाडु का फसल उत्सव",
+    "rituals": ["Pongal preparation", "Cattle worship", "Sun worship"],
+    "panchang": {
+      "note": "Tamil calendar based, Thai month"
+    },
+    "trafficPriority": 4,
+    "regions": ["south", "tamil-nadu"]
+  },
+  {
+    "id": "bhai-dooj",
+    "name": "Bhai Dooj",
+    "nameHindi": "भाई दूज",
+    "slug": "bhai-dooj",
+    "type": "major",
+    "category": "national",
+    "description": "Sisters pray for brothers' well-being",
+    "descriptionHindi": "बहनें भाइयों की लंबी आयु की प्रार्थना करती हैं",
+    "rituals": ["Tilak", "Aarti", "Gift exchange", "Feast"],
+    "panchang": {
+      "tithi": "Dwitiya",
+      "paksha": "Shukla",
+      "masa": "Kartik"
+    },
+    "trafficPriority": 3,
+    "regions": ["all"]
+  },
+  {
+    "id": "vasant-panchami",
+    "name": "Vasant Panchami",
+    "nameHindi": "वसंत पंचमी",
+    "slug": "vasant-panchami",
+    "type": "major",
+    "category": "national",
+    "description": "Saraswati Puja, arrival of spring",
+    "descriptionHindi": "सरस्वती पूजा, वसंत ऋतु का आगमन",
+    "rituals": ["Saraswati Puja", "Yellow clothes", "Kite flying"],
+    "panchang": {
+      "tithi": "Panchami",
+      "paksha": "Shukla",
+      "masa": "Magha"
+    },
+    "trafficPriority": 3,
+    "regions": ["all"]
+  },
+  {
+    "id": "akshaya-tritiya",
+    "name": "Akshaya Tritiya",
+    "nameHindi": "अक्षय तृतीया",
+    "slug": "akshaya-tritiya",
+    "type": "major",
+    "category": "national",
+    "description": "Auspicious day for new beginnings and gold purchase",
+    "descriptionHindi": "नई शुरुआत और सोने की खरीदारी का शुभ दिन",
+    "rituals": ["Gold purchase", "Charity", "New ventures"],
+    "panchang": {
+      "tithi": "Tritiya",
+      "paksha": "Shukla",
+      "masa": "Vaishakha"
+    },
+    "trafficPriority": 3,
+    "regions": ["all"]
+  }
+]

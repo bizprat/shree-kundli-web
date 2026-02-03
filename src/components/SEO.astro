@@ -1,0 +1,248 @@
+---
+/**
+ * SEO Component - AI-Optimized Schema Markup
+ *
+ * This component handles all SEO metadata including:
+ * - Primary meta tags (title, description)
+ * - Open Graph / Social media tags
+ * - Twitter Card tags
+ * - JSON-LD structured data (multiple schema types)
+ * - Breadcrumb schema
+ * - AI crawler optimization signals
+ *
+ * Usage:
+ * <SEO
+ *   title="Today's Panchang for Mumbai"
+ *   description="Shukla Shashthi tithi..."
+ *   schema={panchangSchema}
+ *   breadcrumbs={[...]}
+ * />
+ */
+
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface Props {
+  // Required
+  title: string;
+  description: string;
+
+  // Optional meta
+  image?: string;
+  imageAlt?: string;
+  canonicalUrl?: string;
+  locale?: 'en' | 'hi';
+  type?: 'website' | 'article';
+
+  // Date metadata (for freshness signals)
+  datePublished?: string; // ISO 8601 format
+  dateModified?: string;  // ISO 8601 format
+
+  // Structured data
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+  breadcrumbs?: BreadcrumbItem[];
+  faq?: FAQItem[];
+
+  // AI optimization
+  noIndex?: boolean;
+  speakable?: string[]; // CSS selectors for speakable content
+}
+
+const {
+  title,
+  description,
+  image = '/images/og-default.jpg',
+  imageAlt = 'Shree Kundli - Vedic Astrology',
+  canonicalUrl,
+  locale = 'en',
+  type = 'website',
+  datePublished,
+  dateModified,
+  schema,
+  breadcrumbs = [],
+  faq = [],
+  noIndex = false,
+  speakable = ['.quick-answer', '.voice-summary'],
+} = Astro.props;
+
+// Construct canonical URL
+const canonical = canonicalUrl
+  ? new URL(canonicalUrl, Astro.site || Astro.url.origin)
+  : new URL(Astro.url.pathname, Astro.site || Astro.url.origin);
+
+// Full image URL
+const imageUrl = new URL(image, Astro.site || Astro.url.origin).toString();
+
+// Site info
+const siteName = 'Shree Kundli';
+const siteUrl = (Astro.site || Astro.url.origin).toString();
+
+// Generate breadcrumb schema
+const breadcrumbSchema = breadcrumbs.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        item: new URL(item.url, siteUrl).toString(),
+      })),
+    }
+  : null;
+
+// Generate FAQ schema
+const faqSchema = faq.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    }
+  : null;
+
+// Generate speakable schema
+const speakableSchema = speakable.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: title,
+      speakable: {
+        '@type': 'SpeakableSpecification',
+        cssSelector: speakable,
+      },
+    }
+  : null;
+
+// Organization schema (for brand recognition)
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Shree Kundli',
+  alternateName: ['श्री कुंडली', 'Shri Kundali'],
+  url: siteUrl,
+  logo: new URL('/images/logo.png', siteUrl).toString(),
+  sameAs: [
+    // Add social profiles when available
+    // 'https://twitter.com/shreekundli',
+    // 'https://www.facebook.com/shreekundli',
+  ],
+  knowsAbout: [
+    'Vedic Astrology',
+    'Hindu Panchang',
+    'Kundli',
+    'Jyotish',
+    'Muhurat',
+    'Rashifal',
+  ],
+};
+
+// Combine all schemas
+const allSchemas: Record<string, unknown>[] = [];
+
+// Add primary schema (can be single or array)
+if (schema) {
+  if (Array.isArray(schema)) {
+    allSchemas.push(...schema);
+  } else {
+    allSchemas.push(schema);
+  }
+}
+
+// Add breadcrumb schema
+if (breadcrumbSchema) {
+  allSchemas.push(breadcrumbSchema);
+}
+
+// Add FAQ schema
+if (faqSchema) {
+  allSchemas.push(faqSchema);
+}
+
+// Add speakable schema
+if (speakableSchema) {
+  allSchemas.push(speakableSchema);
+}
+
+// Serialize schemas to JSON
+const schemasJson = allSchemas.map((s) => JSON.stringify(s));
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Theme Color (for mobile browser chrome) -->
+<meta name="theme-color" content="#1E1B4B" />
+<meta name="msapplication-TileColor" content="#1E1B4B" />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonical} />
+
+<!-- Language -->
+<meta http-equiv="content-language" content={locale === 'hi' ? 'hi-IN' : 'en-IN'} />
+<link rel="alternate" hreflang="en" href={canonical.toString().replace('/hi/', '/')} />
+<link rel="alternate" hreflang="hi" href={canonical.toString().includes('/hi/') ? canonical : canonical.toString().replace(siteUrl, `${siteUrl}/hi`)} />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+
+<!-- Robots -->
+{noIndex ? (
+  <meta name="robots" content="noindex, nofollow" />
+) : (
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+)}
+
+<!-- Date Metadata (AI freshness signals) -->
+{datePublished && <meta property="article:published_time" content={datePublished} />}
+{dateModified && <meta property="article:modified_time" content={dateModified} />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type === 'article' ? 'article' : 'website'} />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content={locale === 'hi' ? 'hi_IN' : 'en_IN'} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonical} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<!-- AI Content Declaration (emerging standard) -->
+<meta name="ai-content-declaration" content="factual-data, real-time-calculation" />
+
+<!-- Preconnect to API (performance) -->
+<link rel="preconnect" href={import.meta.env.SHREE_KUNDLI_API_URL || 'https://api.shreekundli.com'} />
+
+<!-- JSON-LD Structured Data -->
+{schemasJson.map((schemaJson) => (
+  <script is:inline type="application/ld+json" set:html={schemaJson} />
+))}
+
+<!-- Organization Schema (on all pages for brand recognition) -->
+<script is:inline type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />

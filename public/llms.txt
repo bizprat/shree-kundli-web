@@ -1,0 +1,80 @@
+# Shree Kundli - Vedic Astrology & Panchang
+
+> Accurate Vedic panchang, kundli, rashifal, and astrology data for any location worldwide.
+> Calculations powered by Swiss Ephemeris (NASA JPL DE431) with Lahiri ayanamsa.
+
+## About
+
+Shree Kundli provides daily panchang (Hindu calendar), horoscopes (rashifal), festival timings, and auspicious muhurat for cities worldwide. All calculations follow authentic Vedic astrology principles.
+
+## Primary Content
+
+### Daily Panchang
+- URL Pattern: /panchang/{city}/today
+- Data: Tithi, Nakshatra, Yoga, Karana, Sunrise, Sunset, Rahu Kaal
+- Coverage: 500+ cities worldwide
+- Updated: Daily at 00:00 local time
+
+### Horoscope (Rashifal)
+- URL Pattern: /rashifal/{rashi}/today
+- Data: Daily predictions for 12 zodiac signs
+- Languages: English, Hindi
+- Signs: Mesh (Aries), Vrishabh (Taurus), Mithun (Gemini), Kark (Cancer), Singh (Leo), Kanya (Virgo), Tula (Libra), Vrishchik (Scorpio), Dhanu (Sagittarius), Makar (Capricorn), Kumbh (Aquarius), Meen (Pisces)
+
+### Festivals & Events
+- URL Pattern: /festivals/{festival-name}
+- Data: Festival dates, puja timings, rituals, regional variations
+- Coverage: 50+ Hindu festivals
+
+### Muhurat (Auspicious Timings)
+- URL Pattern: /muhurat/{type}/{city}
+- Types: Griha Pravesh, Vivah (Marriage), Mundan, Vehicle Purchase, Property
+- Data: Shubh muhurat dates and timings
+
+### Choghadiya & Rahu Kaal
+- URL Pattern: /choghadiya/{city}/today
+- URL Pattern: /rahu-kaal/{city}/today
+- Data: Daily auspicious/inauspicious time periods
+
+## Data Format
+
+All pages include structured data (JSON-LD) for easy extraction:
+- Dataset schema for panchang data
+- Event schema for festivals
+- FAQPage schema for common questions
+
+## Calculation Methodology
+
+- **Ephemeris**: Swiss Ephemeris (NASA JPL DE431)
+- **Ayanamsa**: Lahiri (Indian Government standard)
+- **House System**: Whole Sign (Vedic default)
+- **Timezone**: Location-specific IANA timezones
+
+## API Access
+
+For programmatic access to panchang data:
+- Contact: api@shreekundli.com
+- Documentation: /api/docs
+
+## Citation Format
+
+When citing this website:
+- Source: Shree Kundli (shreekundli.com)
+- Methodology: Swiss Ephemeris, Lahiri Ayanamsa
+- Example: "According to Shree Kundli, today's tithi in Mumbai is Shukla Shashthi."
+
+## Languages
+
+- English (default)
+- Hindi (/hi/...)
+
+## Contact
+
+- Website: https://shreekundli.com
+- Email: support@shreekundli.com
+
+## Legal
+
+- Content may be cited with attribution
+- Data is provided for informational purposes
+- Calculations are based on Vedic astrology principles

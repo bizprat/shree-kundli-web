@@ -1,0 +1,181 @@
+[
+  {
+    "id": "griha-pravesh",
+    "name": "Griha Pravesh",
+    "nameHindi": "गृह प्रवेश",
+    "slug": "griha-pravesh",
+    "description": "Auspicious timing for entering a new home",
+    "descriptionHindi": "नए घर में प्रवेश के लिए शुभ मुहूर्त",
+    "priority": 5,
+    "considerations": [
+      "Avoid Rahu Kaal",
+      "Prefer Shukla Paksha",
+      "Avoid Rikta Tithi (4, 9, 14)",
+      "Check Nakshatra compatibility"
+    ],
+    "goodNakshatras": ["Rohini", "Uttara Phalguni", "Uttara Ashadha", "Uttara Bhadrapada"],
+    "avoidTithis": [4, 9, 14, 8, 6],
+    "idealMonths": ["Vaishakha", "Jyeshtha", "Magha", "Phalguna"]
+  },
+  {
+    "id": "vivah",
+    "name": "Vivah Muhurat",
+    "nameHindi": "विवाह मुहूर्त",
+    "slug": "vivah",
+    "description": "Auspicious timing for marriage ceremony",
+    "descriptionHindi": "विवाह संस्कार के लिए शुभ मुहूर्त",
+    "priority": 5,
+    "considerations": [
+      "Check Kundli matching (Guna Milan)",
+      "Avoid inauspicious months",
+      "Check planetary positions",
+      "Avoid eclipses"
+    ],
+    "goodNakshatras": ["Rohini", "Mrigashira", "Magha", "Uttara Phalguni", "Hasta", "Swati", "Anuradha", "Mula", "Uttara Ashadha", "Uttara Bhadrapada", "Revati"],
+    "avoidTithis": [4, 9, 14, 8, 6, 30],
+    "idealMonths": ["Magha", "Phalguna", "Vaishakha", "Jyeshtha"]
+  },
+  {
+    "id": "mundan",
+    "name": "Mundan Sanskar",
+    "nameHindi": "मुंडन संस्कार",
+    "slug": "mundan",
+    "description": "First hair cutting ceremony for children",
+    "descriptionHindi": "बच्चों के पहले मुंडन का संस्कार",
+    "priority": 4,
+    "considerations": [
+      "Child should be at least 1 year old",
+      "Prefer odd years (1, 3, 5)",
+      "Avoid inauspicious tithis",
+      "Check child's birth nakshatra"
+    ],
+    "goodNakshatras": ["Ashwini", "Mrigashira", "Pushya", "Hasta", "Chitra", "Swati", "Jyeshtha", "Shravana", "Dhanishta", "Revati"],
+    "avoidTithis": [4, 9, 14, 30],
+    "idealMonths": ["Chaitra", "Vaishakha", "Magha", "Phalguna"]
+  },
+  {
+    "id": "vehicle-purchase",
+    "name": "Vehicle Purchase",
+    "nameHindi": "वाहन खरीद",
+    "slug": "vehicle-purchase",
+    "description": "Auspicious timing for buying vehicles",
+    "descriptionHindi": "वाहन खरीदने के लिए शुभ मुहूर्त",
+    "priority": 3,
+    "considerations": [
+      "Avoid Rahu Kaal",
+      "Prefer Wednesday, Thursday, Friday",
+      "Avoid Amavasya",
+      "Check for vehicle-specific lagnas"
+    ],
+    "goodNakshatras": ["Ashwini", "Rohini", "Mrigashira", "Pushya", "Hasta", "Chitra", "Swati", "Anuradha", "Shravana", "Revati"],
+    "avoidTithis": [4, 9, 14, 30],
+    "idealDays": ["Wednesday", "Thursday", "Friday"]
+  },
+  {
+    "id": "property-purchase",
+    "name": "Property Purchase",
+    "nameHindi": "भूमि खरीद",
+    "slug": "property-purchase",
+    "description": "Auspicious timing for buying land or property",
+    "descriptionHindi": "भूमि या संपत्ति खरीदने के लिए शुभ मुहूर्त",
+    "priority": 4,
+    "considerations": [
+      "Check 4th house in kundli",
+      "Avoid Rahu-Ketu transit",
+      "Prefer Shukla Paksha",
+      "Thursday is especially auspicious"
+    ],
+    "goodNakshatras": ["Rohini", "Uttara Phalguni", "Uttara Ashadha", "Uttara Bhadrapada"],
+    "avoidTithis": [4, 9, 14, 6, 8, 30],
+    "idealDays": ["Thursday", "Friday"]
+  },
+  {
+    "id": "naamkaran",
+    "name": "Naamkaran",
+    "nameHindi": "नामकरण",
+    "slug": "naamkaran",
+    "description": "Naming ceremony for newborns",
+    "descriptionHindi": "नवजात के नामकरण का संस्कार",
+    "priority": 4,
+    "considerations": [
+      "Usually done on 11th or 12th day after birth",
+      "Name based on birth nakshatra",
+      "Avoid inauspicious tithis"
+    ],
+    "goodNakshatras": ["All fixed nakshatras", "Ashwini", "Rohini", "Mrigashira", "Pushya", "Hasta", "Swati"],
+    "avoidTithis": [4, 9, 14, 30],
+    "idealDays": ["Monday", "Wednesday", "Thursday", "Friday"]
+  },
+  {
+    "id": "business-start",
+    "name": "Business Start",
+    "nameHindi": "व्यापार आरंभ",
+    "slug": "business-start",
+    "description": "Auspicious timing for starting a new business",
+    "descriptionHindi": "नया व्यापार शुरू करने के लिए शुभ मुहूर्त",
+    "priority": 4,
+    "considerations": [
+      "Check Mercury and Jupiter positions",
+      "Avoid Rahu Kaal",
+      "Prefer Shukla Paksha",
+      "Wednesday and Thursday are ideal"
+    ],
+    "goodNakshatras": ["Ashwini", "Rohini", "Mrigashira", "Punarvasu", "Pushya", "Hasta", "Chitra", "Swati", "Anuradha", "Shravana", "Dhanishta", "Revati"],
+    "avoidTithis": [4, 9, 14, 30],
+    "idealDays": ["Wednesday", "Thursday", "Friday"]
+  },
+  {
+    "id": "education-start",
+    "name": "Vidyarambh",
+    "nameHindi": "विद्यारंभ",
+    "slug": "vidyarambh",
+    "description": "Starting education for children",
+    "descriptionHindi": "बच्चों की शिक्षा आरंभ का मुहूर्त",
+    "priority": 3,
+    "considerations": [
+      "Vasant Panchami is highly auspicious",
+      "Check Mercury position",
+      "Prefer Wednesday",
+      "Saraswati puja recommended"
+    ],
+    "goodNakshatras": ["Ashwini", "Punarvasu", "Pushya", "Hasta", "Chitra", "Swati", "Shravana", "Revati"],
+    "avoidTithis": [4, 9, 14, 30],
+    "idealDays": ["Wednesday", "Thursday", "Friday"]
+  },
+  {
+    "id": "gold-purchase",
+    "name": "Gold Purchase",
+    "nameHindi": "स्वर्ण खरीद",
+    "slug": "gold-purchase",
+    "description": "Auspicious timing for buying gold and jewelry",
+    "descriptionHindi": "सोना और आभूषण खरीदने के लिए शुभ मुहूर्त",
+    "priority": 3,
+    "considerations": [
+      "Akshaya Tritiya is highly auspicious",
+      "Dhanteras is traditional",
+      "Friday is ideal for Venus",
+      "Avoid Amavasya"
+    ],
+    "goodNakshatras": ["Pushya", "Rohini", "Uttara Phalguni", "Uttara Ashadha", "Uttara Bhadrapada", "Shravana"],
+    "avoidTithis": [4, 9, 14, 30],
+    "idealDays": ["Friday", "Thursday"]
+  },
+  {
+    "id": "travel",
+    "name": "Travel Muhurat",
+    "nameHindi": "यात्रा मुहूर्त",
+    "slug": "travel",
+    "description": "Auspicious timing for starting a journey",
+    "descriptionHindi": "यात्रा प्रारंभ के लिए शुभ मुहूर्त",
+    "priority": 2,
+    "considerations": [
+      "Direction-specific considerations",
+      "Avoid Rahu Kaal",
+      "Check daily yoga",
+      "Avoid inauspicious nakshatras"
+    ],
+    "goodNakshatras": ["Ashwini", "Mrigashira", "Punarvasu", "Pushya", "Hasta", "Anuradha", "Shravana", "Revati"],
+    "avoidTithis": [4, 9, 14, 30],
+    "idealDays": ["Monday", "Wednesday", "Thursday", "Friday"]
+  }
+]
