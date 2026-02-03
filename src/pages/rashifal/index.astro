@@ -1,0 +1,255 @@
+---
+/**
+ * Rashifal Hub Page
+ *
+ * Overview of all 12 zodiac signs with:
+ * - Quick answer for "today's horoscope" queries
+ * - Grid of all rashis for navigation
+ * - JSON-LD ItemList schema for SEO
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load rashis data
+import rashisData from '../../data/rashis.json';
+
+interface Rashi {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  symbol: string;
+  element: string;
+  quality: string;
+  rulingPlanet: string;
+  rulingPlanetHindi: string;
+  luckyNumbers: number[];
+  luckyColors: string[];
+  luckyDay: string;
+  bodyPart: string;
+  traits: string[];
+  dateRange: string;
+}
+
+const rashis = rashisData as Rashi[];
+
+// Today's date
+const today = new Date();
+const todayFormatted = today.toLocaleDateString('en-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+// Page meta
+const title = 'Daily Rashifal 2026 - Today\'s Horoscope for All 12 Zodiac Signs | Shree Kundli';
+const description = `Today's horoscope (${todayFormatted}) for all 12 zodiac signs. Read daily rashifal for Mesh, Vrishabh, Mithun, Kark, Singh, Kanya, Tula, Vrishchik, Dhanu, Makar, Kumbh, Meen. आज का राशिफल।`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Rashifal' },
+];
+
+// Schema for rashi list
+const rashiListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Daily Rashifal - All 12 Zodiac Signs',
+  description: 'Daily horoscope predictions for all 12 zodiac signs in Vedic astrology',
+  numberOfItems: 12,
+  itemListElement: rashis.map((rashi, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Article',
+      name: `${rashi.name} (${rashi.nameHindi}) Rashifal`,
+      alternateName: `${rashi.nameHindi} राशिफल`,
+      description: `Daily horoscope for ${rashi.name} (${rashi.nameHindi}). Date range: ${rashi.dateRange}`,
+      url: `/rashifal/${rashi.slug}`,
+    },
+  })),
+};
+
+// Element colors
+const elementColors: Record<string, string> = {
+  fire: 'text-orange-500',
+  earth: 'text-green-600',
+  air: 'text-blue-400',
+  water: 'text-cyan-500',
+};
+
+const elementBg: Record<string, string> = {
+  fire: 'bg-orange-500/10 border-orange-500/20',
+  earth: 'bg-green-600/10 border-green-600/20',
+  air: 'bg-blue-400/10 border-blue-400/20',
+  water: 'bg-cyan-500/10 border-cyan-500/20',
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(rashiListSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Daily Rashifal - आज का राशिफल
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        Today's horoscope for all 12 zodiac signs • {todayFormatted}
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+            Select Your Zodiac Sign
+          </h2>
+          <p class="text-neutral/70 mb-4">
+            Choose your rashi (zodiac sign) below to read your daily horoscope prediction.
+            Vedic astrology uses Moon sign (Chandra Rashi) for accurate predictions.
+          </p>
+          <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+            {rashis.map((rashi) => (
+              <a
+                href={`/rashifal/${rashi.slug}`}
+                class={`flex flex-col items-center p-3 rounded-lg border transition-all hover:shadow-md ${elementBg[rashi.element]}`}
+              >
+                <span class="text-3xl mb-1">{rashi.symbol}</span>
+                <span class="font-semibold text-primary text-sm">{rashi.nameHindi}</span>
+                <span class="text-xs text-neutral/60">{rashi.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Rashi List -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
+        All 12 Zodiac Signs (राशि)
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {rashis.map((rashi) => (
+          <a
+            href={`/rashifal/${rashi.slug}`}
+            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all"
+          >
+            <div class="card-body p-4">
+              <div class="flex items-start gap-4">
+                <!-- Symbol -->
+                <div class={`text-4xl p-3 rounded-lg ${elementBg[rashi.element]}`}>
+                  {rashi.symbol}
+                </div>
+
+                <!-- Info -->
+                <div class="grow min-w-0">
+                  <div class="flex items-center gap-2">
+                    <h3 class="font-heading text-lg font-semibold text-primary">
+                      {rashi.nameHindi}
+                    </h3>
+                    <span class="text-sm text-neutral/60">({rashi.name})</span>
+                  </div>
+                  <p class="text-sm text-neutral/50 mt-1">{rashi.dateRange}</p>
+                  <div class="flex items-center gap-2 mt-2 text-sm">
+                    <span class={`capitalize ${elementColors[rashi.element]}`}>
+                      {rashi.element}
+                    </span>
+                    <span class="text-neutral/30">•</span>
+                    <span class="text-neutral/60">{rashi.rulingPlanet}</span>
+                  </div>
+                </div>
+
+                <!-- Arrow -->
+                <svg
+                  class="w-5 h-5 text-neutral/40 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Element Legend -->
+    <section class="mt-8 p-4 bg-base-200/50 rounded-lg">
+      <h3 class="font-semibold text-primary mb-3">Elements (Tatva)</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div class="flex items-center gap-2">
+          <span class={`w-4 h-4 rounded-full bg-orange-500`}></span>
+          <span class="text-neutral/70">Fire (Agni) - Mesh, Singh, Dhanu</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class={`w-4 h-4 rounded-full bg-green-600`}></span>
+          <span class="text-neutral/70">Earth (Prithvi) - Vrishabh, Kanya, Makar</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class={`w-4 h-4 rounded-full bg-blue-400`}></span>
+          <span class="text-neutral/70">Air (Vayu) - Mithun, Tula, Kumbh</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class={`w-4 h-4 rounded-full bg-cyan-500`}></span>
+          <span class="text-neutral/70">Water (Jal) - Kark, Vrishchik, Meen</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Rashifal?
+          </div>
+          <div class="collapse-content">
+            <p>Rashifal (राशिफल) is the Hindi term for horoscope. It refers to astrological predictions based on your zodiac sign (rashi). In Vedic astrology, your Moon sign is used for daily predictions, unlike Western astrology which uses Sun sign.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            How do I find my Moon sign (Chandra Rashi)?
+          </div>
+          <div class="collapse-content">
+            <p>Your Moon sign is determined by the position of the Moon at the time of your birth. You need your exact birth date, time, and place to calculate it. You can use our Kundli generator to find your Moon sign accurately.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Are daily horoscopes accurate?
+          </div>
+          <div class="collapse-content">
+            <p>Daily horoscopes provide general guidance based on planetary transits affecting each zodiac sign. For personalized predictions, a detailed kundli analysis considering your birth chart is recommended.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>

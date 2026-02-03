@@ -1,0 +1,371 @@
+---
+/**
+ * Individual Rashi Page
+ *
+ * Detailed page for each zodiac sign with:
+ * - Answer-first daily horoscope
+ * - Rashi characteristics
+ * - Lucky factors
+ * - FAQ schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load rashis data
+import rashisData from '../../data/rashis.json';
+
+interface Rashi {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  symbol: string;
+  element: string;
+  quality: string;
+  rulingPlanet: string;
+  rulingPlanetHindi: string;
+  luckyNumbers: number[];
+  luckyColors: string[];
+  luckyDay: string;
+  bodyPart: string;
+  traits: string[];
+  dateRange: string;
+}
+
+const rashis = rashisData as Rashi[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const rashisModule = await import('../../data/rashis.json');
+  const rashis = rashisModule.default as Rashi[];
+
+  return rashis.map((rashi) => ({
+    params: { rashi: rashi.slug },
+    props: { rashi },
+  }));
+}
+
+// Get rashi from props
+const { rashi } = Astro.props as { rashi: Rashi };
+
+// Today's date
+const today = new Date();
+const todayFormatted = today.toLocaleDateString('en-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const todayIso = today.toISOString().split('T')[0];
+
+// Page meta
+const title = `${rashi.name} Horoscope Today (${rashi.nameHindi} राशिफल) - ${todayFormatted} | Shree Kundli`;
+const description = `Today's ${rashi.name} (${rashi.nameHindi}) horoscope for ${todayFormatted}. Daily rashifal with lucky numbers, colors, and predictions. ${rashi.dateRange}.`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Rashifal', url: '/rashifal' },
+  { name: `${rashi.nameHindi} (${rashi.name})` },
+];
+
+// Mock daily horoscope (will be replaced with API data)
+const dailyHoroscope = {
+  overall: 'Today brings positive energy for your endeavors. Focus on your goals and trust your instincts. Financial matters look favorable.',
+  overallHindi: 'आज आपके प्रयासों के लिए सकारात्मक ऊर्जा लाता है। अपने लक्ष्यों पर ध्यान केंद्रित करें और अपनी अंतर्ज्ञान पर भरोसा रखें।',
+  love: 'Romantic relationships flourish today. Single natives may find new connections.',
+  career: 'Professional growth is indicated. Take initiative in workplace matters.',
+  health: 'Maintain balance between work and rest. Light exercise is beneficial.',
+  rating: 4,
+};
+
+// Element colors
+const elementColors: Record<string, string> = {
+  fire: 'text-orange-500',
+  earth: 'text-green-600',
+  air: 'text-blue-400',
+  water: 'text-cyan-500',
+};
+
+const elementBg: Record<string, string> = {
+  fire: 'bg-orange-500/10 border-orange-500/20',
+  earth: 'bg-green-600/10 border-green-600/20',
+  air: 'bg-blue-400/10 border-blue-400/20',
+  water: 'bg-cyan-500/10 border-cyan-500/20',
+};
+
+// Article schema
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${rashi.name} Horoscope Today - ${todayFormatted}`,
+  alternateName: `${rashi.nameHindi} राशिफल - आज का भविष्यफल`,
+  description: description,
+  datePublished: todayIso,
+  dateModified: todayIso,
+  author: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+  about: {
+    '@type': 'Thing',
+    name: `${rashi.name} Zodiac Sign`,
+    alternateName: rashi.nameHindi,
+  },
+  inLanguage: ['en', 'hi'],
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is today's horoscope for ${rashi.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `Today (${todayFormatted}), ${rashi.name} (${rashi.nameHindi}) natives can expect: ${dailyHoroscope.overall} Lucky numbers are ${rashi.luckyNumbers.join(', ')} and lucky color is ${rashi.luckyColors[0]}.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What are the lucky numbers for ${rashi.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `The lucky numbers for ${rashi.name} (${rashi.nameHindi}) are ${rashi.luckyNumbers.join(', ')}. Lucky day is ${rashi.luckyDay} and lucky colors are ${rashi.luckyColors.join(', ')}.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What are the characteristics of ${rashi.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${rashi.name} (${rashi.nameHindi}) is a ${rashi.element} sign ruled by ${rashi.rulingPlanet}. Key traits include: ${rashi.traits.join(', ')}. Date range: ${rashi.dateRange}.`,
+      },
+    },
+  ],
+};
+
+// Get adjacent rashis for navigation
+const currentIndex = rashis.findIndex(r => r.id === rashi.id);
+const prevRashi = rashis[currentIndex - 1] || rashis[rashis.length - 1];
+const nextRashi = rashis[currentIndex + 1] || rashis[0];
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header>
+      <div class="flex items-start gap-4">
+        <div class={`text-5xl p-4 rounded-xl ${elementBg[rashi.element]}`}>
+          {rashi.symbol}
+        </div>
+        <div>
+          <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+            {rashi.nameHindi} राशिफल
+          </h1>
+          <p class="text-xl text-neutral/70 mt-1">
+            {rashi.name} Horoscope Today
+          </p>
+          <p class="text-sm text-neutral/50 mt-2">
+            <time datetime={todayIso}>{todayFormatted}</time>
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo" aria-label="Today's Horoscope">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <!-- Rating -->
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-sm text-neutral/60">Today's Rating:</span>
+            <div class="flex">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <svg
+                  class={`w-5 h-5 ${star <= dailyHoroscope.rating ? 'text-secondary' : 'text-neutral/20'}`}
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <span class="font-semibold text-secondary">{dailyHoroscope.rating}/5</span>
+          </div>
+
+          <!-- Daily Prediction -->
+          <div class="space-y-3">
+            <p class="text-lg leading-relaxed">{dailyHoroscope.overall}</p>
+            <p class="text-neutral/60">{dailyHoroscope.overallHindi}</p>
+          </div>
+
+          <!-- Lucky Factors -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-4 border-t border-secondary/20">
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Lucky Numbers</p>
+              <p class="font-semibold text-primary">{rashi.luckyNumbers.join(', ')}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Lucky Colors</p>
+              <p class="font-semibold text-primary capitalize">{rashi.luckyColors.join(', ')}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Lucky Day</p>
+              <p class="font-semibold text-primary">{rashi.luckyDay}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Ruling Planet</p>
+              <p class="font-semibold text-primary">{rashi.rulingPlanet} ({rashi.rulingPlanetHindi})</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Predictions -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Detailed Predictions
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-2xl">💕</span>
+              <h3 class="font-semibold text-primary">Love & Relationships</h3>
+            </div>
+            <p class="text-sm text-neutral/70">{dailyHoroscope.love}</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-2xl">💼</span>
+              <h3 class="font-semibold text-primary">Career & Finance</h3>
+            </div>
+            <p class="text-sm text-neutral/70">{dailyHoroscope.career}</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-2xl">🏥</span>
+              <h3 class="font-semibold text-primary">Health & Wellness</h3>
+            </div>
+            <p class="text-sm text-neutral/70">{dailyHoroscope.health}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rashi Characteristics -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        {rashi.name} Characteristics
+      </h2>
+      <div class="card bg-base-100 border border-base-200">
+        <div class="card-body p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <p class="text-sm text-neutral/50 mb-1">Date Range</p>
+                <p class="font-medium">{rashi.dateRange}</p>
+              </div>
+              <div>
+                <p class="text-sm text-neutral/50 mb-1">Element (Tatva)</p>
+                <p class={`font-medium capitalize ${elementColors[rashi.element]}`}>{rashi.element}</p>
+              </div>
+              <div>
+                <p class="text-sm text-neutral/50 mb-1">Quality (Guna)</p>
+                <p class="font-medium capitalize">{rashi.quality}</p>
+              </div>
+              <div>
+                <p class="text-sm text-neutral/50 mb-1">Body Part</p>
+                <p class="font-medium">{rashi.bodyPart}</p>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm text-neutral/50 mb-2">Key Traits</p>
+              <div class="flex flex-wrap gap-2">
+                {rashi.traits.map((trait) => (
+                  <span class="badge badge-outline capitalize">{trait}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is today's horoscope for {rashi.name}?
+          </div>
+          <div class="collapse-content">
+            <p>Today ({todayFormatted}), {rashi.name} ({rashi.nameHindi}) natives can expect: {dailyHoroscope.overall} Lucky numbers are {rashi.luckyNumbers.join(', ')} and lucky color is {rashi.luckyColors[0]}.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What are the lucky numbers for {rashi.name}?
+          </div>
+          <div class="collapse-content">
+            <p>The lucky numbers for {rashi.name} ({rashi.nameHindi}) are {rashi.luckyNumbers.join(', ')}. Lucky day is {rashi.luckyDay} and lucky colors are {rashi.luckyColors.join(', ')}.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What are the characteristics of {rashi.name}?
+          </div>
+          <div class="collapse-content">
+            <p>{rashi.name} ({rashi.nameHindi}) is a {rashi.element} sign ruled by {rashi.rulingPlanet}. Key traits include: {rashi.traits.join(', ')}. Date range: {rashi.dateRange}.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="flex flex-wrap justify-between gap-4 pt-4">
+      <a
+        href={`/rashifal/${prevRashi.slug}`}
+        class="btn btn-outline min-h-12"
+      >
+        ← {prevRashi.symbol} {prevRashi.nameHindi}
+      </a>
+      <a href="/rashifal" class="btn btn-ghost min-h-12">
+        All Rashis
+      </a>
+      <a
+        href={`/rashifal/${nextRashi.slug}`}
+        class="btn btn-outline min-h-12"
+      >
+        {nextRashi.nameHindi} {nextRashi.symbol} →
+      </a>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,319 @@
+---
+/**
+ * City Rahu Kaal Page
+ *
+ * Today's Rahu Kaal for a specific city with:
+ * - Answer-first timing display
+ * - Other inauspicious periods
+ * - Dataset schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import CitySelector from '../../components/CitySelector.astro';
+import type { BreadcrumbItem, City } from '../../lib/types';
+
+// Load data
+import citiesData from '../../data/cities-sample.json';
+const cities = citiesData as City[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const citiesModule = await import('../../data/cities-sample.json');
+  const cities = citiesModule.default as City[];
+
+  return cities.map((city) => ({
+    params: { city: city.slug },
+    props: { city },
+  }));
+}
+
+// Get city from props
+const { city } = Astro.props as { city: City };
+
+// Today's date and day
+const today = new Date();
+const todayFormatted = today.toLocaleDateString('en-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const todayHindi = today.toLocaleDateString('hi-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const todayIso = today.toISOString().split('T')[0];
+const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
+
+// Mock Rahu Kaal data (will be replaced with API data based on city coordinates)
+const rahuKaal = {
+  start: '07:30 AM',
+  end: '09:00 AM',
+  startIso: `${todayIso}T07:30:00+05:30`,
+  endIso: `${todayIso}T09:00:00+05:30`,
+  duration: '1h 30m',
+};
+
+const yamaganda = {
+  start: '10:30 AM',
+  end: '12:00 PM',
+};
+
+const gulikaKaal = {
+  start: '01:30 PM',
+  end: '03:00 PM',
+};
+
+const abhijitMuhurat = {
+  start: '11:45 AM',
+  end: '12:30 PM',
+};
+
+// Page meta
+const title = `Rahu Kaal Today in ${city.name} - ${todayFormatted} | राहु काल ${city.nameHindi} | Shree Kundli`;
+const description = `Rahu Kaal today in ${city.name} is ${rahuKaal.start} to ${rahuKaal.end}. Check accurate Rahu Kaal, Yamaganda, and Gulika Kaal timings for ${city.name}, ${city.state}. ${city.nameHindi} राहु काल।`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Rahu Kaal', url: '/rahu-kaal' },
+  { name: city.name },
+];
+
+// Dataset schema for AI
+const datasetSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: `Rahu Kaal for ${city.name} - ${todayFormatted}`,
+  alternateName: `${city.nameHindi} राहु काल - ${todayHindi}`,
+  description: `Rahu Kaal and other inauspicious periods for ${city.name} on ${todayFormatted}.`,
+  url: Astro.url.toString(),
+  datePublished: todayIso,
+  dateModified: todayIso,
+  temporalCoverage: todayIso,
+  spatialCoverage: {
+    '@type': 'Place',
+    name: `${city.name}, ${city.state}, India`,
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: city.latitude,
+      longitude: city.longitude,
+    },
+  },
+  variableMeasured: [
+    { '@type': 'PropertyValue', name: 'Rahu Kaal Start', value: rahuKaal.start },
+    { '@type': 'PropertyValue', name: 'Rahu Kaal End', value: rahuKaal.end },
+    { '@type': 'PropertyValue', name: 'Yamaganda', value: `${yamaganda.start} - ${yamaganda.end}` },
+    { '@type': 'PropertyValue', name: 'Gulika Kaal', value: `${gulikaKaal.start} - ${gulikaKaal.end}` },
+  ],
+  creator: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is Rahu Kaal time today in ${city.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `Rahu Kaal today (${todayFormatted}) in ${city.name} is from ${rahuKaal.start} to ${rahuKaal.end}. Avoid starting important activities during this period.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What is Yamaganda time today in ${city.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `Yamaganda today in ${city.name} is from ${yamaganda.start} to ${yamaganda.end}. This is another inauspicious period to avoid for important work.`,
+      },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(datasetSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header with City Selector -->
+    <header class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      <div>
+        <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+          Rahu Kaal in {city.name}
+        </h1>
+        <p class="text-lg text-neutral/70 mt-1">
+          {city.nameHindi} राहु काल • {city.state}
+        </p>
+        <p class="text-sm text-neutral/50 mt-1">
+          <time datetime={todayIso}>{todayFormatted}</time>
+        </p>
+      </div>
+
+      <div class="w-full md:w-64">
+        <CitySelector
+          cities={cities}
+          currentCity={city}
+          baseUrl="/rahu-kaal"
+        />
+      </div>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo" aria-label="Today's Rahu Kaal">
+      <div class="card bg-error/10 border border-error/20">
+        <div class="card-body p-4 md:p-6 text-center">
+          <h2 class="font-heading text-xl text-error font-semibold mb-2">
+            Rahu Kaal Today in {city.name}
+          </h2>
+          <p class="text-5xl font-bold text-error tabular-nums">
+            <time datetime={rahuKaal.startIso}>{rahuKaal.start}</time>
+            {' - '}
+            <time datetime={rahuKaal.endIso}>{rahuKaal.end}</time>
+          </p>
+          <p class="text-sm text-neutral/60 mt-2">
+            Duration: {rahuKaal.duration} • {dayOfWeek}
+          </p>
+          <p class="text-neutral/70 mt-4">
+            Avoid starting new work, journeys, or important activities during this time
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Other Inauspicious Periods -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Other Inauspicious Periods
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card bg-error/10 border border-error/20">
+          <div class="card-body p-4 text-center">
+            <h3 class="font-semibold text-error">Rahu Kaal</h3>
+            <p class="text-2xl font-bold text-error tabular-nums mt-2">
+              {rahuKaal.start} - {rahuKaal.end}
+            </p>
+            <p class="text-sm text-neutral/60 mt-1">Most inauspicious</p>
+          </div>
+        </div>
+
+        <div class="card bg-warning/10 border border-warning/20">
+          <div class="card-body p-4 text-center">
+            <h3 class="font-semibold text-warning">Yamaganda</h3>
+            <p class="text-2xl font-bold text-warning tabular-nums mt-2">
+              {yamaganda.start} - {yamaganda.end}
+            </p>
+            <p class="text-sm text-neutral/60 mt-1">Avoid auspicious work</p>
+          </div>
+        </div>
+
+        <div class="card bg-warning/10 border border-warning/20">
+          <div class="card-body p-4 text-center">
+            <h3 class="font-semibold text-warning">Gulika Kaal</h3>
+            <p class="text-2xl font-bold text-warning tabular-nums mt-2">
+              {gulikaKaal.start} - {gulikaKaal.end}
+            </p>
+            <p class="text-sm text-neutral/60 mt-1">Inauspicious period</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Auspicious Period -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Auspicious Period Today
+      </h2>
+      <div class="card bg-success/10 border border-success/20">
+        <div class="card-body p-4">
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h3 class="font-semibold text-success">Abhijit Muhurat</h3>
+              <p class="text-sm text-neutral/60">Best time for important work</p>
+            </div>
+            <p class="text-2xl font-bold text-success tabular-nums">
+              {abhijitMuhurat.start} - {abhijitMuhurat.end}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Explanation -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        About Rahu Kaal
+      </h2>
+      <div class="card bg-base-200/50">
+        <div class="card-body p-4">
+          <p class="leading-relaxed">
+            <strong>Rahu Kaal</strong> is an inauspicious period of approximately 1.5 hours every day.
+            The timing is calculated by dividing the time between sunrise and sunset into 8 equal parts.
+            Rahu Kaal falls on a different period each day of the week.
+          </p>
+          <p class="text-neutral/70 mt-3 text-sm">
+            राहु काल हर दिन लगभग 1.5 घंटे का अशुभ समय होता है। इस दौरान नया कार्य शुरू नहीं करना चाहिए।
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location Info -->
+    <section class="text-sm text-neutral/50">
+      <p>
+        Timings calculated for {city.name}, {city.state} (Lat: {city.latitude.toFixed(4)}°, Long: {city.longitude.toFixed(4)}°)
+        based on local sunrise and sunset times.
+      </p>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Rahu Kaal time today in {city.name}?
+          </div>
+          <div class="collapse-content">
+            <p>Rahu Kaal today ({todayFormatted}) in {city.name} is from {rahuKaal.start} to {rahuKaal.end}. Avoid starting important activities during this period.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What is Yamaganda time today in {city.name}?
+          </div>
+          <div class="collapse-content">
+            <p>Yamaganda today in {city.name} is from {yamaganda.start} to {yamaganda.end}. This is another inauspicious period to avoid for important work.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="flex flex-wrap gap-3 pt-4">
+      <a href="/rahu-kaal" class="btn btn-outline min-h-12">
+        ← All Cities
+      </a>
+      <a href={`/panchang/${city.slug}`} class="btn btn-ghost min-h-12">
+        {city.name} Panchang →
+      </a>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,302 @@
+---
+/**
+ * Rahu Kaal Hub Page
+ *
+ * Overview of Rahu Kaal with:
+ * - Quick answer for "rahu kaal today" queries
+ * - City selector for specific timings
+ * - Explanation of Rahu Kaal concept
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import CitySelector from '../../components/CitySelector.astro';
+import type { BreadcrumbItem, City } from '../../lib/types';
+
+// Load cities data
+import citiesData from '../../data/cities-sample.json';
+const cities = citiesData as City[];
+
+// Today's date and day
+const today = new Date();
+const todayFormatted = today.toLocaleDateString('en-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
+
+// Rahu Kaal timing by day (based on sunrise)
+const rahuKaalByDay: Record<string, { period: string; order: number }> = {
+  Sunday: { period: '4:30 PM - 6:00 PM', order: 8 },
+  Monday: { period: '7:30 AM - 9:00 AM', order: 2 },
+  Tuesday: { period: '3:00 PM - 4:30 PM', order: 7 },
+  Wednesday: { period: '12:00 PM - 1:30 PM', order: 5 },
+  Thursday: { period: '1:30 PM - 3:00 PM', order: 6 },
+  Friday: { period: '10:30 AM - 12:00 PM', order: 4 },
+  Saturday: { period: '9:00 AM - 10:30 AM', order: 3 },
+};
+
+const todayRahuKaal = rahuKaalByDay[dayOfWeek];
+
+// Page meta
+const title = `Rahu Kaal Today (${dayOfWeek}) - राहु काल Time for All Cities | Shree Kundli`;
+const description = `Rahu Kaal today (${todayFormatted}) is approximately ${todayRahuKaal.period}. Check accurate Rahu Kaal timings for your city. राहु काल का समय - avoid starting important work during this period.`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Rahu Kaal' },
+];
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Rahu Kaal today?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `Today (${dayOfWeek}, ${todayFormatted}), Rahu Kaal is approximately ${todayRahuKaal.period}. Exact timing varies by city based on local sunrise and sunset times.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is Rahu Kaal?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Rahu Kaal (राहु काल) is a period of approximately 1.5 hours every day that is considered inauspicious in Vedic astrology. It is one of the eight segments of the day, ruled by Rahu, and one should avoid starting new ventures, journeys, or important activities during this time.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How is Rahu Kaal calculated?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Rahu Kaal is calculated by dividing the time between sunrise and sunset into 8 equal parts. Each part is approximately 1.5 hours. The Rahu Kaal period varies by the day of the week: Monday (2nd period), Saturday (3rd), Friday (4th), Wednesday (5th), Thursday (6th), Tuesday (7th), Sunday (8th).',
+      },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Rahu Kaal Today - राहु काल
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        {dayOfWeek}, {todayFormatted}
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo" aria-label="Today's Rahu Kaal">
+      <div class="card bg-error/10 border border-error/20">
+        <div class="card-body p-4 md:p-6 text-center">
+          <h2 class="font-heading text-xl text-error font-semibold mb-2">
+            Rahu Kaal Today ({dayOfWeek})
+          </h2>
+          <p class="text-4xl font-bold text-error tabular-nums">
+            {todayRahuKaal.period}
+          </p>
+          <p class="text-sm text-neutral/60 mt-2">
+            Approximate timing • Select your city below for exact timings
+          </p>
+          <p class="text-neutral/70 mt-4">
+            Avoid starting important activities, journeys, or new ventures during Rahu Kaal
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- City Selector -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Check Rahu Kaal for Your City
+      </h2>
+      <div class="max-w-md">
+        <CitySelector
+          cities={cities}
+          baseUrl="/rahu-kaal"
+          placeholder="Select your city..."
+        />
+      </div>
+      <p class="text-sm text-neutral/50 mt-2">
+        Rahu Kaal timing varies by location based on local sunrise and sunset times.
+      </p>
+    </section>
+
+    <!-- Weekly Schedule -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Weekly Rahu Kaal Schedule
+      </h2>
+      <div class="card bg-base-100 border border-base-200">
+        <div class="card-body p-4">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Rahu Kaal (Approx.)</th>
+                <th>Period</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(rahuKaalByDay).map(([day, info]) => (
+                <tr class={day === dayOfWeek ? 'bg-error/10 font-semibold' : ''}>
+                  <td class={day === dayOfWeek ? 'text-error' : ''}>
+                    {day} {day === dayOfWeek && '(Today)'}
+                  </td>
+                  <td class="tabular-nums">{info.period}</td>
+                  <td class="text-neutral/60">{info.order}th period</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="text-xs text-neutral/50 mt-3">
+            * Timings shown are approximate for 7:00 AM sunrise. Actual times depend on your city's sunrise.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- What is Rahu Kaal -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        What is Rahu Kaal?
+      </h2>
+      <div class="prose prose-neutral max-w-none">
+        <p class="text-lg leading-relaxed">
+          <strong>Rahu Kaal</strong> (राहु काल) is a period of approximately 1.5 hours every day
+          that is considered inauspicious in Vedic astrology. It is believed that activities
+          started during this time may face obstacles or not yield desired results.
+        </p>
+        <p class="text-neutral/70 mt-3">
+          राहु काल वैदिक ज्योतिष में हर दिन लगभग 1.5 घंटे का समय होता है जो अशुभ माना जाता है।
+          इस समय शुरू किए गए कार्यों में बाधाएं आ सकती हैं।
+        </p>
+      </div>
+    </section>
+
+    <!-- What to Avoid -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        What to Avoid During Rahu Kaal
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card bg-error/5 border border-error/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-error mb-2">Avoid These Activities</h3>
+            <ul class="space-y-2 text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-error">✗</span>
+                Starting new business or ventures
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-error">✗</span>
+                Beginning important journeys
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-error">✗</span>
+                Signing important documents
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-error">✗</span>
+                Starting construction or griha pravesh
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-error">✗</span>
+                Purchasing vehicles or property
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card bg-success/5 border border-success/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-success mb-2">These Are Okay</h3>
+            <ul class="space-y-2 text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-success">✓</span>
+                Continuing ongoing work
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-success">✓</span>
+                Routine daily activities
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-success">✓</span>
+                Spiritual practices and prayers
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-success">✓</span>
+                Emergency situations
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-success">✓</span>
+                Medical treatments
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Rahu Kaal today?
+          </div>
+          <div class="collapse-content">
+            <p>Today ({dayOfWeek}, {todayFormatted}), Rahu Kaal is approximately {todayRahuKaal.period}. Exact timing varies by city based on local sunrise and sunset times.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            How is Rahu Kaal calculated?
+          </div>
+          <div class="collapse-content">
+            <p>Rahu Kaal is calculated by dividing the time between sunrise and sunset into 8 equal parts. Each part is approximately 1.5 hours. The Rahu Kaal period varies by the day of the week: Monday (2nd period), Saturday (3rd), Friday (4th), Wednesday (5th), Thursday (6th), Tuesday (7th), Sunday (8th).</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Is Rahu Kaal the same for all cities?
+          </div>
+          <div class="collapse-content">
+            <p>No, Rahu Kaal timing varies by location because it depends on local sunrise and sunset times. Cities in the east will have earlier Rahu Kaal than cities in the west. Always check the timing for your specific city.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Links -->
+    <div class="flex flex-wrap gap-3 pt-4">
+      <a href="/panchang" class="btn btn-outline min-h-12">
+        Today's Panchang
+      </a>
+      <a href="/muhurat" class="btn btn-ghost min-h-12">
+        Shubh Muhurat →
+      </a>
+    </div>
+  </div>
+</Layout>
