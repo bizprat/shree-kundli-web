@@ -1,0 +1,413 @@
+---
+/**
+ * Individual Tithi Page
+ *
+ * Detailed page for each tithi with:
+ * - Significance and meaning
+ * - Deity and nature
+ * - Good activities and things to avoid
+ * - FAQ schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load tithis data
+import tithisData from '../../data/tithis.json';
+
+interface Tithi {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  meaning: string;
+  meaningHindi: string;
+  number: number;
+  paksha?: string;
+  deity: string;
+  deityHindi: string;
+  nature: string;
+  natureHindi: string;
+  element: string;
+  auspicious: boolean;
+  goodFor: string[];
+  avoid: string[];
+  festivals: string[];
+  description: string;
+}
+
+const tithis = tithisData as Tithi[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const tithisModule = await import('../../data/tithis.json');
+  const tithis = tithisModule.default as Tithi[];
+
+  return tithis.map((tithi) => ({
+    params: { tithi: tithi.slug },
+    props: { tithi },
+  }));
+}
+
+// Get tithi from props
+const { tithi } = Astro.props as { tithi: Tithi };
+
+// Page meta
+const title = `${tithi.name} (${tithi.nameHindi}) - ${tithi.meaning} | Tithi Guide | Shree Kundli`;
+const description = `${tithi.name} (${tithi.nameHindi}) is the ${tithi.number}${tithi.number === 1 ? 'st' : tithi.number === 2 ? 'nd' : tithi.number === 3 ? 'rd' : 'th'} lunar day. ${tithi.description} Deity: ${tithi.deity}. Nature: ${tithi.nature}.`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Tithi', url: '/tithi' },
+  { name: `${tithi.nameHindi} (${tithi.name})` },
+];
+
+// Article schema
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${tithi.name} - ${tithi.nameHindi}`,
+  description: description,
+  author: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+  about: {
+    '@type': 'Thing',
+    name: `${tithi.name} Tithi`,
+    alternateName: tithi.nameHindi,
+  },
+  inLanguage: ['en', 'hi'],
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is ${tithi.name} Tithi?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${tithi.name} (${tithi.nameHindi}) is the ${tithi.number}${tithi.number === 1 ? 'st' : tithi.number === 2 ? 'nd' : tithi.number === 3 ? 'rd' : 'th'} lunar day (tithi) in Hindu Panchang. ${tithi.description}`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `Which deity rules ${tithi.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${tithi.name} is ruled by ${tithi.deity} (${tithi.deityHindi}). The nature of this tithi is ${tithi.nature} (${tithi.natureHindi}), associated with the ${tithi.element} element.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What activities are good on ${tithi.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${tithi.name} is ${tithi.auspicious ? 'auspicious' : 'generally not recommended'} for new activities. Good activities include: ${tithi.goodFor.join(', ')}. ${tithi.avoid.length > 0 ? `Avoid: ${tithi.avoid.join(', ')}.` : ''}`,
+      },
+    },
+  ],
+};
+
+// Get adjacent tithis for navigation
+const currentIndex = tithis.findIndex(t => t.id === tithi.id);
+const prevTithi = tithis[currentIndex - 1] || tithis[tithis.length - 1];
+const nextTithi = tithis[currentIndex + 1] || tithis[0];
+
+// Nature colors
+const natureColors: Record<string, string> = {
+  'Nanda (Joy)': 'bg-green-500/10 text-green-600 border-green-500/20',
+  'Bhadra (Auspicious)': 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  'Jaya (Victory)': 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  'Rikta (Empty)': 'bg-red-500/10 text-red-600 border-red-500/20',
+  'Purna (Full)': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  'Purna (Full/Complete)': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  'Nanda (Joy for ancestors)': 'bg-slate-500/10 text-slate-600 border-slate-500/20',
+};
+
+// Element icons
+const elementIcons: Record<string, string> = {
+  Fire: '🔥',
+  Earth: '🌍',
+  Water: '💧',
+};
+
+// Special icons for Purnima and Amavasya
+const specialIcons: Record<string, string> = {
+  Purnima: '🌕',
+  Amavasya: '🌑',
+};
+
+// Ordinal suffix helper
+const getOrdinal = (n: number) => {
+  if (n === 1) return 'st';
+  if (n === 2) return 'nd';
+  if (n === 3) return 'rd';
+  return 'th';
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header>
+      <div class="flex items-start gap-4">
+        <div class={`text-center p-4 rounded-xl border ${tithi.auspicious ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20'}`}>
+          {specialIcons[tithi.name] ? (
+            <span class="text-4xl">{specialIcons[tithi.name]}</span>
+          ) : (
+            <span class="text-4xl font-bold text-primary">{tithi.number}</span>
+          )}
+          <p class="text-xs mt-1 opacity-60">
+            {tithi.auspicious ? 'Auspicious' : 'Inauspicious'}
+          </p>
+        </div>
+        <div>
+          <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+            {tithi.nameHindi}
+          </h1>
+          <p class="text-xl text-neutral/70 mt-1">
+            {tithi.name} - {tithi.meaning}
+          </p>
+          <p class="text-sm text-neutral/50 mt-2">
+            {tithi.number}{getOrdinal(tithi.number)} Lunar Day • {tithi.element} Element
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class={`card border ${natureColors[tithi.nature] || 'bg-base-200 border-base-300'}`}>
+        <div class="card-body p-4 md:p-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Deity</p>
+              <p class="font-semibold">{tithi.deity}</p>
+              <p class="text-sm opacity-70">{tithi.deityHindi}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Nature</p>
+              <p class="font-semibold">{tithi.nature.split(' ')[0]}</p>
+              <p class="text-sm opacity-70">{tithi.natureHindi}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Element</p>
+              <p class="font-semibold">{elementIcons[tithi.element]} {tithi.element}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Auspiciousness</p>
+              <p class={`font-semibold ${tithi.auspicious ? 'text-green-600' : 'text-red-600'}`}>
+                {tithi.auspicious ? '✓ Auspicious' : '✗ Inauspicious'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About This Tithi -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        About {tithi.name}
+      </h2>
+      <div class="prose prose-neutral max-w-none">
+        <p class="text-lg leading-relaxed">
+          <strong>{tithi.name}</strong> ({tithi.nameHindi}) is the {tithi.number}{getOrdinal(tithi.number)} lunar day
+          in the Hindu calendar. The name translates to "<em>{tithi.meaning}</em>" ({tithi.meaningHindi}).
+        </p>
+        <p class="text-neutral/70 mt-3">
+          {tithi.description}
+        </p>
+      </div>
+    </section>
+
+    <!-- Activities -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Activities for {tithi.name}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Good For -->
+        <div class="card bg-green-500/5 border border-green-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-green-600 mb-3 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              Recommended Activities
+            </h3>
+            <ul class="space-y-2">
+              {tithi.goodFor.map((activity) => (
+                <li class="flex items-start gap-2 text-sm">
+                  <span class="text-green-500 mt-0.5">•</span>
+                  <span class="text-neutral/70">{activity}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Avoid -->
+        <div class="card bg-red-500/5 border border-red-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-red-600 mb-3 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+              Things to Avoid
+            </h3>
+            <ul class="space-y-2">
+              {tithi.avoid.length > 0 ? (
+                tithi.avoid.map((activity) => (
+                  <li class="flex items-start gap-2 text-sm">
+                    <span class="text-red-500 mt-0.5">•</span>
+                    <span class="text-neutral/70">{activity}</span>
+                  </li>
+                ))
+              ) : (
+                <li class="text-sm text-neutral/50">No specific restrictions</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Festivals -->
+    {tithi.festivals.length > 0 && (
+      <section>
+        <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+          Festivals on {tithi.name}
+        </h2>
+        <div class="card bg-base-200/50">
+          <div class="card-body p-4">
+            <div class="flex flex-wrap gap-2">
+              {tithi.festivals.map((festival) => (
+                <span class="badge badge-lg badge-secondary badge-outline">{festival}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Detailed Information -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Detailed Information
+      </h2>
+      <div class="card bg-base-200/50">
+        <div class="card-body p-4">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <td class="text-neutral/60 w-40">Tithi Number</td>
+                <td class="font-medium">{tithi.number} of 15</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Sanskrit Name</td>
+                <td class="font-medium">{tithi.nameHindi}</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Meaning</td>
+                <td class="font-medium">{tithi.meaning} ({tithi.meaningHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Ruling Deity</td>
+                <td class="font-medium">{tithi.deity} ({tithi.deityHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Nature (Svabhava)</td>
+                <td class="font-medium">{tithi.nature} ({tithi.natureHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Element</td>
+                <td class="font-medium">{elementIcons[tithi.element]} {tithi.element}</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Auspiciousness</td>
+                <td class={`font-medium ${tithi.auspicious ? 'text-green-600' : 'text-red-600'}`}>
+                  {tithi.auspicious ? 'Generally Auspicious' : 'Generally Inauspicious'}
+                </td>
+              </tr>
+              {tithi.paksha && (
+                <tr>
+                  <td class="text-neutral/60">Paksha Position</td>
+                  <td class="font-medium">End of {tithi.paksha} Paksha</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is {tithi.name} Tithi?
+          </div>
+          <div class="collapse-content">
+            <p>{tithi.name} ({tithi.nameHindi}) is the {tithi.number}{getOrdinal(tithi.number)} lunar day (tithi) in Hindu Panchang. {tithi.description}</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Which deity rules {tithi.name}?
+          </div>
+          <div class="collapse-content">
+            <p>{tithi.name} is ruled by {tithi.deity} ({tithi.deityHindi}). The nature of this tithi is {tithi.nature} ({tithi.natureHindi}), associated with the {tithi.element} element.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What activities are good on {tithi.name}?
+          </div>
+          <div class="collapse-content">
+            <p>{tithi.name} is {tithi.auspicious ? 'auspicious' : 'generally not recommended'} for new activities. Good activities include: {tithi.goodFor.join(', ')}. {tithi.avoid.length > 0 ? `Avoid: ${tithi.avoid.join(', ')}.` : ''}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="flex flex-wrap justify-between gap-4 pt-4">
+      <a
+        href={`/tithi/${prevTithi.slug}`}
+        class="btn btn-outline min-h-12"
+      >
+        ← {prevTithi.nameHindi}
+      </a>
+      <a href="/tithi" class="btn btn-ghost min-h-12">
+        All Tithis
+      </a>
+      <a
+        href={`/tithi/${nextTithi.slug}`}
+        class="btn btn-outline min-h-12"
+      >
+        {nextTithi.nameHindi} →
+      </a>
+    </div>
+  </div>
+</Layout>
