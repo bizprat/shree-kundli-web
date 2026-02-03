@@ -1,0 +1,60 @@
+---
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Comprehensive Vedic Astrology & Panchang" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="spiritual" class="scroll-smooth">
+  <head>
+    <SEO title={title} description={description} />
+  </head>
+  <body class="min-h-screen bg-base-100 font-body text-neutral-900 antialiased selection:bg-secondary selection:text-white flex flex-col">
+    
+    <!-- Navbar (Placeholder) -->
+    <header class="navbar bg-base-100/90 backdrop-blur-md sticky top-0 z-50 border-b border-base-200/50">
+       <div class="flex-1">
+         <a href="/" class="btn btn-ghost font-heading text-xl text-primary font-bold">Shree Kundli</a>
+       </div>
+       <div class="flex-none hidden md:block">
+         <ul class="menu menu-horizontal px-1 font-medium">
+           <li><a>Panchang</a></li>
+           <li><a>Kundli</a></li>
+           <li><a>Festivals</a></li>
+         </ul>
+       </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <slot />
+    </main>
+
+    <!-- Footer (Placeholder) -->
+    <footer class="footer items-center p-4 bg-primary text-primary-content">
+      <aside class="items-center grid-flow-col">
+         <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
+      </aside> 
+    </footer>
+
+    <!-- Bottom Nav (Mobile Only) -->
+    <div class="btm-nav md:hidden bg-base-100/90 backdrop-blur-md border-t border-base-200 z-50">
+        <button class="text-primary active">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+        </button>
+        <button class="text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+        </button>
+        <button class="text-primary">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        </button>
+    </div>
+
+  </body>
+</html>

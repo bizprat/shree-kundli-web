@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Inter:wght@400;600&family=Outfit:wght@400;600&family=Playfair+Display:ital,wght@0,400;1,400&family=Tiro+Devanagari+Hindi&display=swap');
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --font-heading: "Cinzel Decorative", "Playfair Display", serif;
+  --font-body: "Outfit", "Inter", sans-serif;
+}
+
+/* Spiritual Theme Definition */
+/* DaisyUI 5 reads CSS variables. We define them on the data-theme attribute scope */
+@layer base {
+  [data-theme="spiritual"] {
+    /* Color Palette - Using OKLCH for best interpolation or Hex */
+    --color-primary: #1E1B4B;
+    --color-primary-content: #ffffff;
+
+    --color-secondary: #FFB703;
+    --color-secondary-content: #1E1B4B;
+
+    --color-accent: #D97706;
+    --color-accent-content: #ffffff;
+
+    --color-neutral: #3D4451;
+    --color-neutral-content: #ffffff;
+
+    --color-base-100: #FDFCF6;
+    /* Warm Cream */
+    --color-base-200: #F5F4EF;
+    --color-base-300: #EBEAE5;
+    --color-base-content: #1E1B4B;
+
+    --color-info: #3ABFF8;
+    --color-success: #36D399;
+    --color-warning: #FBBD23;
+    --color-error: #F87272;
+
+    /* Rounded corners */
+    --radius-box: 1rem;
+    --radius-btn: 9999px;
+  }
+}
+
+/* Utilities */
+@utility text-shadow-glow {
+  text-shadow: 0 0 10px rgba(255, 183, 3, 0.3);
+}
