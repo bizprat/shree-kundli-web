@@ -107,7 +107,7 @@ const websiteSchema = {
             </div>
 
             <a
-              href={`/panchang/${defaultCity.slug}/today`}
+              href={`/panchang/${defaultCity.slug}`}
               class="btn btn-secondary min-h-12"
             >
               View Full Panchang →
@@ -197,6 +197,70 @@ const websiteSchema = {
           icon="star"
           variant="secondary"
         />
+
+        <FeatureCard
+          title="Kundli Milan"
+          titleHindi="कुंडली मिलान"
+          description="Check marriage compatibility with Guna Milan scoring"
+          href="/kundli-milan"
+          icon="sun"
+        />
+
+        <FeatureCard
+          title="Choghadiya"
+          titleHindi="चौघड़िया"
+          description="Auspicious time periods for daily activities"
+          href="/choghadiya"
+          icon="clock"
+        />
+      </div>
+    </section>
+
+    <!-- Panchang Elements -->
+    <section aria-label="Panchang Elements">
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Panchang Elements - पंचांग तत्व
+      </h2>
+      <p class="text-neutral/60 mb-6">
+        Learn about the five elements that make up the Hindu Panchang
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <a href="/tithi" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">🌙</span>
+            <p class="font-semibold text-primary">Tithi</p>
+            <p class="text-xs text-neutral/60">तिथि - Lunar Day</p>
+          </div>
+        </a>
+        <a href="/nakshatra" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">⭐</span>
+            <p class="font-semibold text-primary">Nakshatra</p>
+            <p class="text-xs text-neutral/60">नक्षत्र - Lunar Mansion</p>
+          </div>
+        </a>
+        <a href="/yoga" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">☯️</span>
+            <p class="font-semibold text-primary">Yoga</p>
+            <p class="text-xs text-neutral/60">योग - Sun-Moon Yoga</p>
+          </div>
+        </a>
+        <a href="/karana" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">📿</span>
+            <p class="font-semibold text-primary">Karana</p>
+            <p class="text-xs text-neutral/60">करण - Half Tithi</p>
+          </div>
+        </a>
+        <a href="/panchang" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
+          <div class="card-body p-4 text-center">
+            <span class="text-3xl mb-2">📅</span>
+            <p class="font-semibold text-primary">Vara</p>
+            <p class="text-xs text-neutral/60">वार - Day of Week</p>
+          </div>
+        </a>
       </div>
     </section>
 
@@ -223,12 +287,12 @@ const websiteSchema = {
     <section class="text-center py-8 border-t border-base-200">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
         <div>
-          <p class="text-3xl font-heading font-bold text-primary">500+</p>
+          <p class="text-3xl font-heading font-bold text-primary">50+</p>
           <p class="text-sm text-neutral/60">Cities Covered</p>
         </div>
         <div>
-          <p class="text-3xl font-heading font-bold text-primary">50+</p>
-          <p class="text-sm text-neutral/60">Festivals</p>
+          <p class="text-3xl font-heading font-bold text-primary">27</p>
+          <p class="text-sm text-neutral/60">Nakshatras</p>
         </div>
         <div>
           <p class="text-3xl font-heading font-bold text-primary">12</p>
