@@ -1,0 +1,372 @@
+---
+/**
+ * City Choghadiya Page
+ *
+ * Today's Choghadiya for a specific city with:
+ * - Day and Night choghadiya tables
+ * - Current period highlight
+ * - Dataset schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import CitySelector from '../../components/CitySelector.astro';
+import type { BreadcrumbItem, City } from '../../lib/types';
+
+// Load data
+import citiesData from '../../data/cities-sample.json';
+const cities = citiesData as City[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const citiesModule = await import('../../data/cities-sample.json');
+  const cities = citiesModule.default as City[];
+
+  return cities.map((city) => ({
+    params: { city: city.slug },
+    props: { city },
+  }));
+}
+
+// Get city from props
+const { city } = Astro.props as { city: City };
+
+// Today's date
+const today = new Date();
+const todayFormatted = today.toLocaleDateString('en-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const todayHindi = today.toLocaleDateString('hi-IN', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+const todayIso = today.toISOString().split('T')[0];
+const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
+
+// Choghadiya type definitions
+interface ChoghadiyaPeriod {
+  name: string;
+  nameHindi: string;
+  quality: 'good' | 'neutral' | 'bad';
+  start: string;
+  end: string;
+}
+
+// Mock Choghadiya data (will be replaced with API data)
+const dayChoghadiya: ChoghadiyaPeriod[] = [
+  { name: 'Udveg', nameHindi: 'उद्वेग', quality: 'bad', start: '06:45 AM', end: '08:15 AM' },
+  { name: 'Char', nameHindi: 'चर', quality: 'neutral', start: '08:15 AM', end: '09:45 AM' },
+  { name: 'Labh', nameHindi: 'लाभ', quality: 'good', start: '09:45 AM', end: '11:15 AM' },
+  { name: 'Amrit', nameHindi: 'अमृत', quality: 'good', start: '11:15 AM', end: '12:45 PM' },
+  { name: 'Kaal', nameHindi: 'काल', quality: 'bad', start: '12:45 PM', end: '02:15 PM' },
+  { name: 'Shubh', nameHindi: 'शुभ', quality: 'good', start: '02:15 PM', end: '03:45 PM' },
+  { name: 'Rog', nameHindi: 'रोग', quality: 'bad', start: '03:45 PM', end: '05:15 PM' },
+  { name: 'Udveg', nameHindi: 'उद्वेग', quality: 'bad', start: '05:15 PM', end: '06:45 PM' },
+];
+
+const nightChoghadiya: ChoghadiyaPeriod[] = [
+  { name: 'Shubh', nameHindi: 'शुभ', quality: 'good', start: '06:45 PM', end: '08:15 PM' },
+  { name: 'Amrit', nameHindi: 'अमृत', quality: 'good', start: '08:15 PM', end: '09:45 PM' },
+  { name: 'Char', nameHindi: 'चर', quality: 'neutral', start: '09:45 PM', end: '11:15 PM' },
+  { name: 'Rog', nameHindi: 'रोग', quality: 'bad', start: '11:15 PM', end: '12:45 AM' },
+  { name: 'Kaal', nameHindi: 'काल', quality: 'bad', start: '12:45 AM', end: '02:15 AM' },
+  { name: 'Labh', nameHindi: 'लाभ', quality: 'good', start: '02:15 AM', end: '03:45 AM' },
+  { name: 'Udveg', nameHindi: 'उद्वेग', quality: 'bad', start: '03:45 AM', end: '05:15 AM' },
+  { name: 'Shubh', nameHindi: 'शुभ', quality: 'good', start: '05:15 AM', end: '06:45 AM' },
+];
+
+// Quality colors
+const qualityStyles: Record<string, { bg: string; text: string; badge: string }> = {
+  good: { bg: 'bg-success/10', text: 'text-success', badge: 'badge-success' },
+  neutral: { bg: 'bg-info/10', text: 'text-info', badge: 'badge-info' },
+  bad: { bg: 'bg-error/10', text: 'text-error', badge: 'badge-error' },
+};
+
+// Page meta
+const title = `Choghadiya Today in ${city.name} - ${todayFormatted} | चौघड़िया ${city.nameHindi} | Shree Kundli`;
+const description = `Today's Choghadiya for ${city.name} (${todayFormatted}). Day and night choghadiya timings with Amrit, Shubh, Labh, Char, Kaal, Rog, Udveg periods. ${city.nameHindi} चौघड़िया।`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Choghadiya', url: '/choghadiya' },
+  { name: city.name },
+];
+
+// Dataset schema for AI
+const datasetSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: `Choghadiya for ${city.name} - ${todayFormatted}`,
+  alternateName: `${city.nameHindi} चौघड़िया - ${todayHindi}`,
+  description: `Day and night Choghadiya timings for ${city.name} on ${todayFormatted}.`,
+  url: Astro.url.toString(),
+  datePublished: todayIso,
+  dateModified: todayIso,
+  temporalCoverage: todayIso,
+  spatialCoverage: {
+    '@type': 'Place',
+    name: `${city.name}, ${city.state}, India`,
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: city.latitude,
+      longitude: city.longitude,
+    },
+  },
+  variableMeasured: dayChoghadiya.map(c => ({
+    '@type': 'PropertyValue',
+    name: `Day ${c.name}`,
+    value: `${c.start} - ${c.end}`,
+  })),
+  creator: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is Choghadiya today in ${city.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `Today's Choghadiya in ${city.name} shows 8 day periods and 8 night periods. Amrit (${dayChoghadiya.find(c => c.name === 'Amrit')?.start || ''}) and Shubh periods are most auspicious for important work.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What is the best Choghadiya time today in ${city.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `The best Choghadiya today in ${city.name} is Amrit (${dayChoghadiya.find(c => c.name === 'Amrit')?.start || ''} - ${dayChoghadiya.find(c => c.name === 'Amrit')?.end || ''}), which is auspicious for all important activities.`,
+      },
+    },
+  ],
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(datasetSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header with City Selector -->
+    <header class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      <div>
+        <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+          Choghadiya in {city.name}
+        </h1>
+        <p class="text-lg text-neutral/70 mt-1">
+          {city.nameHindi} चौघड़िया • {city.state}
+        </p>
+        <p class="text-sm text-neutral/50 mt-1">
+          <time datetime={todayIso}>{todayFormatted}</time>
+        </p>
+      </div>
+
+      <div class="w-full md:w-64">
+        <CitySelector
+          cities={cities}
+          currentCity={city}
+          baseUrl="/choghadiya"
+        />
+      </div>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo" aria-label="Today's Best Choghadiya">
+      <div class="card bg-success/10 border border-success/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-success font-semibold mb-2">
+            Best Choghadiya Today
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-neutral/60">Amrit (Most Auspicious)</p>
+              <p class="text-2xl font-bold text-success tabular-nums">
+                {dayChoghadiya.find(c => c.name === 'Amrit')?.start} - {dayChoghadiya.find(c => c.name === 'Amrit')?.end}
+              </p>
+            </div>
+            <div>
+              <p class="text-sm text-neutral/60">Shubh (Auspicious)</p>
+              <p class="text-2xl font-bold text-success tabular-nums">
+                {dayChoghadiya.find(c => c.name === 'Shubh')?.start} - {dayChoghadiya.find(c => c.name === 'Shubh')?.end}
+              </p>
+            </div>
+          </div>
+          <p class="text-sm text-neutral/60 mt-3">
+            Ideal for important work, new beginnings, and auspicious activities
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Day Choghadiya -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Day Choghadiya (दिन का चौघड़िया)
+      </h2>
+      <p class="text-sm text-neutral/60 mb-4">From sunrise to sunset</p>
+
+      <div class="card bg-base-100 border border-base-200">
+        <div class="card-body p-0">
+          <div class="overflow-x-auto">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Name</th>
+                  <th>Quality</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dayChoghadiya.map((period, index) => (
+                  <tr class={qualityStyles[period.quality].bg}>
+                    <td class="font-medium">{index + 1}</td>
+                    <td>
+                      <span class={qualityStyles[period.quality].text + ' font-semibold'}>
+                        {period.name}
+                      </span>
+                      <span class="text-neutral/60 text-sm ml-1">({period.nameHindi})</span>
+                    </td>
+                    <td>
+                      <span class={`badge badge-sm ${qualityStyles[period.quality].badge}`}>
+                        {period.quality === 'good' ? 'Good' : period.quality === 'neutral' ? 'OK' : 'Avoid'}
+                      </span>
+                    </td>
+                    <td class="tabular-nums font-medium">
+                      {period.start} - {period.end}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Night Choghadiya -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Night Choghadiya (रात का चौघड़िया)
+      </h2>
+      <p class="text-sm text-neutral/60 mb-4">From sunset to next sunrise</p>
+
+      <div class="card bg-base-100 border border-base-200">
+        <div class="card-body p-0">
+          <div class="overflow-x-auto">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Name</th>
+                  <th>Quality</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {nightChoghadiya.map((period, index) => (
+                  <tr class={qualityStyles[period.quality].bg}>
+                    <td class="font-medium">{index + 1}</td>
+                    <td>
+                      <span class={qualityStyles[period.quality].text + ' font-semibold'}>
+                        {period.name}
+                      </span>
+                      <span class="text-neutral/60 text-sm ml-1">({period.nameHindi})</span>
+                    </td>
+                    <td>
+                      <span class={`badge badge-sm ${qualityStyles[period.quality].badge}`}>
+                        {period.quality === 'good' ? 'Good' : period.quality === 'neutral' ? 'OK' : 'Avoid'}
+                      </span>
+                    </td>
+                    <td class="tabular-nums font-medium">
+                      {period.start} - {period.end}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Legend -->
+    <section class="p-4 bg-base-200/50 rounded-lg">
+      <h3 class="font-semibold text-primary mb-3">Choghadiya Quality Guide</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="badge badge-success">Good</span>
+          <span class="text-neutral/70">Amrit, Shubh, Labh - Auspicious</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-info">OK</span>
+          <span class="text-neutral/70">Char - Good for travel only</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-error">Avoid</span>
+          <span class="text-neutral/70">Kaal, Rog, Udveg - Inauspicious</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location Info -->
+    <section class="text-sm text-neutral/50">
+      <p>
+        Timings calculated for {city.name}, {city.state} (Lat: {city.latitude.toFixed(4)}°, Long: {city.longitude.toFixed(4)}°)
+        based on local sunrise and sunset times.
+      </p>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Choghadiya today in {city.name}?
+          </div>
+          <div class="collapse-content">
+            <p>Today's Choghadiya in {city.name} shows 8 day periods and 8 night periods. Amrit ({dayChoghadiya.find(c => c.name === 'Amrit')?.start}) and Shubh periods are most auspicious for important work.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What is the best Choghadiya time today?
+          </div>
+          <div class="collapse-content">
+            <p>The best Choghadiya today in {city.name} is Amrit ({dayChoghadiya.find(c => c.name === 'Amrit')?.start} - {dayChoghadiya.find(c => c.name === 'Amrit')?.end}), which is auspicious for all important activities.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="flex flex-wrap gap-3 pt-4">
+      <a href="/choghadiya" class="btn btn-outline min-h-12">
+        ← All Cities
+      </a>
+      <a href={`/rahu-kaal/${city.slug}`} class="btn btn-ghost min-h-12">
+        {city.name} Rahu Kaal →
+      </a>
+    </div>
+  </div>
+</Layout>

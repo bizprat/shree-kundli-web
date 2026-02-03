@@ -1,0 +1,365 @@
+---
+/**
+ * Individual Nakshatra Page
+ *
+ * Detailed page for each nakshatra with:
+ * - Characteristics and qualities
+ * - Ruling planet and deity
+ * - Compatibility information
+ * - FAQ schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load nakshatras data
+import nakshatrasData from '../../data/nakshatras.json';
+
+interface Nakshatra {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  symbol: string;
+  symbolHindi: string;
+  deity: string;
+  deityHindi: string;
+  rulingPlanet: string;
+  rulingPlanetHindi: string;
+  nature: string;
+  gana: string;
+  animal: string;
+  element: string;
+  qualities: string[];
+  degree: string;
+}
+
+const nakshatras = nakshatrasData as Nakshatra[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const nakshatrasModule = await import('../../data/nakshatras.json');
+  const nakshatras = nakshatrasModule.default as Nakshatra[];
+
+  return nakshatras.map((nakshatra) => ({
+    params: { nakshatra: nakshatra.slug },
+    props: { nakshatra },
+  }));
+}
+
+// Get nakshatra from props
+const { nakshatra } = Astro.props as { nakshatra: Nakshatra };
+
+// Page meta
+const title = `${nakshatra.name} Nakshatra (${nakshatra.nameHindi}) - Characteristics & Meaning | Shree Kundli`;
+const description = `${nakshatra.name} (${nakshatra.nameHindi}) nakshatra - ruled by ${nakshatra.rulingPlanet}, deity ${nakshatra.deity}. Learn about characteristics, qualities, and compatibility. ${nakshatra.degree}.`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Nakshatra', url: '/nakshatra' },
+  { name: `${nakshatra.nameHindi} (${nakshatra.name})` },
+];
+
+// Article schema
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${nakshatra.name} Nakshatra - ${nakshatra.nameHindi}`,
+  description: description,
+  author: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+  about: {
+    '@type': 'Thing',
+    name: `${nakshatra.name} Nakshatra`,
+    alternateName: nakshatra.nameHindi,
+  },
+  inLanguage: ['en', 'hi'],
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is ${nakshatra.name} Nakshatra?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${nakshatra.name} (${nakshatra.nameHindi}) is the ${nakshatra.id}${nakshatra.id === 1 ? 'st' : nakshatra.id === 2 ? 'nd' : nakshatra.id === 3 ? 'rd' : 'th'} nakshatra in Vedic astrology. It is ruled by ${nakshatra.rulingPlanet} and its presiding deity is ${nakshatra.deity}. It spans ${nakshatra.degree}.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What are the characteristics of ${nakshatra.name} nakshatra natives?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `People born under ${nakshatra.name} nakshatra typically exhibit these qualities: ${nakshatra.qualities.join(', ')}. They belong to ${nakshatra.gana} gana and have ${nakshatra.nature} nature.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `Which planet rules ${nakshatra.name} nakshatra?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${nakshatra.name} nakshatra is ruled by ${nakshatra.rulingPlanet} (${nakshatra.rulingPlanetHindi}). The deity associated with this nakshatra is ${nakshatra.deity} (${nakshatra.deityHindi}).`,
+      },
+    },
+  ],
+};
+
+// Get adjacent nakshatras for navigation
+const currentIndex = nakshatras.findIndex(n => n.id === nakshatra.id);
+const prevNakshatra = nakshatras[currentIndex - 1] || nakshatras[nakshatras.length - 1];
+const nextNakshatra = nakshatras[currentIndex + 1] || nakshatras[0];
+
+// Planet colors
+const planetColors: Record<string, string> = {
+  Sun: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
+  Moon: 'bg-slate-200/50 text-slate-600 border-slate-300/50',
+  Mars: 'bg-red-500/10 text-red-600 border-red-500/20',
+  Mercury: 'bg-green-500/10 text-green-600 border-green-500/20',
+  Jupiter: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
+  Venus: 'bg-pink-500/10 text-pink-600 border-pink-500/20',
+  Saturn: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  Rahu: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  Ketu: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+};
+
+// Element icons
+const elementIcons: Record<string, string> = {
+  Fire: '🔥',
+  Earth: '🌍',
+  Air: '💨',
+  Water: '💧',
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header>
+      <div class="flex items-start gap-4">
+        <div class={`text-center p-4 rounded-xl border ${planetColors[nakshatra.rulingPlanet]}`}>
+          <span class="text-4xl">{nakshatra.rulingPlanetHindi}</span>
+          <p class="text-xs mt-1 opacity-60">#{nakshatra.id}</p>
+        </div>
+        <div>
+          <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+            {nakshatra.nameHindi}
+          </h1>
+          <p class="text-xl text-neutral/70 mt-1">
+            {nakshatra.name} Nakshatra
+          </p>
+          <p class="text-sm text-neutral/50 mt-2">
+            {nakshatra.degree}
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class={`card border ${planetColors[nakshatra.rulingPlanet]}`}>
+        <div class="card-body p-4 md:p-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Ruling Planet</p>
+              <p class="font-semibold">{nakshatra.rulingPlanet}</p>
+              <p class="text-sm opacity-70">{nakshatra.rulingPlanetHindi}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Deity</p>
+              <p class="font-semibold">{nakshatra.deity}</p>
+              <p class="text-sm opacity-70">{nakshatra.deityHindi}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Symbol</p>
+              <p class="font-semibold">{nakshatra.symbol}</p>
+              <p class="text-sm opacity-70">{nakshatra.symbolHindi}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Element</p>
+              <p class="font-semibold">{elementIcons[nakshatra.element]} {nakshatra.element}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Characteristics -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Characteristics
+      </h2>
+      <div class="card bg-base-100 border border-base-200">
+        <div class="card-body p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <p class="text-sm text-neutral/50 mb-1">Nature</p>
+                <p class="font-medium">{nakshatra.nature}</p>
+              </div>
+              <div>
+                <p class="text-sm text-neutral/50 mb-1">Gana (Temperament)</p>
+                <p class="font-medium">{nakshatra.gana}</p>
+              </div>
+              <div>
+                <p class="text-sm text-neutral/50 mb-1">Animal Symbol</p>
+                <p class="font-medium">{nakshatra.animal}</p>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm text-neutral/50 mb-2">Key Qualities</p>
+              <div class="flex flex-wrap gap-2">
+                {nakshatra.qualities.map((quality) => (
+                  <span class="badge badge-outline">{quality}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About This Nakshatra -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        About {nakshatra.name} Nakshatra
+      </h2>
+      <div class="prose prose-neutral max-w-none">
+        <p class="text-lg leading-relaxed">
+          <strong>{nakshatra.name}</strong> ({nakshatra.nameHindi}) is the {nakshatra.id}{nakshatra.id === 1 ? 'st' : nakshatra.id === 2 ? 'nd' : nakshatra.id === 3 ? 'rd' : 'th'} nakshatra
+          in Vedic astrology, spanning {nakshatra.degree}. It is ruled by {nakshatra.rulingPlanet} ({nakshatra.rulingPlanetHindi})
+          and its presiding deity is {nakshatra.deity} ({nakshatra.deityHindi}).
+        </p>
+        <p class="text-neutral/70 mt-3">
+          The symbol of this nakshatra is {nakshatra.symbol} ({nakshatra.symbolHindi}), representing its core nature.
+          People born under this nakshatra belong to {nakshatra.gana} gana and have {nakshatra.nature} nature.
+          The animal associated with this nakshatra is the {nakshatra.animal}.
+        </p>
+      </div>
+    </section>
+
+    <!-- Detailed Information -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Detailed Information
+      </h2>
+      <div class="card bg-base-200/50">
+        <div class="card-body p-4">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <td class="text-neutral/60 w-40">Nakshatra Number</td>
+                <td class="font-medium">{nakshatra.id} of 27</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Sanskrit Name</td>
+                <td class="font-medium">{nakshatra.nameHindi}</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Zodiac Range</td>
+                <td class="font-medium">{nakshatra.degree}</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Ruling Planet</td>
+                <td class="font-medium">{nakshatra.rulingPlanet} ({nakshatra.rulingPlanetHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Presiding Deity</td>
+                <td class="font-medium">{nakshatra.deity} ({nakshatra.deityHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Symbol</td>
+                <td class="font-medium">{nakshatra.symbol} ({nakshatra.symbolHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Gana</td>
+                <td class="font-medium">{nakshatra.gana}</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Nature</td>
+                <td class="font-medium">{nakshatra.nature}</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Element</td>
+                <td class="font-medium">{nakshatra.element}</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Animal Symbol</td>
+                <td class="font-medium">{nakshatra.animal}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is {nakshatra.name} Nakshatra?
+          </div>
+          <div class="collapse-content">
+            <p>{nakshatra.name} ({nakshatra.nameHindi}) is the {nakshatra.id}{nakshatra.id === 1 ? 'st' : nakshatra.id === 2 ? 'nd' : nakshatra.id === 3 ? 'rd' : 'th'} nakshatra in Vedic astrology. It is ruled by {nakshatra.rulingPlanet} and its presiding deity is {nakshatra.deity}. It spans {nakshatra.degree}.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What are the characteristics of {nakshatra.name} nakshatra natives?
+          </div>
+          <div class="collapse-content">
+            <p>People born under {nakshatra.name} nakshatra typically exhibit these qualities: {nakshatra.qualities.join(', ')}. They belong to {nakshatra.gana} gana and have {nakshatra.nature} nature.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Which planet rules {nakshatra.name} nakshatra?
+          </div>
+          <div class="collapse-content">
+            <p>{nakshatra.name} nakshatra is ruled by {nakshatra.rulingPlanet} ({nakshatra.rulingPlanetHindi}). The deity associated with this nakshatra is {nakshatra.deity} ({nakshatra.deityHindi}).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="flex flex-wrap justify-between gap-4 pt-4">
+      <a
+        href={`/nakshatra/${prevNakshatra.slug}`}
+        class="btn btn-outline min-h-12"
+      >
+        ← {prevNakshatra.nameHindi}
+      </a>
+      <a href="/nakshatra" class="btn btn-ghost min-h-12">
+        All Nakshatras
+      </a>
+      <a
+        href={`/nakshatra/${nextNakshatra.slug}`}
+        class="btn btn-outline min-h-12"
+      >
+        {nextNakshatra.nameHindi} →
+      </a>
+    </div>
+  </div>
+</Layout>

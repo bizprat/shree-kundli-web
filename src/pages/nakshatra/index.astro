@@ -1,0 +1,262 @@
+---
+/**
+ * Nakshatra Hub Page
+ *
+ * Overview of all 27 nakshatras with:
+ * - Quick reference grid
+ * - Grouped by element
+ * - JSON-LD ItemList schema for SEO
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load nakshatras data
+import nakshatrasData from '../../data/nakshatras.json';
+
+interface Nakshatra {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  symbol: string;
+  symbolHindi: string;
+  deity: string;
+  deityHindi: string;
+  rulingPlanet: string;
+  rulingPlanetHindi: string;
+  nature: string;
+  gana: string;
+  animal: string;
+  element: string;
+  qualities: string[];
+  degree: string;
+}
+
+const nakshatras = nakshatrasData as Nakshatra[];
+
+// Group by ruling planet
+const nakshatrasByPlanet = nakshatras.reduce((acc, nak) => {
+  if (!acc[nak.rulingPlanet]) acc[nak.rulingPlanet] = [];
+  acc[nak.rulingPlanet].push(nak);
+  return acc;
+}, {} as Record<string, Nakshatra[]>);
+
+// Page meta
+const title = '27 Nakshatras - Complete Guide to Lunar Mansions | नक्षत्र | Shree Kundli';
+const description = 'Learn about all 27 Nakshatras (Lunar Mansions) in Vedic Astrology. Ashwini to Revati - characteristics, ruling planets, deities, and meanings. नक्षत्र की पूरी जानकारी।';
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Nakshatra' },
+];
+
+// Schema for nakshatra list
+const nakshatraListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '27 Nakshatras in Vedic Astrology',
+  description: 'Complete list of 27 Nakshatras (Lunar Mansions) used in Vedic Astrology',
+  numberOfItems: 27,
+  itemListElement: nakshatras.map((nak, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Thing',
+      name: nak.name,
+      alternateName: nak.nameHindi,
+      description: `${nak.name} nakshatra ruled by ${nak.rulingPlanet}. Deity: ${nak.deity}.`,
+      url: `/nakshatra/${nak.slug}`,
+    },
+  })),
+};
+
+// Planet colors
+const planetColors: Record<string, string> = {
+  Sun: 'bg-orange-500/10 border-orange-500/20 text-orange-600',
+  Moon: 'bg-slate-200/50 border-slate-300/50 text-slate-600',
+  Mars: 'bg-red-500/10 border-red-500/20 text-red-600',
+  Mercury: 'bg-green-500/10 border-green-500/20 text-green-600',
+  Jupiter: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-600',
+  Venus: 'bg-pink-500/10 border-pink-500/20 text-pink-600',
+  Saturn: 'bg-blue-500/10 border-blue-500/20 text-blue-600',
+  Rahu: 'bg-purple-500/10 border-purple-500/20 text-purple-600',
+  Ketu: 'bg-amber-500/10 border-amber-500/20 text-amber-600',
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(nakshatraListSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        27 Nakshatras - नक्षत्र
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        Complete guide to Lunar Mansions in Vedic Astrology
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+            What are Nakshatras?
+          </h2>
+          <p class="text-neutral/70">
+            Nakshatras are 27 lunar mansions or constellations used in Vedic astrology.
+            The Moon travels through one nakshatra approximately every day, making them
+            crucial for muhurat selection, birth chart analysis, and daily predictions.
+            Each nakshatra spans 13°20' of the zodiac and has its own ruling planet, deity,
+            and characteristics.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- All Nakshatras Grid -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        All 27 Nakshatras
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {nakshatras.map((nak) => (
+          <a
+            href={`/nakshatra/${nak.slug}`}
+            class={`card border transition-all hover:shadow-md ${planetColors[nak.rulingPlanet]}`}
+          >
+            <div class="card-body p-4">
+              <div class="flex items-start justify-between">
+                <div>
+                  <span class="text-xs text-neutral/50">#{nak.id}</span>
+                  <h3 class="font-heading text-lg font-semibold">
+                    {nak.nameHindi}
+                  </h3>
+                  <p class="text-sm opacity-80">{nak.name}</p>
+                </div>
+                <span class="text-2xl opacity-50">{nak.rulingPlanetHindi}</span>
+              </div>
+              <div class="mt-3 pt-3 border-t border-current/10 text-sm space-y-1">
+                <p><span class="opacity-60">Planet:</span> {nak.rulingPlanet}</p>
+                <p><span class="opacity-60">Deity:</span> {nak.deity}</p>
+                <p class="text-xs opacity-60">{nak.degree}</p>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Grouped by Planet -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Nakshatras by Ruling Planet
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {Object.entries(nakshatrasByPlanet).map(([planet, naks]) => (
+          <div class={`card border ${planetColors[planet]}`}>
+            <div class="card-body p-4">
+              <h3 class="font-semibold mb-2">{planet} ({naks[0].rulingPlanetHindi})</h3>
+              <ul class="space-y-1 text-sm">
+                {naks.map((nak) => (
+                  <li>
+                    <a href={`/nakshatra/${nak.slug}`} class="hover:underline">
+                      {nak.name} ({nak.nameHindi})
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Nakshatra Basics -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Understanding Nakshatras
+      </h2>
+      <div class="card bg-base-200/50">
+        <div class="card-body p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold text-primary mb-2">Classification</h3>
+              <ul class="space-y-2 text-sm">
+                <li><strong>By Nature:</strong> Sthira (Fixed), Chara (Movable), Mridu (Soft), Tikshna (Sharp), Ugra (Fierce), Mishra (Mixed)</li>
+                <li><strong>By Gana:</strong> Deva (Divine), Manushya (Human), Rakshasa (Demon)</li>
+                <li><strong>By Element:</strong> Fire, Earth, Air, Water</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold text-primary mb-2">Usage in Astrology</h3>
+              <ul class="space-y-2 text-sm">
+                <li><strong>Janma Nakshatra:</strong> Birth star for name letter and personality</li>
+                <li><strong>Muhurat:</strong> Selecting auspicious times for activities</li>
+                <li><strong>Matching:</strong> Compatibility analysis for marriage</li>
+                <li><strong>Transits:</strong> Daily and monthly predictions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is a Nakshatra?
+          </div>
+          <div class="collapse-content">
+            <p>A Nakshatra is one of 27 lunar mansions or star clusters used in Vedic astrology. The Moon travels through one nakshatra approximately every day. Each nakshatra has unique characteristics, a ruling planet, and a presiding deity that influence astrological interpretations.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            How do I find my Nakshatra?
+          </div>
+          <div class="collapse-content">
+            <p>Your birth nakshatra (Janma Nakshatra) is determined by the Moon's position at your exact time of birth. You need your birth date, time, and place to calculate it accurately. This nakshatra is used to determine the first letter of your name and influences your personality traits.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Why are there 27 Nakshatras?
+          </div>
+          <div class="collapse-content">
+            <p>The 27 nakshatras divide the 360° zodiac into equal parts of 13°20' each. This corresponds to the Moon's sidereal month of approximately 27.3 days, with the Moon spending roughly one day in each nakshatra. Some systems also include Abhijit as the 28th nakshatra.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Links -->
+    <div class="flex flex-wrap gap-3 pt-4">
+      <a href="/rashifal" class="btn btn-outline min-h-12">
+        Rashifal (Horoscope)
+      </a>
+      <a href="/panchang" class="btn btn-ghost min-h-12">
+        Today's Panchang →
+      </a>
+    </div>
+  </div>
+</Layout>
