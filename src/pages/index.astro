@@ -1,56 +1,248 @@
 ---
+/**
+ * Homepage - Shree Kundli
+ *
+ * AI-optimized landing page with:
+ * - Quick answer for "today's panchang" queries
+ * - City selector for location-specific content
+ * - Feature cards for main sections
+ * - JSON-LD WebSite schema
+ */
 import Layout from '../layouts/Layout.astro';
+import CitySelector from '../components/CitySelector.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import type { City } from '../lib/types';
+
+// Load cities data
+import citiesData from '../data/cities-sample.json';
+const cities = citiesData as City[];
+
+// Default city (can be changed based on user preference/geolocation)
+const defaultCity = cities.find(c => c.slug === 'delhi') || cities[0];
+
+// Today's date
+const today = new Date();
+const dateOptions: Intl.DateTimeFormatOptions = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+};
+const todayFormatted = today.toLocaleDateString('en-IN', dateOptions);
+const todayHindi = today.toLocaleDateString('hi-IN', dateOptions);
+const todayIso = today.toISOString().split('T')[0];
+
+// Page meta
+const title = 'Shree Kundli - Vedic Astrology, Panchang & Kundli | श्री कुंडली';
+const description = `Check today's panchang, tithi, nakshatra, rahu kaal for ${defaultCity.name}. Free kundli, rashifal, muhurat finder & Hindu festival calendar. Accurate Vedic astrology powered by Swiss Ephemeris.`;
+
+// WebSite schema for homepage
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Shree Kundli',
+  alternateName: ['श्री कुंडली', 'Shri Kundali'],
+  url: Astro.site?.toString() || 'https://shreekundli.com',
+  description: 'Comprehensive Vedic Astrology platform for Panchang, Kundli, Rashifal, Muhurat and Hindu Festival information.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${Astro.site || 'https://shreekundli.com'}/search?q={search_term_string}`,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+  inLanguage: ['en-IN', 'hi-IN'],
+  publisher: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+};
 ---
 
-<Layout title="Shree Kundli: Vedic Astrology & Panchang">
-  <div class="text-center py-12 space-y-8 animate-[fade-in_0.5s_ease-out]">
-    
+<Layout title={title} description={description}>
+  <!-- JSON-LD Schema -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(websiteSchema)} slot="head" />
+
+  <div class="space-y-12">
     <!-- Hero Section -->
-    <div class="space-y-4">
-      <h1 class="text-5xl md:text-7xl font-heading font-bold text-primary tracking-tight">
-        Shree Kundli
-      </h1>
-      <p class="text-xl md:text-2xl text-neutral/80 font-body max-w-2xl mx-auto leading-relaxed">
-        Ancient Vedic Wisdom for the <span class="text-secondary font-medium">Modern Era</span>.
+    <section class="text-center py-8 md:py-12 space-y-6">
+      <div class="space-y-3">
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-primary tracking-tight">
+          श्री कुंडली
+        </h1>
+        <p class="text-lg md:text-xl text-neutral/70 font-body max-w-xl mx-auto">
+          Ancient Vedic Wisdom for the <span class="text-secondary font-semibold">Modern Era</span>
+        </p>
+      </div>
+
+      <!-- City Selector -->
+      <div class="max-w-md mx-auto mt-8">
+        <label class="text-sm text-neutral/60 mb-2 block text-left">
+          Select your city for accurate timings
+        </label>
+        <CitySelector
+          cities={cities}
+          currentCity={defaultCity}
+          baseUrl="/panchang"
+        />
+      </div>
+    </section>
+
+    <!-- Quick Panchang Summary (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo" aria-label="Today's Panchang Summary">
+      <div class="card bg-primary/5 border border-primary/20">
+        <div class="card-body p-4 md:p-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <p class="text-sm text-neutral/60">
+                <time datetime={todayIso}>{todayFormatted}</time>
+              </p>
+              <h2 class="font-heading text-2xl md:text-3xl text-primary font-bold mt-1">
+                आज का पंचांग
+              </h2>
+              <p class="text-neutral/70 mt-1">
+                Today's Panchang for {defaultCity.name} ({defaultCity.nameHindi})
+              </p>
+            </div>
+
+            <a
+              href={`/panchang/${defaultCity.slug}/today`}
+              class="btn btn-secondary min-h-12"
+            >
+              View Full Panchang →
+            </a>
+          </div>
+
+          <!-- Quick Data (Placeholder - will be dynamic) -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-primary/10">
+            <div>
+              <p class="text-xs text-neutral/50 uppercase tracking-wide">Tithi</p>
+              <p class="font-semibold text-primary">शुक्ल षष्ठी</p>
+              <p class="text-sm text-neutral/60">Shukla Shashthi</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase tracking-wide">Nakshatra</p>
+              <p class="font-semibold text-primary">रोहिणी</p>
+              <p class="text-sm text-neutral/60">Rohini</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase tracking-wide">Sunrise</p>
+              <p class="font-semibold text-primary tabular-nums">07:05 AM</p>
+              <p class="text-sm text-neutral/60">IST</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase tracking-wide">Rahu Kaal</p>
+              <p class="font-semibold text-primary tabular-nums">07:30 - 09:00</p>
+              <p class="text-sm text-neutral/60">Avoid new work</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Features Grid -->
+    <section aria-label="Main Features">
+      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
+        Explore Vedic Astrology
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FeatureCard
+          title="Daily Panchang"
+          titleHindi="आज का पंचांग"
+          description="Tithi, nakshatra, yoga, karana, and auspicious timings for your city"
+          href="/panchang"
+          icon="calendar"
+          variant="primary"
+        />
+
+        <FeatureCard
+          title="Rashifal"
+          titleHindi="राशिफल"
+          description="Daily, weekly, and monthly horoscope for all 12 zodiac signs"
+          href="/rashifal"
+          icon="star"
+        />
+
+        <FeatureCard
+          title="Rahu Kaal"
+          titleHindi="राहु काल"
+          description="Check today's inauspicious Rahu Kaal timings for your location"
+          href="/rahu-kaal"
+          icon="clock"
+        />
+
+        <FeatureCard
+          title="Muhurat Finder"
+          titleHindi="शुभ मुहूर्त"
+          description="Find auspicious dates for wedding, griha pravesh, and more"
+          href="/muhurat"
+          icon="sun"
+        />
+
+        <FeatureCard
+          title="Festival Calendar"
+          titleHindi="त्योहार कैलेंडर"
+          description="Hindu festival dates, puja timings, and vidhi for 2026"
+          href="/festivals"
+          icon="moon"
+        />
+
+        <FeatureCard
+          title="Kundli Generator"
+          titleHindi="जन्म कुंडली"
+          description="Create your free birth chart with detailed analysis"
+          href="/kundli"
+          icon="star"
+          variant="secondary"
+        />
+      </div>
+    </section>
+
+    <!-- Popular Cities -->
+    <section aria-label="Popular Cities">
+      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
+        Popular Cities
+      </h2>
+
+      <div class="flex flex-wrap gap-2">
+        {cities.filter(c => c.tier === 1).slice(0, 12).map((city) => (
+          <a
+            href={`/panchang/${city.slug}`}
+            class="btn btn-sm btn-outline min-h-10 font-normal"
+          >
+            {city.name}
+            <span class="text-neutral/50 text-xs">({city.nameHindi})</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Trust Signals -->
+    <section class="text-center py-8 border-t border-base-200">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+        <div>
+          <p class="text-3xl font-heading font-bold text-primary">500+</p>
+          <p class="text-sm text-neutral/60">Cities Covered</p>
+        </div>
+        <div>
+          <p class="text-3xl font-heading font-bold text-primary">50+</p>
+          <p class="text-sm text-neutral/60">Festivals</p>
+        </div>
+        <div>
+          <p class="text-3xl font-heading font-bold text-primary">12</p>
+          <p class="text-sm text-neutral/60">Rashis</p>
+        </div>
+        <div>
+          <p class="text-3xl font-heading font-bold text-primary">Swiss</p>
+          <p class="text-sm text-neutral/60">Ephemeris Accuracy</p>
+        </div>
+      </div>
+
+      <p class="text-sm text-neutral/50 mt-6">
+        Calculations based on <dfn>Lahiri Ayanamsa</dfn> (Indian Government standard)
       </p>
-    </div>
-
-    <!-- Quick Actions Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-5xl mx-auto">
-      
-      <!-- Card 1 -->
-      <div class="card bg-base-100/80 backdrop-blur border border-secondary/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-6 text-left group">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="font-heading text-2xl text-primary group-hover:text-secondary transition-colors">Panchang</h2>
-          <span class="text-3xl">📅</span>
-        </div>
-        <div class="space-y-2 text-sm text-neutral/70">
-          <p>Tithi: <span class="font-semibold text-neutral">Shukla Ekadashi</span></p>
-          <p>Nakshatra: <span class="font-semibold text-neutral">Rohini</span></p>
-        </div>
-        <button class="btn btn-sm btn-outline btn-secondary mt-6 w-full group-hover:btn-active">View Today</button>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="card bg-base-100/80 backdrop-blur border border-secondary/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-6 text-left group">
-        <div class="flex items-center justify-between mb-4">
-           <h2 class="font-heading text-2xl text-primary group-hover:text-secondary transition-colors">Kundli</h2>
-           <span class="text-3xl">🔮</span>
-        </div>
-        <p class="text-sm text-neutral/70 mb-4">Generate your comprehensive birth chart and life predictions.</p>
-        <button class="btn btn-sm btn-outline btn-secondary mt-auto w-full group-hover:btn-active">Create Free</button>
-      </div>
-
-       <!-- Card 3 -->
-      <div class="card bg-base-100/80 backdrop-blur border border-secondary/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-6 text-left group">
-        <div class="flex items-center justify-between mb-4">
-           <h2 class="font-heading text-2xl text-primary group-hover:text-secondary transition-colors">Matching</h2>
-           <span class="text-3xl">💞</span> // Using emoji as placeholder for icons
-        </div>
-        <p class="text-sm text-neutral/70 mb-4">Check compatibility with detailed Guna Milan analysis.</p>
-        <button class="btn btn-sm btn-outline btn-secondary mt-auto w-full group-hover:btn-active">Check Compatibility</button>
-      </div>
-
-    </div>
+    </section>
   </div>
 </Layout>

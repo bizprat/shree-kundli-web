@@ -1,0 +1,196 @@
+---
+/**
+ * CitySelector Component
+ *
+ * A searchable city selector for panchang and muhurat pages.
+ * Uses DaisyUI dropdown with CSS-only interactivity.
+ * Links to city-specific pages on selection.
+ *
+ * Usage:
+ * <CitySelector
+ *   cities={cities}
+ *   currentCity={currentCity}
+ *   baseUrl="/panchang"
+ * />
+ */
+
+import type { City } from '../lib/types';
+
+interface Props {
+  cities: City[];
+  currentCity?: City;
+  baseUrl: string;
+  placeholder?: string;
+  class?: string;
+}
+
+const {
+  cities,
+  currentCity,
+  baseUrl,
+  placeholder = 'Select city...',
+  class: className = '',
+} = Astro.props;
+
+// Group cities by tier for better organization
+const tier1Cities = cities.filter(c => c.tier === 1);
+const tier2Cities = cities.filter(c => c.tier === 2);
+const tier3Cities = cities.filter(c => c.tier === 3);
+---
+
+<div class:list={['dropdown dropdown-bottom w-full', className]}>
+  <!-- Trigger Button -->
+  <div
+    tabindex="0"
+    role="button"
+    class="btn btn-outline w-full justify-between min-h-12 font-normal"
+    aria-haspopup="listbox"
+    aria-label="Select city"
+  >
+    <span class="flex items-center gap-2">
+      <svg
+        class="w-5 h-5 text-primary"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+        />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+        />
+      </svg>
+      {currentCity ? (
+        <span>
+          <span class="font-medium">{currentCity.name}</span>
+          <span class="text-neutral/60 text-sm ml-1">({currentCity.nameHindi})</span>
+        </span>
+      ) : (
+        <span class="text-neutral/60">{placeholder}</span>
+      )}
+    </span>
+    <svg
+      class="w-4 h-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M19 9l-7 7-7-7"
+      />
+    </svg>
+  </div>
+
+  <!-- Dropdown Menu -->
+  <ul
+    tabindex="0"
+    class="dropdown-content menu bg-base-100 rounded-box z-50 w-full max-h-80 overflow-y-auto shadow-lg border border-base-200 p-2 mt-1"
+    role="listbox"
+  >
+    <!-- Tier 1: Major Metro Cities -->
+    {tier1Cities.length > 0 && (
+      <>
+        <li class="menu-title text-xs text-primary font-semibold px-2 py-1">
+          Major Cities
+        </li>
+        {tier1Cities.map((city) => (
+          <li>
+            <a
+              href={`${baseUrl}/${city.slug}`}
+              class:list={[
+                'flex justify-between items-center py-3 min-h-12',
+                currentCity?.id === city.id && 'active',
+              ]}
+              role="option"
+              aria-selected={currentCity?.id === city.id}
+            >
+              <span>
+                <span class="font-medium">{city.name}</span>
+                <span class="text-neutral/60 text-sm ml-1">({city.nameHindi})</span>
+              </span>
+              <span class="text-xs text-neutral/50">{city.state}</span>
+            </a>
+          </li>
+        ))}
+      </>
+    )}
+
+    <!-- Tier 2: State Capitals & Major Cities -->
+    {tier2Cities.length > 0 && (
+      <>
+        <li class="menu-title text-xs text-primary font-semibold px-2 py-1 mt-2">
+          Other Cities
+        </li>
+        {tier2Cities.map((city) => (
+          <li>
+            <a
+              href={`${baseUrl}/${city.slug}`}
+              class:list={[
+                'flex justify-between items-center py-3 min-h-12',
+                currentCity?.id === city.id && 'active',
+              ]}
+              role="option"
+              aria-selected={currentCity?.id === city.id}
+            >
+              <span>
+                <span class="font-medium">{city.name}</span>
+                <span class="text-neutral/60 text-sm ml-1">({city.nameHindi})</span>
+              </span>
+              <span class="text-xs text-neutral/50">{city.state}</span>
+            </a>
+          </li>
+        ))}
+      </>
+    )}
+
+    <!-- Tier 3: Smaller Cities (if any) -->
+    {tier3Cities.length > 0 && (
+      <>
+        <li class="menu-title text-xs text-primary font-semibold px-2 py-1 mt-2">
+          Other Locations
+        </li>
+        {tier3Cities.map((city) => (
+          <li>
+            <a
+              href={`${baseUrl}/${city.slug}`}
+              class:list={[
+                'flex justify-between items-center py-3 min-h-12',
+                currentCity?.id === city.id && 'active',
+              ]}
+              role="option"
+              aria-selected={currentCity?.id === city.id}
+            >
+              <span>
+                <span class="font-medium">{city.name}</span>
+                <span class="text-neutral/60 text-sm ml-1">({city.nameHindi})</span>
+              </span>
+              <span class="text-xs text-neutral/50">{city.state}</span>
+            </a>
+          </li>
+        ))}
+      </>
+    )}
+
+    <!-- View All Link -->
+    <li class="mt-2 border-t border-base-200 pt-2">
+      <a
+        href={baseUrl}
+        class="text-secondary hover:text-secondary-focus font-medium justify-center"
+      >
+        View all cities →
+      </a>
+    </li>
+  </ul>
+</div>

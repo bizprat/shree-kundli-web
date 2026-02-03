@@ -1,0 +1,99 @@
+---
+/**
+ * Breadcrumb Component
+ *
+ * Renders accessible breadcrumbs with JSON-LD schema markup for SEO.
+ * Mobile-optimized with horizontal scroll on overflow.
+ *
+ * Usage:
+ * <Breadcrumb items={[
+ *   { name: "Home", url: "/" },
+ *   { name: "Panchang", url: "/panchang" },
+ *   { name: "Mumbai" }  // Last item has no URL
+ * ]} />
+ */
+
+export interface BreadcrumbItem {
+  name: string;
+  nameHindi?: string;
+  url?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+
+// Generate JSON-LD schema
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    ...(item.url && { item: new URL(item.url, Astro.site || Astro.url.origin).toString() }),
+  })),
+};
+---
+
+<nav
+  class:list={['breadcrumbs text-sm overflow-x-auto', className]}
+  aria-label="Breadcrumb"
+>
+  <ul
+    class="flex items-center gap-1 whitespace-nowrap"
+    itemscope
+    itemtype="https://schema.org/BreadcrumbList"
+  >
+    {items.map((item, index) => (
+      <li
+        class="flex items-center"
+        itemprop="itemListElement"
+        itemscope
+        itemtype="https://schema.org/ListItem"
+      >
+        {index > 0 && (
+          <svg
+            class="w-4 h-4 text-neutral/40 mx-1 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        )}
+
+        {item.url ? (
+          <a
+            href={item.url}
+            class="text-primary hover:text-secondary transition-colors"
+            itemprop="item"
+          >
+            <span itemprop="name">{item.name}</span>
+          </a>
+        ) : (
+          <span
+            class="text-neutral/70 font-medium"
+            itemprop="name"
+          >
+            {item.name}
+          </span>
+        )}
+
+        <meta itemprop="position" content={String(index + 1)} />
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<!-- Breadcrumb Schema (separate from page schema) -->
+<script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
