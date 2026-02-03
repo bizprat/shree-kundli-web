@@ -1,0 +1,422 @@
+---
+/**
+ * Individual Karana Page
+ *
+ * Detailed page for each karana with:
+ * - Type and nature information
+ * - Recommended activities
+ * - Things to avoid
+ * - FAQ schema for AI extraction
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load karanas data
+import karanasData from '../../data/karanas.json';
+
+interface Karana {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  meaning: string;
+  meaningHindi: string;
+  type: string;
+  typeHindi: string;
+  nature: string;
+  natureHindi: string;
+  deity: string;
+  deityHindi: string;
+  element: string;
+  goodFor: string[];
+  notGoodFor: string[];
+  description: string;
+  occurrence: string;
+  alternativeName?: string;
+}
+
+const karanas = karanasData as Karana[];
+
+// Generate static paths
+export async function getStaticPaths() {
+  const karanasModule = await import('../../data/karanas.json');
+  const karanas = karanasModule.default as Karana[];
+
+  return karanas.map((karana) => ({
+    params: { karana: karana.slug },
+    props: { karana },
+  }));
+}
+
+// Get karana from props
+const { karana } = Astro.props as { karana: Karana };
+
+// Page meta
+const title = `${karana.name} Karana (${karana.nameHindi}) - ${karana.meaning} | Panchang Guide | Shree Kundli`;
+const description = `${karana.name} (${karana.nameHindi}) karana - ${karana.description} Type: ${karana.type}. Nature: ${karana.nature}. Deity: ${karana.deity}.`;
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Karana', url: '/karana' },
+  { name: `${karana.nameHindi} (${karana.name})` },
+];
+
+// Article schema
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${karana.name} Karana - ${karana.nameHindi}`,
+  description: description,
+  author: {
+    '@type': 'Organization',
+    name: 'Shree Kundli',
+  },
+  about: {
+    '@type': 'Thing',
+    name: `${karana.name} Karana`,
+    alternateName: karana.nameHindi,
+  },
+  inLanguage: ['en', 'hi'],
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is ${karana.name} Karana?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${karana.name} (${karana.nameHindi}) is a ${karana.type} karana in Vedic Panchang. It means "${karana.meaning}" and is ruled by ${karana.deity}. ${karana.occurrence}.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `Is ${karana.name} Karana auspicious?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${karana.name} karana is ${karana.nature.toLowerCase()}. ${karana.goodFor.length > 0 ? `It is good for: ${karana.goodFor.join(', ')}.` : ''} ${karana.notGoodFor.length > 0 ? `Avoid: ${karana.notGoodFor.join(', ')}.` : ''}`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What activities are recommended during ${karana.name} Karana?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `During ${karana.name} karana, favorable activities include: ${karana.goodFor.join(', ')}. ${karana.notGoodFor.length > 0 ? `Activities to avoid: ${karana.notGoodFor.join(', ')}.` : 'There are no specific activities to avoid.'}`,
+      },
+    },
+  ],
+};
+
+// Get adjacent karanas for navigation
+const currentIndex = karanas.findIndex(k => k.id === karana.id);
+const prevKarana = karanas[currentIndex - 1] || karanas[karanas.length - 1];
+const nextKarana = karanas[currentIndex + 1] || karanas[0];
+
+// Nature colors
+const natureColors: Record<string, string> = {
+  'Auspicious': 'bg-green-500/10 text-green-600 border-green-500/20',
+  'Mixed': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  'Inauspicious': 'bg-red-500/10 text-red-600 border-red-500/20',
+};
+
+// Type colors
+const typeColors: Record<string, string> = {
+  'Chara': 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  'Sthira': 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+};
+
+// Element icons
+const elementIcons: Record<string, string> = {
+  Fire: '🔥',
+  Earth: '🌍',
+  Air: '💨',
+  Water: '💧',
+};
+
+// Nature emoji
+const natureEmoji: Record<string, string> = {
+  'Auspicious': '✓',
+  'Mixed': '⚖️',
+  'Inauspicious': '⛔',
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header>
+      <div class="flex items-start gap-4">
+        <div class={`text-center p-4 rounded-xl border ${natureColors[karana.nature] || 'bg-base-200'}`}>
+          <span class="text-3xl font-bold">{karana.id}</span>
+          <p class="text-xs mt-1 opacity-60">of 11</p>
+        </div>
+        <div>
+          <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+            {karana.nameHindi}
+          </h1>
+          <p class="text-xl text-neutral/70 mt-1">
+            {karana.name} Karana - {karana.meaning}
+          </p>
+          {karana.alternativeName && (
+            <p class="text-sm text-red-500 mt-1">Also known as: {karana.alternativeName}</p>
+          )}
+          <div class="flex flex-wrap items-center gap-2 mt-2">
+            <span class={`text-sm px-2 py-0.5 rounded border ${typeColors[karana.type] || 'bg-base-200'}`}>
+              {karana.type} ({karana.typeHindi})
+            </span>
+            <span class={`text-sm px-2 py-0.5 rounded border ${natureColors[karana.nature] || 'bg-base-200'}`}>
+              {natureEmoji[karana.nature]} {karana.natureHindi}
+            </span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class={`card border ${natureColors[karana.nature] || 'bg-base-200 border-base-300'}`}>
+        <div class="card-body p-4 md:p-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Type</p>
+              <p class="font-semibold">{karana.type}</p>
+              <p class="text-sm opacity-70">{karana.typeHindi}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Nature</p>
+              <p class="font-semibold">{karana.nature}</p>
+              <p class="text-sm opacity-70">{karana.natureHindi}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Deity</p>
+              <p class="font-semibold">{karana.deity}</p>
+              <p class="text-sm opacity-70">{karana.deityHindi}</p>
+            </div>
+            <div>
+              <p class="text-xs text-neutral/50 uppercase">Element</p>
+              <p class="font-semibold">{elementIcons[karana.element]} {karana.element}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About This Karana -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        About {karana.name} Karana
+      </h2>
+      <div class="prose prose-neutral max-w-none">
+        <p class="text-lg leading-relaxed">
+          <strong>{karana.name}</strong> ({karana.nameHindi}) is a <strong>{karana.type}</strong> karana
+          in the Vedic Panchang. The name means "<em>{karana.meaning}</em>" ({karana.meaningHindi}).
+        </p>
+        <p class="text-neutral/70 mt-3">
+          {karana.description}
+        </p>
+        <p class="text-neutral/70 mt-3">
+          This karana is ruled by <strong>{karana.deity}</strong> ({karana.deityHindi}) and is associated
+          with the <strong>{karana.element}</strong> element. It occurs {karana.occurrence.toLowerCase()}.
+        </p>
+      </div>
+    </section>
+
+    <!-- Vishti Warning -->
+    {karana.name === 'Vishti' && (
+      <section>
+        <div class="card bg-red-500/10 border border-red-500/30">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-red-600 mb-2 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              Bhadra Karana Warning
+            </h3>
+            <p class="text-sm text-neutral/70">
+              Vishti karana, also known as <strong>Bhadra</strong>, is the only inauspicious movable karana.
+              It occurs 8 times every lunar month. During this period, avoid all auspicious activities like
+              marriages, new ventures, travel, and important decisions. Only protective, aggressive, or
+              tantric activities are recommended.
+            </p>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Activities -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Activities During {karana.name} Karana
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Good For -->
+        <div class="card bg-green-500/5 border border-green-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-green-600 mb-3 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              Recommended Activities
+            </h3>
+            <ul class="space-y-2">
+              {karana.goodFor.map((activity) => (
+                <li class="flex items-start gap-2 text-sm">
+                  <span class="text-green-500 mt-0.5">•</span>
+                  <span class="text-neutral/70">{activity}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Not Good For -->
+        <div class="card bg-red-500/5 border border-red-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-red-600 mb-3 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+              Activities to Avoid
+            </h3>
+            <ul class="space-y-2">
+              {karana.notGoodFor.length > 0 ? (
+                karana.notGoodFor.map((activity) => (
+                  <li class="flex items-start gap-2 text-sm">
+                    <span class="text-red-500 mt-0.5">•</span>
+                    <span class="text-neutral/70">{activity}</span>
+                  </li>
+                ))
+              ) : (
+                <li class="text-sm text-neutral/50">No specific restrictions for this karana</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Information -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Detailed Information
+      </h2>
+      <div class="card bg-base-200/50">
+        <div class="card-body p-4">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <td class="text-neutral/60 w-40">Karana Number</td>
+                <td class="font-medium">{karana.id} of 11</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Sanskrit Name</td>
+                <td class="font-medium">{karana.nameHindi}</td>
+              </tr>
+              {karana.alternativeName && (
+                <tr>
+                  <td class="text-neutral/60">Alternative Name</td>
+                  <td class="font-medium text-red-600">{karana.alternativeName}</td>
+                </tr>
+              )}
+              <tr>
+                <td class="text-neutral/60">Meaning</td>
+                <td class="font-medium">{karana.meaning} ({karana.meaningHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Type</td>
+                <td class="font-medium">{karana.type} ({karana.typeHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Ruling Deity</td>
+                <td class="font-medium">{karana.deity} ({karana.deityHindi})</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Nature</td>
+                <td class={`font-medium ${karana.nature === 'Auspicious' ? 'text-green-600' : karana.nature === 'Inauspicious' ? 'text-red-600' : 'text-amber-600'}`}>
+                  {karana.nature} ({karana.natureHindi})
+                </td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Element</td>
+                <td class="font-medium">{elementIcons[karana.element]} {karana.element}</td>
+              </tr>
+              <tr>
+                <td class="text-neutral/60">Occurrence</td>
+                <td class="font-medium">{karana.occurrence}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is {karana.name} Karana?
+          </div>
+          <div class="collapse-content">
+            <p>{karana.name} ({karana.nameHindi}) is a {karana.type} karana in Vedic Panchang. It means "{karana.meaning}" and is ruled by {karana.deity}. {karana.occurrence}.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Is {karana.name} Karana auspicious?
+          </div>
+          <div class="collapse-content">
+            <p>{karana.name} karana is {karana.nature.toLowerCase()}. {karana.goodFor.length > 0 ? `It is good for: ${karana.goodFor.join(', ')}.` : ''} {karana.notGoodFor.length > 0 ? `Avoid: ${karana.notGoodFor.join(', ')}.` : ''}</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What activities are recommended during {karana.name} Karana?
+          </div>
+          <div class="collapse-content">
+            <p>During {karana.name} karana, favorable activities include: {karana.goodFor.join(', ')}. {karana.notGoodFor.length > 0 ? `Activities to avoid: ${karana.notGoodFor.join(', ')}.` : 'There are no specific activities to avoid.'}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="flex flex-wrap justify-between gap-4 pt-4">
+      <a
+        href={`/karana/${prevKarana.slug}`}
+        class="btn btn-outline min-h-12"
+      >
+        ← {prevKarana.nameHindi}
+      </a>
+      <a href="/karana" class="btn btn-ghost min-h-12">
+        All Karanas
+      </a>
+      <a
+        href={`/karana/${nextKarana.slug}`}
+        class="btn btn-outline min-h-12"
+      >
+        {nextKarana.nameHindi} →
+      </a>
+    </div>
+  </div>
+</Layout>

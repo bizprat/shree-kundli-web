@@ -1,0 +1,394 @@
+---
+/**
+ * Karana Hub Page
+ *
+ * Overview of all 11 karanas with:
+ * - Quick answer for karana queries
+ * - Grid of all karanas by type
+ * - JSON-LD ItemList schema for SEO
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load karanas data
+import karanasData from '../../data/karanas.json';
+
+interface Karana {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  meaning: string;
+  meaningHindi: string;
+  type: string;
+  typeHindi: string;
+  nature: string;
+  natureHindi: string;
+  deity: string;
+  deityHindi: string;
+  element: string;
+  goodFor: string[];
+  notGoodFor: string[];
+  description: string;
+  occurrence: string;
+  alternativeName?: string;
+}
+
+const karanas = karanasData as Karana[];
+
+// Page meta
+const title = 'Karana (करण) - 11 Karanas in Hindu Panchang | Complete Guide | Shree Kundli';
+const description = 'Learn about all 11 Karanas (half-tithis) in Vedic Panchang. 7 Chara (movable) and 4 Sthira (fixed) karanas - know their nature, deity, and significance for daily activities.';
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Karana' },
+];
+
+// Schema for karana list
+const karanaListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '11 Karanas in Hindu Panchang',
+  description: 'Complete guide to all 11 karanas used in Vedic astrology and Hindu Panchang',
+  numberOfItems: karanas.length,
+  itemListElement: karanas.map((karana, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Article',
+      name: `${karana.name} (${karana.nameHindi})`,
+      alternateName: karana.nameHindi,
+      description: karana.description,
+      url: `/karana/${karana.slug}`,
+    },
+  })),
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Karana in Panchang?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Karana is half of a tithi (lunar day) in the Hindu Panchang. Each tithi has two karanas. There are 11 karanas in total - 7 Chara (movable) that occur 8 times per month, and 4 Sthira (fixed) that occur once per month. Karanas indicate auspiciousness for specific activities.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many Karanas are there?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'There are 11 karanas in Panchang: 7 Chara (movable) karanas - Bava, Balava, Kaulava, Taitila, Gara, Vanija, Vishti (Bhadra); and 4 Sthira (fixed) karanas - Shakuni, Chatushpada, Naga, Kimstughna. The 7 movable karanas cycle 8 times per lunar month.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which Karana is inauspicious?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Vishti karana, also known as Bhadra, is considered the most inauspicious karana. It occurs 8 times per lunar month and all auspicious activities should be avoided during this period. Only aggressive, protective, or tantric activities are recommended.',
+      },
+    },
+  ],
+};
+
+// Group karanas by type
+const charaKaranas = karanas.filter(k => k.type === 'Chara');
+const sthiraKaranas = karanas.filter(k => k.type === 'Sthira');
+
+// Nature colors
+const natureColors: Record<string, string> = {
+  'Auspicious': 'bg-green-500/10 text-green-600 border-green-500/20',
+  'Mixed': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  'Inauspicious': 'bg-red-500/10 text-red-600 border-red-500/20',
+};
+
+// Type colors
+const typeColors: Record<string, string> = {
+  'Chara': 'bg-purple-500/10 text-purple-600',
+  'Sthira': 'bg-blue-500/10 text-blue-600',
+};
+
+// Element icons
+const elementIcons: Record<string, string> = {
+  Fire: '🔥',
+  Earth: '🌍',
+  Air: '💨',
+  Water: '💧',
+};
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(karanaListSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Karana - करण
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        11 Karanas (Half-Tithis) in Vedic Panchang
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+            What is Karana?
+          </h2>
+          <p class="text-neutral/80 leading-relaxed">
+            <strong>Karana (करण)</strong> is half of a tithi (lunar day) in the Hindu Panchang.
+            Each tithi consists of two karanas. There are <strong>11 karanas</strong> in total -
+            <strong>7 Chara</strong> (movable) that rotate 8 times per lunar month, and
+            <strong>4 Sthira</strong> (fixed) that occur only once at specific positions.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div class="p-4 bg-purple-500/10 rounded-lg">
+              <h3 class="font-semibold text-purple-600 mb-2">Chara (चर) - Movable</h3>
+              <p class="text-sm text-neutral/60 mb-2">7 karanas, each occurs 8 times/month</p>
+              <div class="flex flex-wrap gap-1">
+                {charaKaranas.map(k => (
+                  <span class="text-xs bg-purple-500/20 text-purple-700 px-1.5 py-0.5 rounded">{k.nameHindi}</span>
+                ))}
+              </div>
+            </div>
+            <div class="p-4 bg-blue-500/10 rounded-lg">
+              <h3 class="font-semibold text-blue-600 mb-2">Sthira (स्थिर) - Fixed</h3>
+              <p class="text-sm text-neutral/60 mb-2">4 karanas, each occurs once/month</p>
+              <div class="flex flex-wrap gap-1">
+                {sthiraKaranas.map(k => (
+                  <span class="text-xs bg-blue-500/20 text-blue-700 px-1.5 py-0.5 rounded">{k.nameHindi}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chara Karanas -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Chara Karanas (चर करण) - Movable
+      </h2>
+      <p class="text-neutral/60 mb-4">These 7 karanas rotate and occur 8 times each per lunar month.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {charaKaranas.map((karana) => (
+          <a
+            href={`/karana/${karana.slug}`}
+            class={`card border hover:shadow-md transition-all ${karana.nature === 'Inauspicious' ? 'bg-red-500/5 border-red-500/20' : 'bg-base-100 border-base-200 hover:border-secondary/30'}`}
+          >
+            <div class="card-body p-4">
+              <div class="flex items-start gap-3">
+                <!-- Number Badge -->
+                <div class={`w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm border ${natureColors[karana.nature] || 'bg-base-200'}`}>
+                  {karana.id}
+                </div>
+
+                <!-- Info -->
+                <div class="grow min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="font-heading text-lg font-semibold text-primary">
+                      {karana.nameHindi}
+                    </h3>
+                    <span class="text-sm text-neutral/60">({karana.name})</span>
+                  </div>
+                  <p class="text-sm text-neutral/60 mt-1">{karana.meaning}</p>
+                  <div class="flex items-center gap-2 mt-2 text-xs">
+                    <span class={`px-2 py-0.5 rounded border ${natureColors[karana.nature] || 'bg-base-200'}`}>
+                      {karana.natureHindi}
+                    </span>
+                    <span class="text-neutral/50">{elementIcons[karana.element]}</span>
+                  </div>
+                  {karana.alternativeName && (
+                    <p class="text-xs text-red-500 mt-1">Also called: {karana.alternativeName}</p>
+                  )}
+                </div>
+
+                <!-- Arrow -->
+                <svg
+                  class="w-5 h-5 text-neutral/40 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Sthira Karanas -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Sthira Karanas (स्थिर करण) - Fixed
+      </h2>
+      <p class="text-neutral/60 mb-4">These 4 karanas occur only once per lunar month at specific positions.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {sthiraKaranas.map((karana) => (
+          <a
+            href={`/karana/${karana.slug}`}
+            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all"
+          >
+            <div class="card-body p-4">
+              <div class="flex items-start gap-3">
+                <!-- Number Badge -->
+                <div class={`w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm border ${natureColors[karana.nature] || 'bg-base-200'}`}>
+                  {karana.id}
+                </div>
+
+                <!-- Info -->
+                <div class="grow min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="font-heading text-lg font-semibold text-primary">
+                      {karana.nameHindi}
+                    </h3>
+                    <span class="text-sm text-neutral/60">({karana.name})</span>
+                  </div>
+                  <p class="text-sm text-neutral/60 mt-1">{karana.meaning}</p>
+                  <div class="flex items-center gap-2 mt-2 text-xs">
+                    <span class={`px-2 py-0.5 rounded border ${natureColors[karana.nature] || 'bg-base-200'}`}>
+                      {karana.natureHindi}
+                    </span>
+                    <span class="text-neutral/50">{elementIcons[karana.element]}</span>
+                  </div>
+                  <p class="text-xs text-neutral/50 mt-2">{karana.occurrence}</p>
+                </div>
+
+                <!-- Arrow -->
+                <svg
+                  class="w-5 h-5 text-neutral/40 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Vishti/Bhadra Warning -->
+    <section>
+      <div class="card bg-red-500/10 border border-red-500/30">
+        <div class="card-body p-4">
+          <h3 class="font-semibold text-red-600 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            Vishti (Bhadra) Karana Warning
+          </h3>
+          <p class="text-sm text-neutral/70">
+            <strong>Vishti</strong> karana, also known as <strong>Bhadra</strong>, is considered highly inauspicious.
+            It occurs 8 times per lunar month. During Vishti karana, avoid starting new ventures, travel, marriages,
+            and important decisions. Only tantric, protective, or aggressive activities are recommended.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Karana Cycle Explanation -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Karana Cycle in a Lunar Month
+      </h2>
+      <div class="card bg-base-200/50">
+        <div class="card-body p-4">
+          <p class="text-sm text-neutral/70 mb-4">
+            In each lunar month (30 tithis = 60 half-tithis), karanas follow this pattern:
+          </p>
+          <ol class="list-decimal list-inside space-y-2 text-sm text-neutral/70">
+            <li><strong>Kimstughna</strong> - First half of Shukla Pratipada</li>
+            <li><strong>Bava to Vishti cycle</strong> - Repeats 8 times (56 karana periods)</li>
+            <li><strong>Shakuni</strong> - Second half of Krishna Chaturdashi</li>
+            <li><strong>Chatushpada</strong> - First half of Amavasya</li>
+            <li><strong>Naga</strong> - Second half of Amavasya</li>
+          </ol>
+          <p class="text-xs text-neutral/50 mt-4">
+            Total: 4 fixed + (7 x 8) movable = 4 + 56 = 60 karana periods per lunar month
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Karana in Panchang?
+          </div>
+          <div class="collapse-content">
+            <p>Karana is half of a tithi (lunar day) in the Hindu Panchang. Each tithi has two karanas. There are 11 karanas in total - 7 Chara (movable) that occur 8 times per month, and 4 Sthira (fixed) that occur once per month.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            How many Karanas are there?
+          </div>
+          <div class="collapse-content">
+            <p>There are 11 karanas: 7 Chara (movable) - Bava, Balava, Kaulava, Taitila, Gara, Vanija, Vishti; and 4 Sthira (fixed) - Shakuni, Chatushpada, Naga, Kimstughna.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Which Karana is inauspicious?
+          </div>
+          <div class="collapse-content">
+            <p>Vishti karana, also known as Bhadra, is considered the most inauspicious. It occurs 8 times per lunar month. Avoid starting important work during Vishti karana.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            What is the difference between Chara and Sthira karanas?
+          </div>
+          <div class="collapse-content">
+            <p>Chara (movable) karanas rotate and occur 8 times per lunar month. Sthira (fixed) karanas occur only once per month at specific positions - around Amavasya and Shukla Pratipada.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
