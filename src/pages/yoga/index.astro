@@ -1,0 +1,361 @@
+---
+/**
+ * Yoga Hub Page
+ *
+ * Overview of all 27 yogas with:
+ * - Quick answer for yoga queries
+ * - Grid of all yogas by category
+ * - JSON-LD ItemList schema for SEO
+ */
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import type { BreadcrumbItem } from '../../lib/types';
+
+// Load yogas data
+import yogasData from '../../data/yogas.json';
+
+interface Yoga {
+  id: number;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  meaning: string;
+  meaningHindi: string;
+  nature: string;
+  natureHindi: string;
+  deity: string;
+  deityHindi: string;
+  goodFor: string[];
+  notGoodFor: string[];
+  description: string;
+  category: string;
+}
+
+const yogas = yogasData as Yoga[];
+
+// Page meta
+const title = 'Yoga (योग) - 27 Yogas in Hindu Panchang | Complete Guide | Shree Kundli';
+const description = 'Learn about all 27 Yogas in Vedic Panchang. From Vishkambha to Vaidhriti - know the nature, deity, auspiciousness, and significance of each yoga for daily activities.';
+
+// Breadcrumbs
+const breadcrumbs: BreadcrumbItem[] = [
+  { name: 'Home', url: '/' },
+  { name: 'Yoga' },
+];
+
+// Schema for yoga list
+const yogaListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '27 Yogas in Hindu Panchang',
+  description: 'Complete guide to all 27 yogas used in Vedic astrology and Hindu Panchang',
+  numberOfItems: yogas.length,
+  itemListElement: yogas.map((yoga, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Article',
+      name: `${yoga.name} (${yoga.nameHindi})`,
+      alternateName: yoga.nameHindi,
+      description: yoga.description,
+      url: `/yoga/${yoga.slug}`,
+    },
+  })),
+};
+
+// FAQ schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Yoga in Panchang?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yoga in Panchang is one of the five elements (Panchangas) of the Hindu calendar. It represents the angular relationship between the Sun and Moon. There are 27 yogas, each lasting about one day. They indicate the auspiciousness of time for various activities.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many Yogas are there in Panchang?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'There are 27 yogas in Panchang: Vishkambha, Priti, Ayushman, Saubhagya, Shobhana, Atiganda, Sukarma, Dhriti, Shula, Ganda, Vriddhi, Dhruva, Vyaghata, Harshana, Vajra, Siddhi, Vyatipata, Variyana, Parigha, Shiva, Siddha, Sadhya, Shubha, Shukla, Brahma, Indra, and Vaidhriti.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which Yogas are most auspicious?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The most auspicious yogas are Siddhi, Siddha, Shiva, Shubha, Brahma, Indra, Saubhagya, and Amrit. These yogas are favorable for starting new ventures, marriages, religious ceremonies, and important decisions. Vyatipata and Vaidhriti are considered the most inauspicious.',
+      },
+    },
+  ],
+};
+
+// Nature colors
+const natureColors: Record<string, string> = {
+  'Highly Auspicious': 'bg-green-500/20 text-green-700 border-green-500/30',
+  'Auspicious': 'bg-green-500/10 text-green-600 border-green-500/20',
+  'Mixed': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  'Inauspicious': 'bg-red-500/10 text-red-600 border-red-500/20',
+  'Highly Inauspicious': 'bg-red-500/20 text-red-700 border-red-500/30',
+};
+
+// Category colors
+const categoryColors: Record<string, string> = {
+  'Sthira': 'bg-blue-500/10 text-blue-600',
+  'Chara': 'bg-purple-500/10 text-purple-600',
+  'Ugra': 'bg-red-500/10 text-red-600',
+};
+
+// Group yogas by category
+const sthiraYogas = yogas.filter(y => y.category === 'Sthira');
+const charaYogas = yogas.filter(y => y.category === 'Chara');
+const ugraYogas = yogas.filter(y => y.category === 'Ugra');
+---
+
+<Layout title={title} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(yogaListSchema)} slot="head" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+
+  <div class="space-y-8">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Yoga - योग
+      </h1>
+      <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
+        27 Yogas in Vedic Panchang
+      </p>
+    </header>
+
+    <!-- Quick Answer (AI Extraction Target) -->
+    <section class="quick-answer" role="contentinfo">
+      <div class="card bg-secondary/10 border border-secondary/20">
+        <div class="card-body p-4 md:p-6">
+          <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+            What is Yoga in Panchang?
+          </h2>
+          <p class="text-neutral/80 leading-relaxed">
+            <strong>Yoga (योग)</strong> is one of the five elements of Panchang in Vedic astrology.
+            It is calculated based on the combined longitude of the Sun and Moon.
+            There are <strong>27 yogas</strong>, each spanning approximately one day (about 13°20' of lunar motion).
+            Yogas indicate the auspiciousness of time for various activities.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+            <div class="p-3 bg-blue-500/10 rounded-lg">
+              <p class="font-semibold text-blue-600">Sthira (Fixed)</p>
+              <p class="text-sm text-neutral/60">Stable, permanent activities</p>
+              <p class="text-xs text-neutral/50 mt-1">{sthiraYogas.length} yogas</p>
+            </div>
+            <div class="p-3 bg-purple-500/10 rounded-lg">
+              <p class="font-semibold text-purple-600">Chara (Movable)</p>
+              <p class="text-sm text-neutral/60">Dynamic, changing activities</p>
+              <p class="text-xs text-neutral/50 mt-1">{charaYogas.length} yogas</p>
+            </div>
+            <div class="p-3 bg-red-500/10 rounded-lg">
+              <p class="font-semibold text-red-600">Ugra (Fierce)</p>
+              <p class="text-sm text-neutral/60">Aggressive, protective activities</p>
+              <p class="text-xs text-neutral/50 mt-1">{ugraYogas.length} yogas</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- All 27 Yogas Grid -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
+        All 27 Yogas
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {yogas.map((yoga) => (
+          <a
+            href={`/yoga/${yoga.slug}`}
+            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all"
+          >
+            <div class="card-body p-4">
+              <div class="flex items-start gap-3">
+                <!-- Number Badge -->
+                <div class={`w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm border ${natureColors[yoga.nature] || 'bg-base-200'}`}>
+                  {yoga.id}
+                </div>
+
+                <!-- Info -->
+                <div class="grow min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="font-heading text-lg font-semibold text-primary">
+                      {yoga.nameHindi}
+                    </h3>
+                    <span class="text-sm text-neutral/60">({yoga.name})</span>
+                  </div>
+                  <p class="text-sm text-neutral/60 mt-1">{yoga.meaning}</p>
+                  <div class="flex items-center gap-2 mt-2 text-xs">
+                    <span class={`px-2 py-0.5 rounded ${categoryColors[yoga.category] || 'bg-base-200'}`}>
+                      {yoga.category}
+                    </span>
+                    <span class={`px-2 py-0.5 rounded border ${natureColors[yoga.nature] || 'bg-base-200'}`}>
+                      {yoga.natureHindi}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Arrow -->
+                <svg
+                  class="w-5 h-5 text-neutral/40 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Auspiciousness Guide -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Yoga Auspiciousness Guide
+      </h2>
+      <div class="card bg-base-200/50">
+        <div class="card-body p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 class="font-semibold text-green-600 mb-2">Most Auspicious Yogas</h3>
+              <div class="flex flex-wrap gap-2">
+                {yogas.filter(y => y.nature === 'Highly Auspicious').map(y => (
+                  <a href={`/yoga/${y.slug}`} class="badge badge-success badge-outline">{y.nameHindi}</a>
+                ))}
+              </div>
+              <p class="text-xs text-neutral/50 mt-2">Best for marriages, new ventures, important work</p>
+            </div>
+            <div>
+              <h3 class="font-semibold text-red-600 mb-2">Inauspicious Yogas</h3>
+              <div class="flex flex-wrap gap-2">
+                {yogas.filter(y => y.nature === 'Highly Inauspicious' || y.nature === 'Inauspicious').map(y => (
+                  <a href={`/yoga/${y.slug}`} class="badge badge-error badge-outline">{y.nameHindi}</a>
+                ))}
+              </div>
+              <p class="text-xs text-neutral/50 mt-2">Avoid starting new work, use for tantric/protective rituals</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category Explanation -->
+    <section>
+      <h2 class="font-heading text-xl text-primary font-semibold mb-4">
+        Yoga Categories
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card bg-blue-500/5 border border-blue-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-blue-600 mb-2">Sthira (स्थिर) - Fixed</h3>
+            <p class="text-sm text-neutral/70 mb-3">
+              Best for permanent, long-lasting activities like construction, foundation laying,
+              and commitments meant to endure.
+            </p>
+            <div class="flex flex-wrap gap-1">
+              {sthiraYogas.map(y => (
+                <span class="text-xs bg-blue-500/10 text-blue-600 px-1.5 py-0.5 rounded">{y.nameHindi}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div class="card bg-purple-500/5 border border-purple-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-purple-600 mb-2">Chara (चर) - Movable</h3>
+            <p class="text-sm text-neutral/70 mb-3">
+              Suitable for dynamic activities like travel, trade, learning new skills,
+              and activities involving change or movement.
+            </p>
+            <div class="flex flex-wrap gap-1">
+              {charaYogas.map(y => (
+                <span class="text-xs bg-purple-500/10 text-purple-600 px-1.5 py-0.5 rounded">{y.nameHindi}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div class="card bg-red-500/5 border border-red-500/20">
+          <div class="card-body p-4">
+            <h3 class="font-semibold text-red-600 mb-2">Ugra (उग्र) - Fierce</h3>
+            <p class="text-sm text-neutral/70 mb-3">
+              Used for aggressive activities, overcoming obstacles, protective measures,
+              and tantric practices. Avoid for peaceful work.
+            </p>
+            <div class="flex flex-wrap gap-1">
+              {ugraYogas.map(y => (
+                <span class="text-xs bg-red-500/10 text-red-600 px-1.5 py-0.5 rounded">{y.nameHindi}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section>
+      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" checked />
+          <div class="collapse-title font-medium">
+            What is Yoga in Panchang?
+          </div>
+          <div class="collapse-content">
+            <p>Yoga in Panchang is one of the five elements (Panchangas) of the Hindu calendar. It represents the angular relationship between the Sun and Moon. There are 27 yogas, each lasting about one day. They indicate the auspiciousness of time for various activities.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            How many Yogas are there in Panchang?
+          </div>
+          <div class="collapse-content">
+            <p>There are 27 yogas in Panchang: Vishkambha, Priti, Ayushman, Saubhagya, Shobhana, Atiganda, Sukarma, Dhriti, Shula, Ganda, Vriddhi, Dhruva, Vyaghata, Harshana, Vajra, Siddhi, Vyatipata, Variyana, Parigha, Shiva, Siddha, Sadhya, Shubha, Shukla, Brahma, Indra, and Vaidhriti.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            Which Yogas are most auspicious?
+          </div>
+          <div class="collapse-content">
+            <p>The most auspicious yogas are Siddhi, Siddha, Shiva, Shubha, Brahma, Indra, Saubhagya. These yogas are favorable for starting new ventures, marriages, religious ceremonies, and important decisions. Vyatipata and Vaidhriti are considered the most inauspicious.</p>
+          </div>
+        </div>
+
+        <div class="collapse collapse-arrow bg-base-200/50">
+          <input type="radio" name="faq" />
+          <div class="collapse-title font-medium">
+            How is Yoga calculated?
+          </div>
+          <div class="collapse-content">
+            <p>Yoga is calculated by adding the longitude of the Sun and Moon. The sum is divided by 13°20' (800 minutes), and the quotient plus 1 gives the yoga number. Each yoga spans 13°20' of combined Sun-Moon movement, lasting approximately one day.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
