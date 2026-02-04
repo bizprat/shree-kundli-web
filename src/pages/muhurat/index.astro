@@ -32,8 +32,8 @@ const muhurats = muhuratsData as MuhuratType[];
 const sortedMuhurats = [...muhurats].sort((a, b) => b.priority - a.priority);
 
 // Page meta
-const title = 'Shubh Muhurat 2026 - Auspicious Dates & Timings | शुभ मुहूर्त | Shree Kundli';
-const description = 'Find shubh muhurat for griha pravesh, vivah, mundan, vehicle purchase, and more. Accurate auspicious dates and timings for 2026. शुभ मुहूर्त 2026।';
+const title = 'Shubh Muhurat 2026 - Auspicious Dates & Timings | Shree Kundli';
+const description = 'Find shubh muhurat for griha pravesh, vivah, mundan, vehicle purchase, and more. Accurate auspicious dates and timings for 2026.';
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -89,7 +89,7 @@ function getMuhuratIcon(id: string): 'home' | 'heart' | 'star' | 'sun' | 'calend
     <!-- Header -->
     <header class="text-center space-y-4">
       <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-        शुभ मुहूर्त 2026
+        Shubh Muhurat 2026
       </h1>
       <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
         Find auspicious dates and timings for important life events. Select a ceremony type to view shubh muhurat.
@@ -104,7 +104,7 @@ function getMuhuratIcon(id: string): 'home' | 'heart' | 'star' | 'sun' | 'calend
             What is Muhurat?
           </h2>
           <p class="text-neutral/70">
-            <dfn>Muhurat</dfn> (मुहूर्त) is an auspicious time calculated based on Vedic astrology.
+            <dfn>Muhurat</dfn> is an auspicious time calculated based on Vedic astrology.
             Starting important activities during shubh muhurat is believed to bring success and prosperity.
             Our calculations consider tithi, nakshatra, yoga, karana, and planetary positions.
           </p>
@@ -122,7 +122,6 @@ function getMuhuratIcon(id: string): 'home' | 'heart' | 'star' | 'sun' | 'calend
         {sortedMuhurats.filter(m => m.priority >= 4).map((muhurat) => (
           <FeatureCard
             title={muhurat.name}
-            titleHindi={muhurat.nameHindi}
             description={muhurat.description}
             href={`/muhurat/${muhurat.slug}`}
             icon={getMuhuratIcon(muhurat.id)}

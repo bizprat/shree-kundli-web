@@ -38,19 +38,12 @@ const todayFormatted = today.toLocaleDateString('en-IN', {
   month: 'long',
   year: 'numeric',
 });
-const todayHindi = today.toLocaleDateString('hi-IN', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
 const todayIso = today.toISOString().split('T')[0];
 const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
 
 // Choghadiya type definitions
 interface ChoghadiyaPeriod {
   name: string;
-  nameHindi: string;
   quality: 'good' | 'neutral' | 'bad';
   start: string;
   end: string;
@@ -58,25 +51,25 @@ interface ChoghadiyaPeriod {
 
 // Mock Choghadiya data (will be replaced with API data)
 const dayChoghadiya: ChoghadiyaPeriod[] = [
-  { name: 'Udveg', nameHindi: 'उद्वेग', quality: 'bad', start: '06:45 AM', end: '08:15 AM' },
-  { name: 'Char', nameHindi: 'चर', quality: 'neutral', start: '08:15 AM', end: '09:45 AM' },
-  { name: 'Labh', nameHindi: 'लाभ', quality: 'good', start: '09:45 AM', end: '11:15 AM' },
-  { name: 'Amrit', nameHindi: 'अमृत', quality: 'good', start: '11:15 AM', end: '12:45 PM' },
-  { name: 'Kaal', nameHindi: 'काल', quality: 'bad', start: '12:45 PM', end: '02:15 PM' },
-  { name: 'Shubh', nameHindi: 'शुभ', quality: 'good', start: '02:15 PM', end: '03:45 PM' },
-  { name: 'Rog', nameHindi: 'रोग', quality: 'bad', start: '03:45 PM', end: '05:15 PM' },
-  { name: 'Udveg', nameHindi: 'उद्वेग', quality: 'bad', start: '05:15 PM', end: '06:45 PM' },
+  { name: 'Udveg', quality: 'bad', start: '06:45 AM', end: '08:15 AM' },
+  { name: 'Char', quality: 'neutral', start: '08:15 AM', end: '09:45 AM' },
+  { name: 'Labh', quality: 'good', start: '09:45 AM', end: '11:15 AM' },
+  { name: 'Amrit', quality: 'good', start: '11:15 AM', end: '12:45 PM' },
+  { name: 'Kaal', quality: 'bad', start: '12:45 PM', end: '02:15 PM' },
+  { name: 'Shubh', quality: 'good', start: '02:15 PM', end: '03:45 PM' },
+  { name: 'Rog', quality: 'bad', start: '03:45 PM', end: '05:15 PM' },
+  { name: 'Udveg', quality: 'bad', start: '05:15 PM', end: '06:45 PM' },
 ];
 
 const nightChoghadiya: ChoghadiyaPeriod[] = [
-  { name: 'Shubh', nameHindi: 'शुभ', quality: 'good', start: '06:45 PM', end: '08:15 PM' },
-  { name: 'Amrit', nameHindi: 'अमृत', quality: 'good', start: '08:15 PM', end: '09:45 PM' },
-  { name: 'Char', nameHindi: 'चर', quality: 'neutral', start: '09:45 PM', end: '11:15 PM' },
-  { name: 'Rog', nameHindi: 'रोग', quality: 'bad', start: '11:15 PM', end: '12:45 AM' },
-  { name: 'Kaal', nameHindi: 'काल', quality: 'bad', start: '12:45 AM', end: '02:15 AM' },
-  { name: 'Labh', nameHindi: 'लाभ', quality: 'good', start: '02:15 AM', end: '03:45 AM' },
-  { name: 'Udveg', nameHindi: 'उद्वेग', quality: 'bad', start: '03:45 AM', end: '05:15 AM' },
-  { name: 'Shubh', nameHindi: 'शुभ', quality: 'good', start: '05:15 AM', end: '06:45 AM' },
+  { name: 'Shubh', quality: 'good', start: '06:45 PM', end: '08:15 PM' },
+  { name: 'Amrit', quality: 'good', start: '08:15 PM', end: '09:45 PM' },
+  { name: 'Char', quality: 'neutral', start: '09:45 PM', end: '11:15 PM' },
+  { name: 'Rog', quality: 'bad', start: '11:15 PM', end: '12:45 AM' },
+  { name: 'Kaal', quality: 'bad', start: '12:45 AM', end: '02:15 AM' },
+  { name: 'Labh', quality: 'good', start: '02:15 AM', end: '03:45 AM' },
+  { name: 'Udveg', quality: 'bad', start: '03:45 AM', end: '05:15 AM' },
+  { name: 'Shubh', quality: 'good', start: '05:15 AM', end: '06:45 AM' },
 ];
 
 // Quality colors
@@ -87,8 +80,8 @@ const qualityStyles: Record<string, { bg: string; text: string; badge: string }>
 };
 
 // Page meta
-const title = `Choghadiya Today in ${city.name} - ${todayFormatted} | चौघड़िया ${city.nameHindi} | Shree Kundli`;
-const description = `Today's Choghadiya for ${city.name} (${todayFormatted}). Day and night choghadiya timings with Amrit, Shubh, Labh, Char, Kaal, Rog, Udveg periods. ${city.nameHindi} चौघड़िया।`;
+const title = `Choghadiya Today in ${city.name} - ${todayFormatted} | Shree Kundli`;
+const description = `Today's Choghadiya for ${city.name} (${todayFormatted}). Day and night choghadiya timings with Amrit, Shubh, Labh, Char, Kaal, Rog, Udveg periods.`;
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -102,7 +95,7 @@ const datasetSchema = {
   '@context': 'https://schema.org',
   '@type': 'Dataset',
   name: `Choghadiya for ${city.name} - ${todayFormatted}`,
-  alternateName: `${city.nameHindi} चौघड़िया - ${todayHindi}`,
+  alternateName: `${city.name} Choghadiya - ${todayFormatted}`,
   description: `Day and night Choghadiya timings for ${city.name} on ${todayFormatted}.`,
   url: Astro.url.toString(),
   datePublished: todayIso,
@@ -168,7 +161,7 @@ const faqSchema = {
           Choghadiya in {city.name}
         </h1>
         <p class="text-lg text-neutral/70 mt-1">
-          {city.nameHindi} चौघड़िया • {city.state}
+          {city.state}
         </p>
         <p class="text-sm text-neutral/50 mt-1">
           <time datetime={todayIso}>{todayFormatted}</time>
@@ -215,7 +208,7 @@ const faqSchema = {
     <!-- Day Choghadiya -->
     <section>
       <h2 class="font-heading text-2xl text-primary font-bold mb-4">
-        Day Choghadiya (दिन का चौघड़िया)
+        Day Choghadiya
       </h2>
       <p class="text-sm text-neutral/60 mb-4">From sunrise to sunset</p>
 
@@ -239,7 +232,6 @@ const faqSchema = {
                       <span class={qualityStyles[period.quality].text + ' font-semibold'}>
                         {period.name}
                       </span>
-                      <span class="text-neutral/60 text-sm ml-1">({period.nameHindi})</span>
                     </td>
                     <td>
                       <span class={`badge badge-sm ${qualityStyles[period.quality].badge}`}>
@@ -261,7 +253,7 @@ const faqSchema = {
     <!-- Night Choghadiya -->
     <section>
       <h2 class="font-heading text-2xl text-primary font-bold mb-4">
-        Night Choghadiya (रात का चौघड़िया)
+        Night Choghadiya
       </h2>
       <p class="text-sm text-neutral/60 mb-4">From sunset to next sunrise</p>
 
@@ -285,7 +277,6 @@ const faqSchema = {
                       <span class={qualityStyles[period.quality].text + ' font-semibold'}>
                         {period.name}
                       </span>
-                      <span class="text-neutral/60 text-sm ml-1">({period.nameHindi})</span>
                     </td>
                     <td>
                       <span class={`badge badge-sm ${qualityStyles[period.quality].badge}`}>

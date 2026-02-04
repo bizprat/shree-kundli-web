@@ -38,12 +38,6 @@ const todayFormatted = today.toLocaleDateString('en-IN', {
   month: 'long',
   year: 'numeric',
 });
-const todayHindi = today.toLocaleDateString('hi-IN', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
 const todayIso = today.toISOString().split('T')[0];
 const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
 
@@ -72,8 +66,8 @@ const abhijitMuhurat = {
 };
 
 // Page meta
-const title = `Rahu Kaal Today in ${city.name} - ${todayFormatted} | राहु काल ${city.nameHindi} | Shree Kundli`;
-const description = `Rahu Kaal today in ${city.name} is ${rahuKaal.start} to ${rahuKaal.end}. Check accurate Rahu Kaal, Yamaganda, and Gulika Kaal timings for ${city.name}, ${city.state}. ${city.nameHindi} राहु काल।`;
+const title = `Rahu Kaal Today in ${city.name} - ${todayFormatted} | Shree Kundli`;
+const description = `Rahu Kaal today in ${city.name} is ${rahuKaal.start} to ${rahuKaal.end}. Check accurate Rahu Kaal, Yamaganda, and Gulika Kaal timings for ${city.name}, ${city.state}.`;
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -87,7 +81,7 @@ const datasetSchema = {
   '@context': 'https://schema.org',
   '@type': 'Dataset',
   name: `Rahu Kaal for ${city.name} - ${todayFormatted}`,
-  alternateName: `${city.nameHindi} राहु काल - ${todayHindi}`,
+  alternateName: `${city.name} Rahu Kaal - ${todayFormatted}`,
   description: `Rahu Kaal and other inauspicious periods for ${city.name} on ${todayFormatted}.`,
   url: Astro.url.toString(),
   datePublished: todayIso,
@@ -154,7 +148,7 @@ const faqSchema = {
           Rahu Kaal in {city.name}
         </h1>
         <p class="text-lg text-neutral/70 mt-1">
-          {city.nameHindi} राहु काल • {city.state}
+          {city.state}
         </p>
         <p class="text-sm text-neutral/50 mt-1">
           <time datetime={todayIso}>{todayFormatted}</time>
@@ -262,9 +256,6 @@ const faqSchema = {
             <strong>Rahu Kaal</strong> is an inauspicious period of approximately 1.5 hours every day.
             The timing is calculated by dividing the time between sunrise and sunset into 8 equal parts.
             Rahu Kaal falls on a different period each day of the week.
-          </p>
-          <p class="text-neutral/70 mt-3 text-sm">
-            राहु काल हर दिन लगभग 1.5 घंटे का अशुभ समय होता है। इस दौरान नया कार्य शुरू नहीं करना चाहिए।
           </p>
         </div>
       </div>

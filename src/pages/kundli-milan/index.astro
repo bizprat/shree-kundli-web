@@ -27,7 +27,7 @@ const cities = citiesData as City[];
 
 // Page meta
 const title = 'Kundli Milan - Free Horoscope Matching | Guna Milan for Marriage | Shree Kundli';
-const description = 'Free Kundli Milan (horoscope matching) for marriage compatibility. Check Guna Milan score, Mangal Dosha, and Nadi Dosha. कुंडली मिलान - गुण मिलान।';
+const description = 'Free Kundli Milan (horoscope matching) for marriage compatibility. Check Guna Milan score, Mangal Dosha, and Nadi Dosha.';
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -92,14 +92,14 @@ const faqSchema = {
 
 // 8 Koota for Guna Milan
 const kootas = [
-  { name: 'Varna', nameHindi: 'वर्ण', points: 1, description: 'Spiritual compatibility and ego levels' },
-  { name: 'Vashya', nameHindi: 'वश्य', points: 2, description: 'Mutual attraction and control in relationship' },
-  { name: 'Tara', nameHindi: 'तारा', points: 3, description: 'Birth star compatibility and destiny' },
-  { name: 'Yoni', nameHindi: 'योनि', points: 4, description: 'Physical and sexual compatibility' },
-  { name: 'Graha Maitri', nameHindi: 'ग्रह मैत्री', points: 5, description: 'Mental compatibility and friendship' },
-  { name: 'Gana', nameHindi: 'गण', points: 6, description: 'Temperament and behavior compatibility' },
-  { name: 'Bhakoot', nameHindi: 'भकूट', points: 7, description: 'Love, family welfare and finances' },
-  { name: 'Nadi', nameHindi: 'नाड़ी', points: 8, description: 'Health, genes and progeny' },
+  { name: 'Varna', points: 1, description: 'Spiritual compatibility and ego levels' },
+  { name: 'Vashya', points: 2, description: 'Mutual attraction and control in relationship' },
+  { name: 'Tara', points: 3, description: 'Birth star compatibility and destiny' },
+  { name: 'Yoni', points: 4, description: 'Physical and sexual compatibility' },
+  { name: 'Graha Maitri', points: 5, description: 'Mental compatibility and friendship' },
+  { name: 'Gana', points: 6, description: 'Temperament and behavior compatibility' },
+  { name: 'Bhakoot', points: 7, description: 'Love, family welfare and finances' },
+  { name: 'Nadi', points: 8, description: 'Health, genes and progeny' },
 ];
 ---
 
@@ -114,7 +114,7 @@ const kootas = [
     <!-- Header -->
     <header class="text-center space-y-4">
       <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-        Kundli Milan - कुंडली मिलान
+        Kundli Milan
       </h1>
       <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
         Horoscope Matching for Marriage Compatibility
@@ -129,7 +129,7 @@ const kootas = [
             What is Kundli Milan?
           </h2>
           <p class="text-neutral/80 leading-relaxed">
-            <strong>Kundli Milan</strong> (कुंडली मिलान), also known as <em>Guna Milan</em> or horoscope matching,
+            <strong>Kundli Milan</strong>, also known as <em>Guna Milan</em> or horoscope matching,
             is the Vedic astrology method to assess marriage compatibility. It compares the birth charts of
             prospective bride and groom using <strong>Ashtakoota</strong> (8 aspects) system, scoring up to
             <strong>36 Gunas</strong>. A score of 18+ is considered acceptable for marriage.
@@ -152,7 +152,7 @@ const kootas = [
             <div class="p-4 bg-blue-500/5 rounded-lg border border-blue-500/20">
               <h3 class="font-semibold text-blue-600 mb-4 flex items-center gap-2">
                 <span class="text-xl">👤</span>
-                Groom Details (वर विवरण)
+                Groom Details
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="form-control">
@@ -212,7 +212,7 @@ const kootas = [
             <div class="p-4 bg-pink-500/5 rounded-lg border border-pink-500/20">
               <h3 class="font-semibold text-pink-600 mb-4 flex items-center gap-2">
                 <span class="text-xl">👤</span>
-                Bride Details (वधू विवरण)
+                Bride Details
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="form-control">
@@ -274,7 +274,7 @@ const kootas = [
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                Check Compatibility (मिलान करें)
+                Check Compatibility
               </button>
             </div>
           </form>
@@ -323,7 +323,6 @@ const kootas = [
           <thead>
             <tr>
               <th>Koota</th>
-              <th>Hindi</th>
               <th>Points</th>
               <th>Significance</th>
             </tr>
@@ -332,13 +331,12 @@ const kootas = [
             {kootas.map((koota) => (
               <tr>
                 <td class="font-medium">{koota.name}</td>
-                <td>{koota.nameHindi}</td>
                 <td class="font-semibold text-primary">{koota.points}</td>
                 <td class="text-sm text-neutral/70">{koota.description}</td>
               </tr>
             ))}
             <tr class="bg-secondary/10">
-              <td class="font-bold" colspan="2">Total</td>
+              <td class="font-bold">Total</td>
               <td class="font-bold text-primary">36</td>
               <td class="text-sm">Maximum possible Gunas</td>
             </tr>
@@ -392,7 +390,7 @@ const kootas = [
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="card bg-red-500/5 border border-red-500/20">
           <div class="card-body p-4">
-            <h3 class="font-semibold text-red-600 mb-2">Mangal Dosha (मांगलिक दोष)</h3>
+            <h3 class="font-semibold text-red-600 mb-2">Mangal Dosha</h3>
             <p class="text-sm text-neutral/70 mb-2">
               Occurs when Mars is in 1st, 4th, 7th, 8th, or 12th house. Can cause disharmony if only one partner has it.
             </p>
@@ -403,7 +401,7 @@ const kootas = [
         </div>
         <div class="card bg-amber-500/5 border border-amber-500/20">
           <div class="card-body p-4">
-            <h3 class="font-semibold text-amber-600 mb-2">Nadi Dosha (नाड़ी दोष)</h3>
+            <h3 class="font-semibold text-amber-600 mb-2">Nadi Dosha</h3>
             <p class="text-sm text-neutral/70 mb-2">
               Occurs when both have same Nadi (Aadi, Madhya, or Antya). Can affect progeny and health.
             </p>

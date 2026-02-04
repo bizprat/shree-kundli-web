@@ -7,8 +7,8 @@
  *
  * Usage:
  * <TodayPanchang
- *   tithi={{ name: "Shukla Shashthi", nameHindi: "शुक्ल षष्ठी" }}
- *   nakshatra={{ name: "Revati", nameHindi: "रेवती" }}
+ *   tithi={{ name: "Shukla Shashthi" }}
+ *   nakshatra={{ name: "Revati" }}
  *   ...
  * />
  */
@@ -20,7 +20,6 @@ import StatusBadge from '../data-display/StatusBadge.astro';
 
 interface PanchangElement {
   name: string;
-  nameHindi: string;
   endTime?: string;
 }
 
@@ -74,11 +73,11 @@ const {
 
 // Placeholder data for demo (when no data provided)
 const defaultData = {
-  tithi: { name: 'Shukla Shashthi', nameHindi: 'शुक्ल षष्ठी' },
-  nakshatra: { name: 'Revati', nameHindi: 'रेवती' },
-  yoga: { name: 'Shubha', nameHindi: 'शुभ' },
-  karana: { name: 'Bava', nameHindi: 'बव' },
-  vara: { name: 'Tuesday', nameHindi: 'मंगलवार' },
+  tithi: { name: 'Shukla Shashthi' },
+  nakshatra: { name: 'Revati' },
+  yoga: { name: 'Shubha' },
+  karana: { name: 'Bava' },
+  vara: { name: 'Tuesday' },
   sunrise: '6:42 AM',
   sunset: '5:48 PM',
 };
@@ -126,43 +125,33 @@ const displaySunset = sunset || defaultData.sunset;
     <div class="space-y-0">
       <DataRow
         label="Tithi"
-        labelHindi="तिथि"
         value={displayTithi.name}
-        valueHindi={displayTithi.nameHindi}
         icon="🌙"
         href={citySlug ? `/tithi/${displayTithi.name.toLowerCase().replace(/\s+/g, '-')}` : undefined}
       />
 
       <DataRow
         label="Nakshatra"
-        labelHindi="नक्षत्र"
         value={displayNakshatra.name}
-        valueHindi={displayNakshatra.nameHindi}
         icon="⭐"
         href={citySlug ? `/nakshatra/${displayNakshatra.name.toLowerCase()}` : undefined}
       />
 
       <DataRow
         label="Yoga"
-        labelHindi="योग"
         value={displayYoga.name}
-        valueHindi={displayYoga.nameHindi}
         icon="🔮"
       />
 
       <DataRow
         label="Karana"
-        labelHindi="करण"
         value={displayKarana.name}
-        valueHindi={displayKarana.nameHindi}
         icon="📿"
       />
 
       <DataRow
         label="Vara"
-        labelHindi="वार"
         value={displayVara.name}
-        valueHindi={displayVara.nameHindi}
         icon="📆"
       />
     </div>
@@ -172,7 +161,6 @@ const displaySunset = sunset || defaultData.sunset;
       <TimeDisplay
         time={displaySunrise}
         label="Sunrise"
-        labelHindi="सूर्योदय"
         icon="🌅"
         size="sm"
       />
@@ -180,7 +168,6 @@ const displaySunset = sunset || defaultData.sunset;
       <TimeDisplay
         time={displaySunset}
         label="Sunset"
-        labelHindi="सूर्यास्त"
         icon="🌇"
         size="sm"
       />
@@ -189,7 +176,6 @@ const displaySunset = sunset || defaultData.sunset;
         <TimeDisplay
           time={moonrise}
           label="Moonrise"
-          labelHindi="चंद्रोदय"
           icon="🌙"
           size="sm"
         />

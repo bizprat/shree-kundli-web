@@ -51,7 +51,7 @@ const { muhurat } = Astro.props as { muhurat: MuhuratType };
 
 // Page meta
 const title = `${muhurat.name} Muhurat 2026 - Auspicious Dates & Timings | ${muhurat.nameHindi} | Shree Kundli`;
-const description = `${muhurat.description} Find shubh muhurat for ${muhurat.name.toLowerCase()} in 2026. ${muhurat.nameHindi} के लिए शुभ मुहूर्त।`;
+const description = `${muhurat.description} Find shubh muhurat for ${muhurat.name.toLowerCase()} in 2026.`;
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -131,7 +131,7 @@ const tithiNames: Record<number, string> = {
       <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
         {muhurat.name} Muhurat 2026
       </h1>
-      <p class="text-xl text-neutral/70 mt-1">{muhurat.nameHindi} मुहूर्त</p>
+      <p class="text-xl text-neutral/70 mt-1">{muhurat.name} Muhurat</p>
     </header>
 
     <!-- Quick Answer -->
@@ -139,7 +139,6 @@ const tithiNames: Record<number, string> = {
       <div class="glass-elevated">
         <div class="p-4 md:p-6">
           <p class="text-lg leading-relaxed">{muhurat.description}</p>
-          <p class="text-neutral/60 mt-2">{muhurat.descriptionHindi}</p>
         </div>
       </div>
     </section>

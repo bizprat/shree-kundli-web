@@ -158,7 +158,8 @@ The project follows a **near-zero client JS** philosophy:
 - All other languages use ISO 639-1 code as prefix
 - Use Astro's built-in i18n routing (`prefixDefaultLocale: false`)
 - UI strings live in `src/i18n/{lang}.json`
-- Content is bilingual on English pages (Hindi terms like "Tithi", "Nakshatra" appear naturally)
+- English pages use transliterated Roman terms only (e.g., "Tithi", "Nakshatra")
+- Devanagari script belongs exclusively in `/hi/` pages
 - Hindi pages are fully Hindi with Devanagari script
 
 ### API Communication
@@ -259,15 +260,15 @@ Base.astro
 
 EVERY content page MUST start with a `<div class="quick-answer">` that:
 - Answers the search query in the first 120 words
-- Uses bilingual format: Hindi term (English translation)
+- Uses transliterated Roman terms (e.g., "Tithi: Shukla Shashthi")
 - Is wrapped in semantic HTML with `role="contentinfo"`
 - Contains the most critical data point FIRST
 
 ```html
 <div class="quick-answer" role="contentinfo">
   <p><strong>Today's Panchang for Patna</strong> —
-  Tithi: शुक्ल षष्ठी (Shukla Shashthi),
-  Nakshatra: रेवती (Revati),
+  Tithi: Shukla Shashthi,
+  Nakshatra: Revati,
   Sunrise: 6:42 AM, Sunset: 5:48 PM.
   Rahu Kaal: 12:00 PM - 1:30 PM (avoid new ventures).</p>
 </div>
@@ -429,7 +430,7 @@ src/
 
 - ✅ **ALWAYS** test on 375px width first (budget Android)
 - ✅ **ALWAYS** use `glass-card` or variants for card backgrounds
-- ✅ **ALWAYS** include bilingual content (Hindi terms + English translation)
+- ✅ **ALWAYS** use transliterated Roman terms on English pages (Devanagari belongs in /hi/ only)
 - ✅ **ALWAYS** reserve height for ad slots to prevent CLS
 - ✅ **ALWAYS** use semantic HTML (`<article>`, `<section>`, `<nav>`, `<time>`)
 - ✅ **ALWAYS** add `loading="lazy"` to images below the fold

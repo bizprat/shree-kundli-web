@@ -28,16 +28,10 @@ const todayFormatted = today.toLocaleDateString('en-IN', {
   month: 'long',
   year: 'numeric',
 });
-const todayHindi = today.toLocaleDateString('hi-IN', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
 const todayIso = today.toISOString().split('T')[0];
 
 // Page meta
-const title = "Today's Panchang - Daily Hindu Calendar | आज का पंचांग | Shree Kundli";
+const title = "Today's Panchang - Daily Hindu Calendar | Shree Kundli";
 const description = `Check today's panchang (${todayFormatted}) with tithi, nakshatra, yoga, karana, sunrise, sunset, and rahu kaal for 500+ cities. Accurate Vedic panchang powered by Swiss Ephemeris.`;
 
 // Breadcrumbs
@@ -51,7 +45,7 @@ const panchangHubSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
   name: "Today's Panchang",
-  alternateName: 'आज का पंचांग',
+  alternateName: 'Aaj Ka Panchang',
   description: description,
   datePublished: todayIso,
   dateModified: todayIso,
@@ -73,12 +67,11 @@ const panchangHubSchema = {
     <!-- Header -->
     <header class="text-center space-y-4">
       <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-        आज का पंचांग
+        Today's Panchang
       </h1>
       <p class="text-lg text-neutral/70">
         <time datetime={todayIso}>{todayFormatted}</time>
       </p>
-      <p class="text-neutral/60">{todayHindi}</p>
     </header>
 
     <!-- Quick Answer -->
@@ -89,7 +82,7 @@ const panchangHubSchema = {
             What is Panchang?
           </h2>
           <p class="text-neutral/70">
-            <dfn>Panchang</dfn> (पंचांग) is the Hindu calendar system consisting of five elements:
+            <dfn>Panchang</dfn> is the Hindu calendar system consisting of five elements:
             <strong>Tithi</strong> (lunar day), <strong>Nakshatra</strong> (constellation),
             <strong>Yoga</strong> (luni-solar combination), <strong>Karana</strong> (half of tithi),
             and <strong>Vara</strong> (weekday). It helps determine auspicious timings for ceremonies,
@@ -129,7 +122,6 @@ const panchangHubSchema = {
           >
             <div class="p-3 text-center">
               <p class="font-semibold text-primary">{city.name}</p>
-              <p class="text-sm text-neutral/60">{city.nameHindi}</p>
               <p class="text-xs text-neutral/40 mt-1">{city.state}</p>
             </div>
           </a>
@@ -165,7 +157,7 @@ const panchangHubSchema = {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div class="glass-card">
           <div class="p-4">
-            <h3 class="font-semibold text-primary">Tithi (तिथि)</h3>
+            <h3 class="font-semibold text-primary">Tithi</h3>
             <p class="text-sm text-neutral/70">
               Lunar day based on moon's position relative to sun. 30 tithis in a lunar month.
             </p>
@@ -173,7 +165,7 @@ const panchangHubSchema = {
         </div>
         <div class="glass-card">
           <div class="p-4">
-            <h3 class="font-semibold text-primary">Nakshatra (नक्षत्र)</h3>
+            <h3 class="font-semibold text-primary">Nakshatra</h3>
             <p class="text-sm text-neutral/70">
               Constellation where moon is located. 27 nakshatras in the zodiac.
             </p>
@@ -181,7 +173,7 @@ const panchangHubSchema = {
         </div>
         <div class="glass-card">
           <div class="p-4">
-            <h3 class="font-semibold text-primary">Yoga (योग)</h3>
+            <h3 class="font-semibold text-primary">Yoga</h3>
             <p class="text-sm text-neutral/70">
               Combination of sun and moon longitudes. 27 yogas with varying effects.
             </p>
@@ -189,7 +181,7 @@ const panchangHubSchema = {
         </div>
         <div class="glass-card">
           <div class="p-4">
-            <h3 class="font-semibold text-primary">Karana (करण)</h3>
+            <h3 class="font-semibold text-primary">Karana</h3>
             <p class="text-sm text-neutral/70">
               Half of a tithi. 11 karanas that repeat in a cycle.
             </p>
@@ -197,7 +189,7 @@ const panchangHubSchema = {
         </div>
         <div class="glass-card">
           <div class="p-4">
-            <h3 class="font-semibold text-primary">Vara (वार)</h3>
+            <h3 class="font-semibold text-primary">Vara</h3>
             <p class="text-sm text-neutral/70">
               Day of the week, each ruled by a planet. Important for muhurat.
             </p>
@@ -205,7 +197,7 @@ const panchangHubSchema = {
         </div>
         <div class="glass-card">
           <div class="p-4">
-            <h3 class="font-semibold text-primary">Rahu Kaal (राहु काल)</h3>
+            <h3 class="font-semibold text-primary">Rahu Kaal</h3>
             <p class="text-sm text-neutral/70">
               Inauspicious period each day. Avoid starting new work during this time.
             </p>

@@ -45,7 +45,7 @@ const todayFormatted = today.toLocaleDateString('en-IN', {
 
 // Page meta
 const title = 'Daily Rashifal 2026 - Today\'s Horoscope for All 12 Zodiac Signs | Shree Kundli';
-const description = `Today's horoscope (${todayFormatted}) for all 12 zodiac signs. Read daily rashifal for Mesh, Vrishabh, Mithun, Kark, Singh, Kanya, Tula, Vrishchik, Dhanu, Makar, Kumbh, Meen. आज का राशिफल।`;
+const description = `Today's horoscope (${todayFormatted}) for all 12 zodiac signs. Read daily rashifal for Mesh, Vrishabh, Mithun, Kark, Singh, Kanya, Tula, Vrishchik, Dhanu, Makar, Kumbh, Meen.`;
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -65,8 +65,8 @@ const rashiListSchema = {
     position: index + 1,
     item: {
       '@type': 'Article',
-      name: `${rashi.name} (${rashi.nameHindi}) Rashifal`,
-      alternateName: `${rashi.nameHindi} राशिफल`,
+      name: `${rashi.name} Rashifal`,
+      alternateName: `${rashi.name} Horoscope`,
       description: `Daily horoscope for ${rashi.name} (${rashi.nameHindi}). Date range: ${rashi.dateRange}`,
       url: `/rashifal/${rashi.slug}`,
     },
@@ -99,7 +99,7 @@ const elementBg: Record<string, string> = {
     <!-- Header -->
     <header class="text-center space-y-4">
       <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-        Daily Rashifal - आज का राशिफल
+        Daily Rashifal
       </h1>
       <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
         Today's horoscope for all 12 zodiac signs • {todayFormatted}
@@ -136,7 +136,7 @@ const elementBg: Record<string, string> = {
     <!-- Detailed Rashi List -->
     <section>
       <h2 class="font-heading text-2xl text-primary font-bold mb-6">
-        All 12 Zodiac Signs (राशि)
+        All 12 Zodiac Signs
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -226,7 +226,7 @@ const elementBg: Record<string, string> = {
             What is Rashifal?
           </div>
           <div class="collapse-content">
-            <p>Rashifal (राशिफल) is the Hindi term for horoscope. It refers to astrological predictions based on your zodiac sign (rashi). In Vedic astrology, your Moon sign is used for daily predictions, unlike Western astrology which uses Sun sign.</p>
+            <p>Rashifal is the Hindi term for horoscope. It refers to astrological predictions based on your zodiac sign (rashi). In Vedic astrology, your Moon sign is used for daily predictions, unlike Western astrology which uses Sun sign.</p>
           </div>
         </div>
 

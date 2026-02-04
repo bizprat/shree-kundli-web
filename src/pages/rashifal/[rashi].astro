@@ -60,20 +60,19 @@ const todayFormatted = today.toLocaleDateString('en-IN', {
 const todayIso = today.toISOString().split('T')[0];
 
 // Page meta
-const title = `${rashi.name} Horoscope Today (${rashi.nameHindi} राशिफल) - ${todayFormatted} | Shree Kundli`;
-const description = `Today's ${rashi.name} (${rashi.nameHindi}) horoscope for ${todayFormatted}. Daily rashifal with lucky numbers, colors, and predictions. ${rashi.dateRange}.`;
+const title = `${rashi.name} Horoscope Today - ${todayFormatted} | Shree Kundli`;
+const description = `Today's ${rashi.name} horoscope for ${todayFormatted}. Daily rashifal with lucky numbers, colors, and predictions. ${rashi.dateRange}.`;
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
   { name: 'Home', url: '/' },
   { name: 'Rashifal', url: '/rashifal' },
-  { name: `${rashi.nameHindi} (${rashi.name})` },
+  { name: rashi.name },
 ];
 
 // Mock daily horoscope (will be replaced with API data)
 const dailyHoroscope = {
   overall: 'Today brings positive energy for your endeavors. Focus on your goals and trust your instincts. Financial matters look favorable.',
-  overallHindi: 'आज आपके प्रयासों के लिए सकारात्मक ऊर्जा लाता है। अपने लक्ष्यों पर ध्यान केंद्रित करें और अपनी अंतर्ज्ञान पर भरोसा रखें।',
   love: 'Romantic relationships flourish today. Single natives may find new connections.',
   career: 'Professional growth is indicated. Take initiative in workplace matters.',
   health: 'Maintain balance between work and rest. Light exercise is beneficial.',
@@ -100,7 +99,7 @@ const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: `${rashi.name} Horoscope Today - ${todayFormatted}`,
-  alternateName: `${rashi.nameHindi} राशिफल - आज का भविष्यफल`,
+  alternateName: `${rashi.name} Daily Horoscope`,
   description: description,
   datePublished: todayIso,
   dateModified: todayIso,
@@ -130,7 +129,7 @@ const faqSchema = {
       name: `What is today's horoscope for ${rashi.name}?`,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: `Today (${todayFormatted}), ${rashi.name} (${rashi.nameHindi}) natives can expect: ${dailyHoroscope.overall} Lucky numbers are ${rashi.luckyNumbers.join(', ')} and lucky color is ${rashi.luckyColors[0]}.`,
+        text: `Today (${todayFormatted}), ${rashi.name} natives can expect: ${dailyHoroscope.overall} Lucky numbers are ${rashi.luckyNumbers.join(', ')} and lucky color is ${rashi.luckyColors[0]}.`,
       },
     },
     {
@@ -138,7 +137,7 @@ const faqSchema = {
       name: `What are the lucky numbers for ${rashi.name}?`,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: `The lucky numbers for ${rashi.name} (${rashi.nameHindi}) are ${rashi.luckyNumbers.join(', ')}. Lucky day is ${rashi.luckyDay} and lucky colors are ${rashi.luckyColors.join(', ')}.`,
+        text: `The lucky numbers for ${rashi.name} are ${rashi.luckyNumbers.join(', ')}. Lucky day is ${rashi.luckyDay} and lucky colors are ${rashi.luckyColors.join(', ')}.`,
       },
     },
     {
@@ -146,7 +145,7 @@ const faqSchema = {
       name: `What are the characteristics of ${rashi.name}?`,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: `${rashi.name} (${rashi.nameHindi}) is a ${rashi.element} sign ruled by ${rashi.rulingPlanet}. Key traits include: ${rashi.traits.join(', ')}. Date range: ${rashi.dateRange}.`,
+        text: `${rashi.name} is a ${rashi.element} sign ruled by ${rashi.rulingPlanet}. Key traits include: ${rashi.traits.join(', ')}. Date range: ${rashi.dateRange}.`,
       },
     },
   ],
@@ -174,7 +173,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
         </div>
         <div>
           <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-            {rashi.nameHindi} राशिफल
+            {rashi.name} Rashifal
           </h1>
           <p class="text-xl text-neutral/70 mt-1">
             {rashi.name} Horoscope Today
@@ -210,7 +209,6 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
           <!-- Daily Prediction -->
           <div class="space-y-3">
             <p class="text-lg leading-relaxed">{dailyHoroscope.overall}</p>
-            <p class="text-neutral/60">{dailyHoroscope.overallHindi}</p>
           </div>
 
           <!-- Lucky Factors -->
@@ -229,7 +227,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
             </div>
             <div>
               <p class="text-xs text-neutral/50 uppercase">Ruling Planet</p>
-              <p class="font-semibold text-primary">{rashi.rulingPlanet} ({rashi.rulingPlanetHindi})</p>
+              <p class="font-semibold text-primary">{rashi.rulingPlanet}</p>
             </div>
           </div>
         </div>
@@ -323,7 +321,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
             What is today's horoscope for {rashi.name}?
           </div>
           <div class="collapse-content">
-            <p>Today ({todayFormatted}), {rashi.name} ({rashi.nameHindi}) natives can expect: {dailyHoroscope.overall} Lucky numbers are {rashi.luckyNumbers.join(', ')} and lucky color is {rashi.luckyColors[0]}.</p>
+            <p>Today ({todayFormatted}), {rashi.name} natives can expect: {dailyHoroscope.overall} Lucky numbers are {rashi.luckyNumbers.join(', ')} and lucky color is {rashi.luckyColors[0]}.</p>
           </div>
         </div>
 
@@ -333,7 +331,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
             What are the lucky numbers for {rashi.name}?
           </div>
           <div class="collapse-content">
-            <p>The lucky numbers for {rashi.name} ({rashi.nameHindi}) are {rashi.luckyNumbers.join(', ')}. Lucky day is {rashi.luckyDay} and lucky colors are {rashi.luckyColors.join(', ')}.</p>
+            <p>The lucky numbers for {rashi.name} are {rashi.luckyNumbers.join(', ')}. Lucky day is {rashi.luckyDay} and lucky colors are {rashi.luckyColors.join(', ')}.</p>
           </div>
         </div>
 
@@ -343,7 +341,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
             What are the characteristics of {rashi.name}?
           </div>
           <div class="collapse-content">
-            <p>{rashi.name} ({rashi.nameHindi}) is a {rashi.element} sign ruled by {rashi.rulingPlanet}. Key traits include: {rashi.traits.join(', ')}. Date range: {rashi.dateRange}.</p>
+            <p>{rashi.name} is a {rashi.element} sign ruled by {rashi.rulingPlanet}. Key traits include: {rashi.traits.join(', ')}. Date range: {rashi.dateRange}.</p>
           </div>
         </div>
       </div>
@@ -355,7 +353,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
         href={`/rashifal/${prevRashi.slug}`}
         class="btn btn-outline min-h-12"
       >
-        ← {prevRashi.symbol} {prevRashi.nameHindi}
+        ← {prevRashi.symbol} {prevRashi.name}
       </a>
       <a href="/rashifal" class="btn btn-ghost min-h-12">
         All Rashis
@@ -364,7 +362,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
         href={`/rashifal/${nextRashi.slug}`}
         class="btn btn-outline min-h-12"
       >
-        {nextRashi.nameHindi} {nextRashi.symbol} →
+        {nextRashi.name} {nextRashi.symbol} →
       </a>
     </div>
   </div>

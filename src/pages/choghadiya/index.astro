@@ -30,7 +30,6 @@ const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
 const choghadiyaTypes = [
   {
     name: 'Amrit',
-    nameHindi: 'अमृत',
     quality: 'Best',
     color: 'success',
     description: 'Most auspicious for all activities, especially important work',
@@ -38,7 +37,6 @@ const choghadiyaTypes = [
   },
   {
     name: 'Shubh',
-    nameHindi: 'शुभ',
     quality: 'Good',
     color: 'success',
     description: 'Auspicious for marriage, education, and religious activities',
@@ -46,7 +44,6 @@ const choghadiyaTypes = [
   },
   {
     name: 'Labh',
-    nameHindi: 'लाभ',
     quality: 'Good',
     color: 'info',
     description: 'Good for financial matters, business, and profit-related work',
@@ -54,7 +51,6 @@ const choghadiyaTypes = [
   },
   {
     name: 'Char',
-    nameHindi: 'चर',
     quality: 'Good',
     color: 'info',
     description: 'Favorable for travel, journey, and movement',
@@ -62,7 +58,6 @@ const choghadiyaTypes = [
   },
   {
     name: 'Kaal',
-    nameHindi: 'काल',
     quality: 'Bad',
     color: 'error',
     description: 'Inauspicious period, avoid important activities',
@@ -70,7 +65,6 @@ const choghadiyaTypes = [
   },
   {
     name: 'Rog',
-    nameHindi: 'रोग',
     quality: 'Bad',
     color: 'warning',
     description: 'Associated with illness, avoid health-related decisions',
@@ -78,7 +72,6 @@ const choghadiyaTypes = [
   },
   {
     name: 'Udveg',
-    nameHindi: 'उद्वेग',
     quality: 'Bad',
     color: 'warning',
     description: 'Period of anxiety, avoid government and legal work',
@@ -87,8 +80,8 @@ const choghadiyaTypes = [
 ];
 
 // Page meta
-const title = `Choghadiya Today (${dayOfWeek}) - Shubh Muhurat Time | आज का चौघड़िया | Shree Kundli`;
-const description = `Today's Choghadiya (${todayFormatted}) - Find auspicious (Amrit, Shubh, Labh, Char) and inauspicious (Kaal, Rog, Udveg) periods. Check day and night choghadiya timings for your city. आज का चौघड़िया।`;
+const title = `Choghadiya Today (${dayOfWeek}) - Shubh Muhurat Time | Shree Kundli`;
+const description = `Today's Choghadiya (${todayFormatted}) - Find auspicious (Amrit, Shubh, Labh, Char) and inauspicious (Kaal, Rog, Udveg) periods. Check day and night choghadiya timings for your city.`;
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -106,7 +99,7 @@ const faqSchema = {
       name: 'What is Choghadiya?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Choghadiya (चौघड़िया) is a Vedic time system that divides day and night into 8 periods each, totaling 16 periods. Each period is classified as auspicious (Amrit, Shubh, Labh, Char) or inauspicious (Kaal, Rog, Udveg) for different activities.',
+        text: 'Choghadiya is a Vedic time system that divides day and night into 8 periods each, totaling 16 periods. Each period is classified as auspicious (Amrit, Shubh, Labh, Char) or inauspicious (Kaal, Rog, Udveg) for different activities.',
       },
     },
     {
@@ -139,7 +132,7 @@ const faqSchema = {
     <!-- Header -->
     <header class="text-center space-y-4">
       <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-        Choghadiya Today - आज का चौघड़िया
+        Choghadiya Today
       </h1>
       <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
         {dayOfWeek}, {todayFormatted}
@@ -205,7 +198,7 @@ const faqSchema = {
       <div class="space-y-4">
         <!-- Auspicious -->
         <div>
-          <h3 class="font-semibold text-success mb-3">Auspicious (शुभ) Choghadiya</h3>
+          <h3 class="font-semibold text-success mb-3">Auspicious Choghadiya</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {choghadiyaTypes
               .filter(c => c.quality === 'Best' || (c.quality === 'Good' && c.color === 'success'))
@@ -215,7 +208,7 @@ const faqSchema = {
                     <div class="flex items-center gap-2">
                       <span class={`badge badge-${type.color}`}>{type.quality}</span>
                       <h4 class={`font-semibold text-${type.color}`}>
-                        {type.name} ({type.nameHindi})
+                        {type.name}
                       </h4>
                     </div>
                     <p class="text-sm text-neutral/70 mt-2">{type.description}</p>
@@ -242,7 +235,7 @@ const faqSchema = {
                     <div class="flex items-center gap-2">
                       <span class={`badge badge-${type.color}`}>{type.quality}</span>
                       <h4 class={`font-semibold text-${type.color}`}>
-                        {type.name} ({type.nameHindi})
+                        {type.name}
                       </h4>
                     </div>
                     <p class="text-sm text-neutral/70 mt-2">{type.description}</p>
@@ -259,7 +252,7 @@ const faqSchema = {
 
         <!-- Inauspicious -->
         <div>
-          <h3 class="font-semibold text-error mb-3">Inauspicious (अशुभ) Choghadiya</h3>
+          <h3 class="font-semibold text-error mb-3">Inauspicious Choghadiya</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             {choghadiyaTypes
               .filter(c => c.quality === 'Bad')
@@ -269,7 +262,7 @@ const faqSchema = {
                     <div class="flex items-center gap-2">
                       <span class={`badge badge-${type.color}`}>{type.quality}</span>
                       <h4 class={`font-semibold text-${type.color}`}>
-                        {type.name} ({type.nameHindi})
+                        {type.name}
                       </h4>
                     </div>
                     <p class="text-sm text-neutral/70 mt-2">{type.description}</p>
@@ -290,7 +283,7 @@ const faqSchema = {
         <div class="card-body p-4">
           <div class="prose prose-neutral max-w-none">
             <p>
-              <strong>Choghadiya</strong> (चौघड़िया) literally means "four ghatis" where one ghati equals
+              <strong>Choghadiya</strong> literally means "four ghatis" where one ghati equals
               24 minutes. Each choghadiya period is approximately 1.5 hours (4 ghatis).
             </p>
             <ul class="mt-3 space-y-2">
@@ -316,7 +309,7 @@ const faqSchema = {
             What is Choghadiya?
           </div>
           <div class="collapse-content">
-            <p>Choghadiya (चौघड़िया) is a Vedic time system that divides day and night into 8 periods each, totaling 16 periods. Each period is classified as auspicious or inauspicious for different activities.</p>
+            <p>Choghadiya is a Vedic time system that divides day and night into 8 periods each, totaling 16 periods. Each period is classified as auspicious or inauspicious for different activities.</p>
           </div>
         </div>
 

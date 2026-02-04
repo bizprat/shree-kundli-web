@@ -38,7 +38,7 @@ const dateOptions: Intl.DateTimeFormatOptions = {
 const todayFormatted = today.toLocaleDateString('en-IN', dateOptions);
 
 // Page meta
-const title = 'Shreeng - Vedic Astrology, Panchang & Kundli | श्रीएंग';
+const title = 'Shreeng - Vedic Astrology, Panchang & Kundli';
 const description = `Check today's panchang, tithi, nakshatra, rahu kaal for ${defaultCity.name}. Free kundli, rashifal, muhurat finder & Hindu festival calendar. Accurate Vedic astrology powered by Swiss Ephemeris.`;
 
 // WebSite schema for homepage
@@ -46,7 +46,7 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Shreeng',
-  alternateName: ['श्रीएंग', 'Shreeng Astrology'],
+  alternateName: ['Shreeng Astrology', 'Shreeng Panchang'],
   url: Astro.site?.toString() || 'https://shreeng.com',
   description: 'Comprehensive Vedic Astrology platform for Panchang, Kundli, Rashifal, Muhurat and Hindu Festival information.',
   potentialAction: {
@@ -109,7 +109,6 @@ const websiteSchema = {
                 <h3 class="font-semibold text-lg group-hover:text-primary transition-colors">
                   Daily Panchang
                 </h3>
-                <p class="text-sm text-neutral font-hindi mb-1">आज का पंचांग</p>
                 <p class="text-sm text-neutral/80">
                   Tithi, nakshatra, yoga, karana for your city
                 </p>
@@ -127,7 +126,6 @@ const websiteSchema = {
                 <h3 class="font-semibold text-lg group-hover:text-error transition-colors">
                   Rahu Kaal
                 </h3>
-                <p class="text-sm text-neutral font-hindi mb-1">राहु काल</p>
                 <p class="text-sm text-neutral/80">
                   Inauspicious timing to avoid new ventures
                 </p>
@@ -145,7 +143,6 @@ const websiteSchema = {
                 <h3 class="font-semibold text-lg group-hover:text-success transition-colors">
                   Choghadiya
                 </h3>
-                <p class="text-sm text-neutral font-hindi mb-1">चौघड़िया</p>
                 <p class="text-sm text-neutral/80">
                   Auspicious time periods for activities
                 </p>
@@ -163,7 +160,6 @@ const websiteSchema = {
                 <h3 class="font-semibold text-lg group-hover:text-primary transition-colors">
                   Shubh Muhurat
                 </h3>
-                <p class="text-sm text-neutral font-hindi mb-1">शुभ मुहूर्त</p>
                 <p class="text-sm text-neutral/80">
                   Auspicious dates for wedding, griha pravesh
                 </p>
@@ -181,7 +177,6 @@ const websiteSchema = {
                 <h3 class="font-semibold text-lg group-hover:text-secondary transition-colors">
                   Festival Calendar
                 </h3>
-                <p class="text-sm text-neutral font-hindi mb-1">त्योहार कैलेंडर</p>
                 <p class="text-sm text-neutral/80">
                   Hindu festivals, vrat dates & puja timings
                 </p>
@@ -199,7 +194,6 @@ const websiteSchema = {
                 <h3 class="font-semibold text-lg text-primary group-hover:text-primary/80 transition-colors">
                   Kundli Generator
                 </h3>
-                <p class="text-sm text-neutral font-hindi mb-1">जन्म कुंडली</p>
                 <p class="text-sm text-neutral/80">
                   Create free birth chart with analysis
                 </p>
@@ -222,7 +216,6 @@ const websiteSchema = {
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
         <span aria-hidden="true">📿</span>
         <span>Panchang Elements</span>
-        <span class="font-hindi text-neutral text-base font-normal">पंचांग तत्व</span>
       </h2>
       <p class="text-neutral/80 mb-6 text-sm">
         The five elements that make up the Hindu Panchang
@@ -233,7 +226,6 @@ const websiteSchema = {
           <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
             <span class="text-3xl mb-2 block" aria-hidden="true">🌙</span>
             <p class="font-semibold text-primary">Tithi</p>
-            <p class="text-xs text-neutral font-hindi">तिथि</p>
             <p class="text-[10px] text-neutral/70 mt-1">Lunar Day</p>
           </GlassCard>
         </a>
@@ -242,7 +234,6 @@ const websiteSchema = {
           <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
             <span class="text-3xl mb-2 block" aria-hidden="true">⭐</span>
             <p class="font-semibold text-primary">Nakshatra</p>
-            <p class="text-xs text-neutral font-hindi">नक्षत्र</p>
             <p class="text-[10px] text-neutral/70 mt-1">Lunar Mansion</p>
           </GlassCard>
         </a>
@@ -251,7 +242,6 @@ const websiteSchema = {
           <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
             <span class="text-3xl mb-2 block" aria-hidden="true">☯️</span>
             <p class="font-semibold text-primary">Yoga</p>
-            <p class="text-xs text-neutral font-hindi">योग</p>
             <p class="text-[10px] text-neutral/70 mt-1">Sun-Moon Yoga</p>
           </GlassCard>
         </a>
@@ -260,7 +250,6 @@ const websiteSchema = {
           <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
             <span class="text-3xl mb-2 block" aria-hidden="true">📿</span>
             <p class="font-semibold text-primary">Karana</p>
-            <p class="text-xs text-neutral font-hindi">करण</p>
             <p class="text-[10px] text-neutral/70 mt-1">Half Tithi</p>
           </GlassCard>
         </a>
@@ -269,7 +258,6 @@ const websiteSchema = {
           <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
             <span class="text-3xl mb-2 block" aria-hidden="true">📅</span>
             <p class="font-semibold text-primary">Vara</p>
-            <p class="text-xs text-neutral font-hindi">वार</p>
             <p class="text-[10px] text-neutral/70 mt-1">Day of Week</p>
           </GlassCard>
         </a>

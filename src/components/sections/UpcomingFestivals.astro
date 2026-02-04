@@ -16,7 +16,6 @@ import StatusBadge from '../data-display/StatusBadge.astro';
 interface Festival {
   id: string;
   name: string;
-  nameHindi: string;
   slug: string;
   date: string | Date;
   type?: 'major' | 'regional' | 'vrat';
@@ -52,7 +51,6 @@ const demoFestivals: Festival[] = [
   {
     id: 'mahashivratri',
     name: 'Mahashivratri',
-    nameHindi: 'महाशिवरात्रि',
     slug: 'mahashivratri',
     date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
     type: 'major',
@@ -61,7 +59,6 @@ const demoFestivals: Festival[] = [
   {
     id: 'holi',
     name: 'Holi',
-    nameHindi: 'होली',
     slug: 'holi',
     date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
     type: 'major',
@@ -70,7 +67,6 @@ const demoFestivals: Festival[] = [
   {
     id: 'ram-navami',
     name: 'Ram Navami',
-    nameHindi: 'राम नवमी',
     slug: 'ram-navami',
     date: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
     type: 'major',
@@ -79,7 +75,6 @@ const demoFestivals: Festival[] = [
   {
     id: 'ekadashi',
     name: 'Ekadashi Vrat',
-    nameHindi: 'एकादशी व्रत',
     slug: 'ekadashi',
     date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     type: 'vrat',
@@ -146,7 +141,6 @@ const typeBadgeStatus: Record<string, 'active' | 'info' | 'neutral'> = {
                       />
                     )}
                   </div>
-                  <div class="text-sm text-neutral font-hindi">{festival.nameHindi}</div>
                 </div>
               </div>
               <div class="shrink-0 ml-3">
@@ -205,7 +199,6 @@ const typeBadgeStatus: Record<string, 'active' | 'info' | 'neutral'> = {
                     />
                   )}
                 </div>
-                <div class="text-sm text-neutral font-hindi mb-2">{festival.nameHindi}</div>
                 {festival.description && (
                   <p class="text-sm text-neutral/80 mb-3 line-clamp-2">
                     {festival.description}

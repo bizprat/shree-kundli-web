@@ -40,8 +40,8 @@ const rahuKaalByDay: Record<string, { period: string; order: number }> = {
 const todayRahuKaal = rahuKaalByDay[dayOfWeek];
 
 // Page meta
-const title = `Rahu Kaal Today (${dayOfWeek}) - राहु काल Time for All Cities | Shree Kundli`;
-const description = `Rahu Kaal today (${todayFormatted}) is approximately ${todayRahuKaal.period}. Check accurate Rahu Kaal timings for your city. राहु काल का समय - avoid starting important work during this period.`;
+const title = `Rahu Kaal Today (${dayOfWeek}) - Time for All Cities | Shree Kundli`;
+const description = `Rahu Kaal today (${todayFormatted}) is approximately ${todayRahuKaal.period}. Check accurate Rahu Kaal timings for your city. Avoid starting important work during this period.`;
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -67,7 +67,7 @@ const faqSchema = {
       name: 'What is Rahu Kaal?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Rahu Kaal (राहु काल) is a period of approximately 1.5 hours every day that is considered inauspicious in Vedic astrology. It is one of the eight segments of the day, ruled by Rahu, and one should avoid starting new ventures, journeys, or important activities during this time.',
+        text: 'Rahu Kaal is a period of approximately 1.5 hours every day that is considered inauspicious in Vedic astrology. It is one of the eight segments of the day, ruled by Rahu, and one should avoid starting new ventures, journeys, or important activities during this time.',
       },
     },
     {
@@ -92,7 +92,7 @@ const faqSchema = {
     <!-- Header -->
     <header class="text-center space-y-4">
       <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-        Rahu Kaal Today - राहु काल
+        Rahu Kaal Today
       </h1>
       <p class="text-lg text-neutral/70 max-w-2xl mx-auto">
         {dayOfWeek}, {todayFormatted}
@@ -177,13 +177,9 @@ const faqSchema = {
       </h2>
       <div class="prose prose-neutral max-w-none">
         <p class="text-lg leading-relaxed">
-          <strong>Rahu Kaal</strong> (राहु काल) is a period of approximately 1.5 hours every day
+          <strong>Rahu Kaal</strong> is a period of approximately 1.5 hours every day
           that is considered inauspicious in Vedic astrology. It is believed that activities
           started during this time may face obstacles or not yield desired results.
-        </p>
-        <p class="text-neutral/70 mt-3">
-          राहु काल वैदिक ज्योतिष में हर दिन लगभग 1.5 घंटे का समय होता है जो अशुभ माना जाता है।
-          इस समय शुरू किए गए कार्यों में बाधाएं आ सकती हैं।
         </p>
       </div>
     </section>

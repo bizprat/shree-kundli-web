@@ -31,8 +31,6 @@ interface Props {
   endTime?: string;
   /** Time label */
   label: string;
-  /** Hindi label (optional) */
-  labelHindi?: string;
   /** Emoji icon */
   icon?: string;
   /** Display variant */
@@ -50,7 +48,6 @@ const {
   startTime,
   endTime,
   label,
-  labelHindi,
   icon = '🕐',
   variant = 'default',
   size = 'md',
@@ -103,9 +100,6 @@ const displayTime = time || (startTime && endTime ? `${startTime} - ${endTime}` 
     )}
     <div class:list={[sizeStyles[size].label, 'text-neutral']}>
       {label}
-      {labelHindi && (
-        <span class="font-hindi ml-1">({labelHindi})</span>
-      )}
     </div>
   </div>
 </div>

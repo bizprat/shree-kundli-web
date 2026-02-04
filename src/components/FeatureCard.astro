@@ -8,7 +8,6 @@
  * Usage:
  * <FeatureCard
  *   title="Daily Panchang"
- *   titleHindi="आज का पंचांग"
  *   description="Check tithi, nakshatra, yoga, and karana"
  *   href="/panchang"
  *   icon="calendar"
@@ -17,9 +16,7 @@
 
 interface Props {
   title: string;
-  titleHindi?: string;
   description: string;
-  descriptionHindi?: string;
   href: string;
   icon?: 'calendar' | 'star' | 'clock' | 'sun' | 'moon' | 'home' | 'heart';
   variant?: 'default' | 'primary' | 'secondary';
@@ -28,9 +25,7 @@ interface Props {
 
 const {
   title,
-  titleHindi,
   description,
-  descriptionHindi,
   href,
   icon = 'star',
   variant = 'default',
@@ -91,11 +86,6 @@ const variantClasses = {
     <div class="grow min-w-0">
       <h3 class="font-heading text-lg font-semibold text-primary truncate">
         {title}
-        {titleHindi && (
-          <span class="text-neutral/60 text-sm font-normal ml-1">
-            ({titleHindi})
-          </span>
-        )}
       </h3>
       <p class="text-sm text-neutral/70 line-clamp-2">
         {description}

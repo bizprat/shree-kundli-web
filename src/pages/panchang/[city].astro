@@ -45,45 +45,31 @@ const todayFormatted = today.toLocaleDateString('en-IN', {
   month: 'long',
   year: 'numeric',
 });
-const todayHindi = today.toLocaleDateString('hi-IN', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
 const todayIso = today.toISOString().split('T')[0];
 
 // Mock panchang data (will be replaced with API data)
 const panchang = {
   tithi: {
     name: 'Shukla Shashthi',
-    nameHindi: 'शुक्ल षष्ठी',
     paksha: 'Shukla',
-    pakshaHindi: 'शुक्ल पक्ष',
     endTime: '05:15 AM (Next Day)',
   },
   nakshatra: {
     name: 'Rohini',
-    nameHindi: 'रोहिणी',
     lord: 'Moon',
-    lordHindi: 'चंद्र',
     endTime: '08:42 PM',
   },
   yoga: {
     name: 'Shool',
-    nameHindi: 'शूल',
     endTime: '11:23 AM',
   },
   karana: {
     name: 'Balava',
-    nameHindi: 'बालव',
     endTime: '05:15 AM (Next Day)',
   },
   vara: {
     name: 'Monday',
-    nameHindi: 'सोमवार',
     lord: 'Moon',
-    lordHindi: 'चंद्र',
   },
   sun: {
     sunrise: '07:05 AM',
@@ -112,8 +98,8 @@ const panchang = {
 };
 
 // Page meta
-const title = `Today's Panchang for ${city.name} - ${todayFormatted} | ${city.nameHindi} पंचांग | Shreeng`;
-const description = `${panchang.tithi.nameHindi} (${panchang.tithi.name}) tithi, ${panchang.nakshatra.nameHindi} (${panchang.nakshatra.name}) nakshatra. Sunrise ${panchang.sun.sunrise}, Rahu Kaal ${panchang.rahuKaal.start}-${panchang.rahuKaal.end}. Accurate panchang for ${city.name}.`;
+const title = `Today's Panchang for ${city.name} - ${todayFormatted} | Shreeng`;
+const description = `${panchang.tithi.name} tithi, ${panchang.nakshatra.name} nakshatra. Sunrise ${panchang.sun.sunrise}, Rahu Kaal ${panchang.rahuKaal.start}-${panchang.rahuKaal.end}. Accurate panchang for ${city.name}.`;
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -127,7 +113,7 @@ const datasetSchema = {
   '@context': 'https://schema.org',
   '@type': 'Dataset',
   name: `Panchang for ${city.name} - ${todayFormatted}`,
-  alternateName: `${city.nameHindi} पंचांग - ${todayHindi}`,
+  alternateName: `${city.name} Panchang - ${todayFormatted}`,
   description: `Vedic panchang data including tithi, nakshatra, yoga, karana, sunrise, sunset, and muhurat timings for ${city.name}.`,
   url: Astro.url.toString(),
   datePublished: todayIso,
@@ -168,7 +154,7 @@ const faqSchema = {
       name: `What is today's tithi in ${city.name}?`,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: `Today (${todayFormatted}) is ${panchang.tithi.name} (${panchang.tithi.nameHindi}) in ${city.name}. The tithi ends at ${panchang.tithi.endTime}.`,
+        text: `Today (${todayFormatted}) is ${panchang.tithi.name} in ${city.name}. The tithi ends at ${panchang.tithi.endTime}.`,
       },
     },
     {
@@ -201,9 +187,6 @@ const faqSchema = {
     <header class="mb-2">
       <h1 class="text-2xl md:text-3xl font-bold">
         <span class="text-primary">{city.name}</span> Panchang
-        <span class="font-hindi text-xl text-neutral font-normal ml-2">
-          {city.nameHindi} पंचांग
-        </span>
       </h1>
       <p class="text-sm text-neutral mt-1">
         <time datetime={todayIso}>{todayFormatted}</time> • {city.state}
@@ -222,8 +205,8 @@ const faqSchema = {
     <QuickAnswer highlight>
       <p>
         <strong>Today's Panchang for {city.name}</strong> —
-        Tithi: <span class="font-hindi">{panchang.tithi.nameHindi}</span> ({panchang.tithi.name}),
-        Nakshatra: <span class="font-hindi">{panchang.nakshatra.nameHindi}</span> ({panchang.nakshatra.name}),
+        Tithi: {panchang.tithi.name},
+        Nakshatra: {panchang.nakshatra.name},
         Sunrise: <time datetime={panchang.sun.sunriseIso}>{panchang.sun.sunrise}</time>,
         Sunset: <time datetime={panchang.sun.sunsetIso}>{panchang.sun.sunset}</time>.
         Rahu Kaal: <time datetime={panchang.rahuKaal.startIso}>{panchang.rahuKaal.start}</time> - <time datetime={panchang.rahuKaal.endIso}>{panchang.rahuKaal.end}</time> (avoid new ventures).
@@ -235,54 +218,41 @@ const faqSchema = {
       <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
         <span aria-hidden="true">📅</span>
         <span>Panchangam</span>
-        <span class="font-hindi text-neutral text-base font-normal">पंचांग</span>
       </h2>
 
       <GlassCard variant="elevated" padding="md">
         <DataRow
           label="Tithi"
-          labelHindi="तिथि"
           value={panchang.tithi.name}
-          valueHindi={panchang.tithi.nameHindi}
           icon="🌙"
           href={`/tithi/${panchang.tithi.name.toLowerCase().replace(/\s+/g, '-')}`}
           variant="highlight"
         />
         <DataRow
           label="Paksha"
-          labelHindi="पक्ष"
           value={panchang.tithi.paksha}
-          valueHindi={panchang.tithi.pakshaHindi}
           icon="🌓"
         />
         <DataRow
           label="Nakshatra"
-          labelHindi="नक्षत्र"
           value={panchang.nakshatra.name}
-          valueHindi={panchang.nakshatra.nameHindi}
           icon="⭐"
           href={`/nakshatra/${panchang.nakshatra.name.toLowerCase()}`}
         />
         <DataRow
           label="Yoga"
-          labelHindi="योग"
           value={panchang.yoga.name}
-          valueHindi={panchang.yoga.nameHindi}
           icon="☯️"
           href={`/yoga/${panchang.yoga.name.toLowerCase()}`}
         />
         <DataRow
           label="Karana"
-          labelHindi="करण"
           value={panchang.karana.name}
-          valueHindi={panchang.karana.nameHindi}
           icon="📿"
         />
         <DataRow
           label="Vara"
-          labelHindi="वार"
           value={panchang.vara.name}
-          valueHindi={panchang.vara.nameHindi}
           icon="📆"
           href={`/vara/${panchang.vara.name.toLowerCase()}`}
         />
@@ -301,7 +271,6 @@ const faqSchema = {
             <TimeDisplay
               time={panchang.sun.sunrise}
               label="Sunrise"
-              labelHindi="सूर्योदय"
               icon="🌅"
               datetime={panchang.sun.sunriseIso}
               variant="shubh"
@@ -309,7 +278,6 @@ const faqSchema = {
             <TimeDisplay
               time={panchang.sun.sunset}
               label="Sunset"
-              labelHindi="सूर्यास्त"
               icon="🌇"
               datetime={panchang.sun.sunsetIso}
             />
@@ -327,13 +295,11 @@ const faqSchema = {
             <TimeDisplay
               time={panchang.moon.moonrise}
               label="Moonrise"
-              labelHindi="चंद्रोदय"
               icon="🌙"
             />
             <TimeDisplay
               time={panchang.moon.moonset}
               label="Moonset"
-              labelHindi="चंद्रास्त"
               icon="🌑"
             />
           </div>
@@ -346,7 +312,6 @@ const faqSchema = {
       <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
         <span aria-hidden="true">⚠️</span>
         <span>Inauspicious Timings</span>
-        <span class="font-hindi text-neutral text-base font-normal">अशुभ समय</span>
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
