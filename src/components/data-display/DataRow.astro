@@ -1,0 +1,91 @@
+---
+/**
+ * DataRow Component
+ *
+ * Displays a label-value pair in a consistent format.
+ * Used for Panchang data, sun/moon times, and other key-value displays.
+ *
+ * Supports bilingual content with Hindi labels and values.
+ *
+ * Usage:
+ * <DataRow
+ *   label="Tithi"
+ *   labelHindi="तिथि"
+ *   value="Shukla Shashthi"
+ *   valueHindi="शुक्ल षष्ठी"
+ *   icon="🌙"
+ * />
+ */
+
+interface Props {
+  /** English label */
+  label: string;
+  /** Hindi label (optional) */
+  labelHindi?: string;
+  /** English value */
+  value: string;
+  /** Hindi value (optional) */
+  valueHindi?: string;
+  /** Emoji icon (optional) */
+  icon?: string;
+  /** Additional CSS classes */
+  class?: string;
+  /** Display variant */
+  variant?: 'default' | 'compact' | 'highlight';
+  /** Link destination (optional) */
+  href?: string;
+}
+
+const {
+  label,
+  labelHindi,
+  value,
+  valueHindi,
+  icon,
+  class: className = '',
+  variant = 'default',
+  href,
+} = Astro.props;
+
+const variantClasses = {
+  default: 'py-3 border-b border-base-300/50',
+  compact: 'py-2 border-b border-base-300/30',
+  highlight: 'py-3 border-b border-primary/30 bg-primary/5 -mx-4 px-4 md:-mx-6 md:px-6',
+};
+
+const Tag = href ? 'a' : 'div';
+const linkProps = href ? { href, class: 'hover:text-primary transition-colors' } : {};
+---
+
+<Tag
+  class:list={[
+    'flex justify-between items-center last:border-0',
+    variantClasses[variant],
+    href && 'cursor-pointer group',
+    className,
+  ]}
+  {...linkProps}
+>
+  <!-- Label side -->
+  <div class="flex items-center gap-2 min-w-0">
+    {icon && <span class="text-lg shrink-0">{icon}</span>}
+    <span class:list={['text-neutral', href && 'group-hover:text-base-content transition-colors']}>
+      {label}
+      {labelHindi && (
+        <span class="font-hindi text-sm ml-1 opacity-80">({labelHindi})</span>
+      )}
+    </span>
+  </div>
+
+  <!-- Value side -->
+  <div class="font-medium text-right min-w-0 ml-4">
+    {valueHindi && (
+      <span class="font-hindi">{valueHindi}</span>
+    )}
+    {valueHindi && value && <span class="text-neutral text-sm ml-1">({value})</span>}
+    {!valueHindi && <span>{value}</span>}
+    {href && (
+      <span class="ml-1 text-neutral opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+    )}
+  </div>
+</Tag>

@@ -1,0 +1,146 @@
+---
+/**
+ * CountdownTimer Component
+ *
+ * Displays countdown to a target date/time.
+ * Server-rendered with static calculation (no client JS).
+ *
+ * Usage:
+ * <CountdownTimer
+ *   targetDate={new Date('2024-11-01')}
+ *   label="until Diwali"
+ * />
+ *
+ * <CountdownTimer
+ *   targetDate={festivalDate}
+ *   variant="card"
+ * />
+ */
+
+interface Props {
+  /** Target date to count down to */
+  targetDate: Date | string;
+  /** Optional label text */
+  label?: string;
+  /** Display variant */
+  variant?: 'inline' | 'card' | 'compact';
+  /** Show time in addition to days */
+  showTime?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  targetDate,
+  label,
+  variant = 'inline',
+  showTime = false,
+  class: className = '',
+} = Astro.props;
+
+// Parse target date
+const target = typeof targetDate === 'string' ? new Date(targetDate) : targetDate;
+const now = new Date();
+
+// Calculate difference
+const diff = target.getTime() - now.getTime();
+const totalSeconds = Math.floor(diff / 1000);
+const totalMinutes = Math.floor(totalSeconds / 60);
+const totalHours = Math.floor(totalMinutes / 60);
+const days = Math.floor(totalHours / 24);
+const hours = totalHours % 24;
+const minutes = totalMinutes % 60;
+
+const isPast = diff < 0;
+const isToday = days === 0 && !isPast;
+const isTomorrow = days === 1;
+
+// Determine display text
+let displayText = '';
+let statusClass = '';
+
+if (isPast) {
+  displayText = 'Passed';
+  statusClass = 'text-neutral';
+} else if (isToday) {
+  displayText = 'Today!';
+  statusClass = 'text-success';
+} else if (isTomorrow) {
+  displayText = 'Tomorrow';
+  statusClass = 'text-primary';
+} else {
+  displayText = `${days} ${days === 1 ? 'day' : 'days'}`;
+  statusClass = 'text-primary';
+}
+---
+
+{variant === 'inline' && (
+  <div class:list={['flex items-center gap-2 text-sm', className]}>
+    <span aria-hidden="true">⏳</span>
+    {isPast ? (
+      <span class="text-neutral">Passed</span>
+    ) : isToday ? (
+      <span class="text-success font-medium">Today!</span>
+    ) : (
+      <>
+        <span class="text-primary font-medium">{displayText}</span>
+        {showTime && !isPast && hours > 0 && (
+          <span class="text-neutral">{hours}h {minutes}m</span>
+        )}
+      </>
+    )}
+    {label && <span class="text-neutral">{label}</span>}
+  </div>
+)}
+
+{variant === 'compact' && (
+  <span class:list={['inline-flex items-center gap-1 text-xs', statusClass, className]}>
+    <span aria-hidden="true">⏳</span>
+    <span class="font-medium">{displayText}</span>
+  </span>
+)}
+
+{variant === 'card' && (
+  <div class:list={['glass-card p-4 text-center', className]}>
+    <div class="text-3xl mb-2" aria-hidden="true">⏳</div>
+
+    {isPast ? (
+      <div class="text-neutral">
+        <div class="text-lg font-semibold">Event Passed</div>
+      </div>
+    ) : isToday ? (
+      <div class="text-success">
+        <div class="text-2xl font-bold">Today!</div>
+        {showTime && (
+          <div class="text-sm mt-1 text-neutral">
+            {hours > 0 ? `${hours}h ${minutes}m remaining` : `${minutes}m remaining`}
+          </div>
+        )}
+      </div>
+    ) : (
+      <>
+        <div class="flex justify-center gap-4 mb-2">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-primary">{days}</div>
+            <div class="text-xs text-neutral uppercase tracking-wide">
+              {days === 1 ? 'Day' : 'Days'}
+            </div>
+          </div>
+          {showTime && (
+            <>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-secondary">{hours}</div>
+                <div class="text-xs text-neutral uppercase tracking-wide">Hours</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-secondary">{minutes}</div>
+                <div class="text-xs text-neutral uppercase tracking-wide">Min</div>
+              </div>
+            </>
+          )}
+        </div>
+        {label && <div class="text-sm text-neutral">{label}</div>}
+      </>
+    )}
+  </div>
+)}

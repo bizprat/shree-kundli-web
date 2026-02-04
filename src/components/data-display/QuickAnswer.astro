@@ -1,0 +1,85 @@
+---
+/**
+ * QuickAnswer Component
+ *
+ * Optimized for AI chatbot citations (ChatGPT, Gemini, Claude web search),
+ * Google Featured Snippets, and voice assistant answers.
+ *
+ * CRITICAL SEO: First 120 words of this component answer the search query directly.
+ * Use bilingual format: Hindi term (English translation)
+ *
+ * Usage:
+ * <QuickAnswer>
+ *   <p><strong>Today's Panchang for Patna</strong> —
+ *   Tithi: शुक्ल षष्ठी (Shukla Shashthi),
+ *   Nakshatra: रेवती (Revati)...</p>
+ * </QuickAnswer>
+ */
+
+interface Props {
+  /** Additional CSS classes */
+  class?: string;
+  /** Whether to show gradient border highlight */
+  highlight?: boolean;
+}
+
+const { class: className = '', highlight = false } = Astro.props;
+---
+
+<div
+  class:list={[
+    'quick-answer glass-elevated p-4 md:p-6 mb-6 rounded-xl',
+    highlight && 'gradient-border',
+    className,
+  ]}
+  role="contentinfo"
+  aria-label="Quick summary"
+>
+  <slot />
+</div>
+
+<style>
+  /* First paragraph optimized for AI/featured snippets */
+  .quick-answer :global(p:first-child) {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Highlight important terms */
+  .quick-answer :global(strong) {
+    color: oklch(var(--p));
+    font-weight: 600;
+  }
+
+  /* Hindi terms styling */
+  .quick-answer :global(.font-hindi) {
+    font-family: var(--font-hindi);
+  }
+
+  /* Time values */
+  .quick-answer :global(time) {
+    font-weight: 500;
+    color: oklch(var(--s));
+  }
+
+  /* Lists within quick answer */
+  .quick-answer :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0 0;
+  }
+
+  .quick-answer :global(li) {
+    padding: 0.25rem 0;
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .quick-answer :global(li::before) {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: oklch(var(--p));
+  }
+</style>

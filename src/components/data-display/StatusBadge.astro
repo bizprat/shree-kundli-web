@@ -1,0 +1,103 @@
+---
+/**
+ * StatusBadge Component
+ *
+ * Displays status indicators for auspicious/inauspicious times,
+ * active periods, and other categorical states.
+ *
+ * Usage:
+ * <StatusBadge status="shubh" label="Auspicious" />
+ * <StatusBadge status="ashubh" label="Avoid" />
+ * <StatusBadge status="active" label="Now" pulse />
+ */
+
+interface Props {
+  /** Status type */
+  status: 'shubh' | 'ashubh' | 'neutral' | 'active' | 'info' | 'warning';
+  /** Badge label */
+  label: string;
+  /** Hindi label (optional) */
+  labelHindi?: string;
+  /** Size variant */
+  size?: 'xs' | 'sm' | 'md';
+  /** Show pulsing dot indicator */
+  pulse?: boolean;
+  /** Show icon before label */
+  icon?: string;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  status,
+  label,
+  labelHindi,
+  size = 'md',
+  pulse = false,
+  icon,
+  class: className = '',
+} = Astro.props;
+
+const statusStyles = {
+  shubh: 'bg-success/20 text-success border-success/30',
+  ashubh: 'bg-error/20 text-error border-error/30',
+  neutral: 'bg-neutral/20 text-neutral border-neutral/30',
+  active: 'bg-primary/20 text-primary border-primary/30',
+  info: 'bg-info/20 text-info border-info/30',
+  warning: 'bg-warning/20 text-warning border-warning/30',
+};
+
+const sizeStyles = {
+  xs: 'text-[10px] px-1.5 py-0.5 gap-1',
+  sm: 'text-xs px-2 py-0.5 gap-1',
+  md: 'text-sm px-3 py-1 gap-1.5',
+};
+
+const dotColors = {
+  shubh: 'bg-success',
+  ashubh: 'bg-error',
+  neutral: 'bg-neutral',
+  active: 'bg-primary',
+  info: 'bg-info',
+  warning: 'bg-warning',
+};
+
+const statusIcons = {
+  shubh: '✓',
+  ashubh: '✗',
+  neutral: '•',
+  active: '●',
+  info: 'ℹ',
+  warning: '⚠',
+};
+---
+
+<span
+  class:list={[
+    'inline-flex items-center rounded-full border font-medium',
+    statusStyles[status],
+    sizeStyles[size],
+    className,
+  ]}
+>
+  {pulse && (
+    <span class="relative flex h-2 w-2">
+      <span class:list={[
+        'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75',
+        dotColors[status],
+      ]}></span>
+      <span class:list={[
+        'relative inline-flex rounded-full h-2 w-2',
+        dotColors[status],
+      ]}></span>
+    </span>
+  )}
+  {icon && !pulse && <span aria-hidden="true">{icon}</span>}
+  {!icon && !pulse && <span aria-hidden="true">{statusIcons[status]}</span>}
+  <span>
+    {label}
+    {labelHindi && (
+      <span class="font-hindi ml-0.5 opacity-90">({labelHindi})</span>
+    )}
+  </span>
+</span>

@@ -1,0 +1,111 @@
+---
+/**
+ * TimeDisplay Component
+ *
+ * Displays time information with an icon and optional variant styling.
+ * Used for sunrise/sunset times, muhurat times, rahu kaal, etc.
+ *
+ * Usage:
+ * <TimeDisplay
+ *   time="6:42 AM"
+ *   label="Sunrise"
+ *   icon="🌅"
+ *   variant="shubh"
+ * />
+ *
+ * <TimeDisplay
+ *   startTime="12:00 PM"
+ *   endTime="1:30 PM"
+ *   label="Rahu Kaal"
+ *   icon="⚠️"
+ *   variant="ashubh"
+ * />
+ */
+
+interface Props {
+  /** Single time value */
+  time?: string;
+  /** Start time (for ranges) */
+  startTime?: string;
+  /** End time (for ranges) */
+  endTime?: string;
+  /** Time label */
+  label: string;
+  /** Hindi label (optional) */
+  labelHindi?: string;
+  /** Emoji icon */
+  icon?: string;
+  /** Display variant */
+  variant?: 'default' | 'shubh' | 'ashubh' | 'neutral';
+  /** Size variant */
+  size?: 'sm' | 'md' | 'lg';
+  /** ISO datetime for semantic markup */
+  datetime?: string;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  time,
+  startTime,
+  endTime,
+  label,
+  labelHindi,
+  icon = '🕐',
+  variant = 'default',
+  size = 'md',
+  datetime,
+  class: className = '',
+} = Astro.props;
+
+const variantStyles = {
+  default: 'text-base-content',
+  shubh: 'text-success',
+  ashubh: 'text-error',
+  neutral: 'text-neutral',
+};
+
+const sizeStyles = {
+  sm: {
+    icon: 'text-lg',
+    time: 'text-base font-medium',
+    label: 'text-xs',
+  },
+  md: {
+    icon: 'text-2xl',
+    time: 'text-lg font-semibold',
+    label: 'text-sm',
+  },
+  lg: {
+    icon: 'text-3xl',
+    time: 'text-2xl font-bold',
+    label: 'text-base',
+  },
+};
+
+const displayTime = time || (startTime && endTime ? `${startTime} - ${endTime}` : startTime);
+---
+
+<div class:list={['flex items-center gap-3', className]}>
+  <span class={sizeStyles[size].icon} aria-hidden="true">{icon}</span>
+  <div>
+    {datetime ? (
+      <time
+        datetime={datetime}
+        class:list={[sizeStyles[size].time, variantStyles[variant]]}
+      >
+        {displayTime}
+      </time>
+    ) : (
+      <div class:list={[sizeStyles[size].time, variantStyles[variant]]}>
+        {displayTime}
+      </div>
+    )}
+    <div class:list={[sizeStyles[size].label, 'text-neutral']}>
+      {label}
+      {labelHindi && (
+        <span class="font-hindi ml-1">({labelHindi})</span>
+      )}
+    </div>
+  </div>
+</div>
