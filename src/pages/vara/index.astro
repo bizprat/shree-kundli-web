@@ -146,8 +146,8 @@ const planetSymbols: Record<string, string> = {
 
     <!-- Quick Answer (AI Extraction Target) -->
     <section class="quick-answer" role="contentinfo">
-      <div class="card bg-secondary/10 border border-secondary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-elevated">
+        <div class="p-4 md:p-6">
           <h2 class="font-heading text-xl text-primary font-semibold mb-4">
             What is Vara?
           </h2>
@@ -178,9 +178,9 @@ const planetSymbols: Record<string, string> = {
         {varas.map((vara) => (
           <a
             href={`/vara/${vara.slug}`}
-            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all"
+            class="glass-card hover:border-secondary/30 hover:shadow-md transition-all"
           >
-            <div class="card-body p-4">
+            <div class="p-4">
               <div class="flex items-start gap-4">
                 <!-- Planet Symbol -->
                 <div class={`w-14 h-14 flex items-center justify-center rounded-xl text-2xl border ${planetColors[vara.planet]}`}>
@@ -356,7 +356,7 @@ const planetSymbols: Record<string, string> = {
       <h2 class="font-heading text-xl text-primary font-semibold mb-4">
         Popular Fasting Days (Vrat)
       </h2>
-      <div class="card bg-base-200/50">
+      <div class="glass-card">
         <div class="card-body p-4">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
             <div>
@@ -386,7 +386,7 @@ const planetSymbols: Record<string, string> = {
         Frequently Asked Questions
       </h2>
       <div class="space-y-4">
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" checked />
           <div class="collapse-title font-medium">
             What is Vara in Hindu Calendar?
@@ -396,7 +396,7 @@ const planetSymbols: Record<string, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Which Vara is most auspicious?
@@ -406,7 +406,7 @@ const planetSymbols: Record<string, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Why is Tuesday considered inauspicious?
@@ -416,7 +416,7 @@ const planetSymbols: Record<string, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Which day is best for which activity?

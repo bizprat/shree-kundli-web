@@ -137,8 +137,8 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
 
     <!-- Quick Answer (AI Extraction Target) -->
     <section class="quick-answer" role="contentinfo">
-      <div class="card bg-secondary/10 border border-secondary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-elevated">
+        <div class="p-4 md:p-6">
           <h2 class="font-heading text-xl text-primary font-semibold mb-4">
             What is Yoga in Panchang?
           </h2>
@@ -179,9 +179,9 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
         {yogas.map((yoga) => (
           <a
             href={`/yoga/${yoga.slug}`}
-            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all"
+            class="glass-card hover:border-secondary/30 hover:shadow-md transition-all"
           >
-            <div class="card-body p-4">
+            <div class="p-4">
               <div class="flex items-start gap-3">
                 <!-- Number Badge -->
                 <div class={`w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm border ${natureColors[yoga.nature] || 'bg-base-200'}`}>
@@ -233,8 +233,8 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
       <h2 class="font-heading text-xl text-primary font-semibold mb-4">
         Yoga Auspiciousness Guide
       </h2>
-      <div class="card bg-base-200/50">
-        <div class="card-body p-4">
+      <div class="glass-card">
+        <div class="p-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 class="font-semibold text-green-600 mb-2">Most Auspicious Yogas</h3>
@@ -316,7 +316,7 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
         Frequently Asked Questions
       </h2>
       <div class="space-y-4">
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" checked />
           <div class="collapse-title font-medium">
             What is Yoga in Panchang?
@@ -326,7 +326,7 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             How many Yogas are there in Panchang?
@@ -336,7 +336,7 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Which Yogas are most auspicious?
@@ -346,7 +346,7 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             How is Yoga calculated?

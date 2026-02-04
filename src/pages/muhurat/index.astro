@@ -98,8 +98,8 @@ function getMuhuratIcon(id: string): 'home' | 'heart' | 'star' | 'sun' | 'calend
 
     <!-- Quick Answer -->
     <section class="quick-answer" role="contentinfo">
-      <div class="card bg-primary/5 border border-primary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-shubh">
+        <div class="p-4 md:p-6">
           <h2 class="font-heading text-xl text-primary font-semibold mb-2">
             What is Muhurat?
           </h2>
@@ -142,9 +142,9 @@ function getMuhuratIcon(id: string): 'home' | 'heart' | 'star' | 'sun' | 'calend
         {sortedMuhurats.map((muhurat) => (
           <a
             href={`/muhurat/${muhurat.slug}`}
-            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-sm transition-all"
+            class="glass-card hover:border-secondary/30 hover:shadow-sm transition-all"
           >
-            <div class="card-body p-4">
+            <div class="p-4">
               <h3 class="font-semibold text-primary">{muhurat.name}</h3>
               <p class="text-sm text-neutral/60">{muhurat.nameHindi}</p>
               <p class="text-sm text-neutral/70 mt-2 line-clamp-2">
@@ -175,8 +175,8 @@ function getMuhuratIcon(id: string): 'home' | 'heart' | 'star' | 'sun' | 'calend
     </section>
 
     <!-- How Muhurat is Calculated -->
-    <section class="card bg-base-200/50">
-      <div class="card-body p-4 md:p-6">
+    <section class="glass-card">
+      <div class="p-4 md:p-6">
         <h2 class="font-heading text-xl text-primary font-semibold mb-4">
           How is Muhurat Calculated?
         </h2>

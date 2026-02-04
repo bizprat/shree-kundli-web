@@ -188,8 +188,8 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
 
     <!-- Quick Answer (AI Extraction Target) -->
     <section class="quick-answer" role="contentinfo" aria-label="Today's Horoscope">
-      <div class="card bg-secondary/10 border border-secondary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-elevated">
+        <div class="p-4 md:p-6">
           <!-- Rating -->
           <div class="flex items-center gap-2 mb-4">
             <span class="text-sm text-neutral/60">Today's Rating:</span>
@@ -242,7 +242,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
         Detailed Predictions
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="card bg-base-100 border border-base-200">
+        <div class="glass-card">
           <div class="card-body p-4">
             <div class="flex items-center gap-2 mb-2">
               <span class="text-2xl">💕</span>
@@ -251,7 +251,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
             <p class="text-sm text-neutral/70">{dailyHoroscope.love}</p>
           </div>
         </div>
-        <div class="card bg-base-100 border border-base-200">
+        <div class="glass-card">
           <div class="card-body p-4">
             <div class="flex items-center gap-2 mb-2">
               <span class="text-2xl">💼</span>
@@ -260,7 +260,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
             <p class="text-sm text-neutral/70">{dailyHoroscope.career}</p>
           </div>
         </div>
-        <div class="card bg-base-100 border border-base-200">
+        <div class="glass-card">
           <div class="card-body p-4">
             <div class="flex items-center gap-2 mb-2">
               <span class="text-2xl">🏥</span>
@@ -277,7 +277,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
       <h2 class="font-heading text-2xl text-primary font-bold mb-4">
         {rashi.name} Characteristics
       </h2>
-      <div class="card bg-base-100 border border-base-200">
+      <div class="glass-card">
         <div class="card-body p-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-4">
@@ -317,7 +317,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
         Frequently Asked Questions
       </h2>
       <div class="space-y-4">
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" checked />
           <div class="collapse-title font-medium">
             What is today's horoscope for {rashi.name}?
@@ -327,7 +327,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             What are the lucky numbers for {rashi.name}?
@@ -337,7 +337,7 @@ const nextRashi = rashis[currentIndex + 1] || rashis[0];
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             What are the characteristics of {rashi.name}?

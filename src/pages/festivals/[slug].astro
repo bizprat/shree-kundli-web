@@ -161,8 +161,8 @@ const relatedFestivals = festivals
 
     <!-- Quick Answer (AI Extraction Target) -->
     <section class="quick-answer" role="contentinfo">
-      <div class="card bg-secondary/10 border border-secondary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-elevated">
+        <div class="p-4 md:p-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Panchang Info -->
             <div class="space-y-3">
@@ -249,7 +249,7 @@ const relatedFestivals = festivals
         Frequently Asked Questions
       </h2>
       <div class="space-y-4">
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" checked />
           <div class="collapse-title font-medium">
             When is {festival.name} celebrated?
@@ -259,7 +259,7 @@ const relatedFestivals = festivals
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             What is {festival.name}?
@@ -269,7 +269,7 @@ const relatedFestivals = festivals
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             How is {festival.name} celebrated?
@@ -291,7 +291,7 @@ const relatedFestivals = festivals
           {relatedFestivals.map((related) => (
             <a
               href={`/festivals/${related.slug}`}
-              class="card bg-base-100 border border-base-200 hover:border-secondary/30 transition-colors"
+              class="glass-card hover:border-secondary/30 transition-colors"
             >
               <div class="card-body p-4">
                 <h3 class="font-semibold text-primary">{related.name}</h3>

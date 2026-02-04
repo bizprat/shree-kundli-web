@@ -290,7 +290,7 @@ const getOrdinal = (n: number) => {
         <h2 class="font-heading text-xl text-primary font-semibold mb-4">
           Festivals on {tithi.name}
         </h2>
-        <div class="card bg-base-200/50">
+        <div class="glass-card">
           <div class="card-body p-4">
             <div class="flex flex-wrap gap-2">
               {tithi.festivals.map((festival) => (
@@ -307,7 +307,7 @@ const getOrdinal = (n: number) => {
       <h2 class="font-heading text-xl text-primary font-semibold mb-4">
         Detailed Information
       </h2>
-      <div class="card bg-base-200/50">
+      <div class="glass-card">
         <div class="card-body p-4">
           <table class="table table-sm">
             <tbody>
@@ -359,7 +359,7 @@ const getOrdinal = (n: number) => {
         Frequently Asked Questions
       </h2>
       <div class="space-y-4">
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" checked />
           <div class="collapse-title font-medium">
             What is {tithi.name} Tithi?
@@ -369,7 +369,7 @@ const getOrdinal = (n: number) => {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Which deity rules {tithi.name}?
@@ -379,7 +379,7 @@ const getOrdinal = (n: number) => {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             What activities are good on {tithi.name}?

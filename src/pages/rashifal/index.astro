@@ -108,8 +108,8 @@ const elementBg: Record<string, string> = {
 
     <!-- Quick Answer (AI Extraction Target) -->
     <section class="quick-answer" role="contentinfo">
-      <div class="card bg-secondary/10 border border-secondary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-elevated">
+        <div class="p-4 md:p-6">
           <h2 class="font-heading text-xl text-primary font-semibold mb-4">
             Select Your Zodiac Sign
           </h2>
@@ -143,9 +143,9 @@ const elementBg: Record<string, string> = {
         {rashis.map((rashi) => (
           <a
             href={`/rashifal/${rashi.slug}`}
-            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all"
+            class="glass-card hover:border-secondary/30 hover:shadow-md transition-all"
           >
-            <div class="card-body p-4">
+            <div class="p-4">
               <div class="flex items-start gap-4">
                 <!-- Symbol -->
                 <div class={`text-4xl p-3 rounded-lg ${elementBg[rashi.element]}`}>
@@ -192,7 +192,7 @@ const elementBg: Record<string, string> = {
     </section>
 
     <!-- Element Legend -->
-    <section class="mt-8 p-4 bg-base-200/50 rounded-lg">
+    <section class="mt-8 glass-card p-4">
       <h3 class="font-semibold text-primary mb-3">Elements (Tatva)</h3>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
         <div class="flex items-center gap-2">
@@ -220,7 +220,7 @@ const elementBg: Record<string, string> = {
         Frequently Asked Questions
       </h2>
       <div class="space-y-4">
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" checked />
           <div class="collapse-title font-medium">
             What is Rashifal?
@@ -230,7 +230,7 @@ const elementBg: Record<string, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             How do I find my Moon sign (Chandra Rashi)?
@@ -240,7 +240,7 @@ const elementBg: Record<string, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Are daily horoscopes accurate?

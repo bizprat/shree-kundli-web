@@ -137,8 +137,8 @@ const elementIcons: Record<string, string> = {
 
     <!-- Quick Answer (AI Extraction Target) -->
     <section class="quick-answer" role="contentinfo">
-      <div class="card bg-secondary/10 border border-secondary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-elevated">
+        <div class="p-4 md:p-6">
           <h2 class="font-heading text-xl text-primary font-semibold mb-4">
             What is Tithi?
           </h2>
@@ -183,9 +183,9 @@ const elementIcons: Record<string, string> = {
         {tithis.slice(0, 15).map((tithi) => (
           <a
             href={`/tithi/${tithi.slug}`}
-            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all"
+            class="glass-card hover:border-secondary/30 hover:shadow-md transition-all"
           >
-            <div class="card-body p-4">
+            <div class="p-4">
               <div class="flex items-start gap-4">
                 <!-- Number Badge -->
                 <div class={`w-12 h-12 flex items-center justify-center rounded-xl font-bold text-lg border ${tithi.auspicious ? 'bg-green-500/10 text-green-600 border-green-500/20' : 'bg-red-500/10 text-red-600 border-red-500/20'}`}>
@@ -275,8 +275,8 @@ const elementIcons: Record<string, string> = {
       <h2 class="font-heading text-xl text-primary font-semibold mb-4">
         Tithi Nature Groups
       </h2>
-      <div class="card bg-base-200/50">
-        <div class="card-body p-4">
+      <div class="glass-card">
+        <div class="p-4">
           <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
             <div>
               <p class="font-semibold text-green-600 mb-1">Nanda (नन्दा)</p>
@@ -349,7 +349,7 @@ const elementIcons: Record<string, string> = {
         Frequently Asked Questions
       </h2>
       <div class="space-y-4">
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" checked />
           <div class="collapse-title font-medium">
             What is Tithi in Hindu Calendar?
@@ -359,7 +359,7 @@ const elementIcons: Record<string, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             How many Tithis are there?
@@ -369,7 +369,7 @@ const elementIcons: Record<string, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Which Tithi is most auspicious?
@@ -379,7 +379,7 @@ const elementIcons: Record<string, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             What are Rikta Tithis?

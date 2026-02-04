@@ -83,8 +83,8 @@ const panchangHubSchema = {
 
     <!-- Quick Answer -->
     <section class="quick-answer" role="contentinfo">
-      <div class="card bg-primary/5 border border-primary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-shubh">
+        <div class="p-4 md:p-6">
           <h2 class="font-heading text-xl text-primary font-semibold mb-2">
             What is Panchang?
           </h2>
@@ -125,9 +125,9 @@ const panchangHubSchema = {
         {tier1Cities.map((city) => (
           <a
             href={`/panchang/${city.slug}`}
-            class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-sm transition-all"
+            class="glass-card hover:border-secondary/30 transition-all"
           >
-            <div class="card-body p-3 text-center">
+            <div class="p-3 text-center">
               <p class="font-semibold text-primary">{city.name}</p>
               <p class="text-sm text-neutral/60">{city.nameHindi}</p>
               <p class="text-xs text-neutral/40 mt-1">{city.state}</p>
@@ -163,48 +163,48 @@ const panchangHubSchema = {
         Five Elements of Panchang
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="card bg-base-200/50">
-          <div class="card-body p-4">
+        <div class="glass-card">
+          <div class="p-4">
             <h3 class="font-semibold text-primary">Tithi (तिथि)</h3>
             <p class="text-sm text-neutral/70">
               Lunar day based on moon's position relative to sun. 30 tithis in a lunar month.
             </p>
           </div>
         </div>
-        <div class="card bg-base-200/50">
-          <div class="card-body p-4">
+        <div class="glass-card">
+          <div class="p-4">
             <h3 class="font-semibold text-primary">Nakshatra (नक्षत्र)</h3>
             <p class="text-sm text-neutral/70">
               Constellation where moon is located. 27 nakshatras in the zodiac.
             </p>
           </div>
         </div>
-        <div class="card bg-base-200/50">
-          <div class="card-body p-4">
+        <div class="glass-card">
+          <div class="p-4">
             <h3 class="font-semibold text-primary">Yoga (योग)</h3>
             <p class="text-sm text-neutral/70">
               Combination of sun and moon longitudes. 27 yogas with varying effects.
             </p>
           </div>
         </div>
-        <div class="card bg-base-200/50">
-          <div class="card-body p-4">
+        <div class="glass-card">
+          <div class="p-4">
             <h3 class="font-semibold text-primary">Karana (करण)</h3>
             <p class="text-sm text-neutral/70">
               Half of a tithi. 11 karanas that repeat in a cycle.
             </p>
           </div>
         </div>
-        <div class="card bg-base-200/50">
-          <div class="card-body p-4">
+        <div class="glass-card">
+          <div class="p-4">
             <h3 class="font-semibold text-primary">Vara (वार)</h3>
             <p class="text-sm text-neutral/70">
               Day of the week, each ruled by a planet. Important for muhurat.
             </p>
           </div>
         </div>
-        <div class="card bg-base-200/50">
-          <div class="card-body p-4">
+        <div class="glass-card">
+          <div class="p-4">
             <h3 class="font-semibold text-primary">Rahu Kaal (राहु काल)</h3>
             <p class="text-sm text-neutral/70">
               Inauspicious period each day. Avoid starting new work during this time.

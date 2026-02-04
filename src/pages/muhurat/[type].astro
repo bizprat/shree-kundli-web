@@ -136,8 +136,8 @@ const tithiNames: Record<number, string> = {
 
     <!-- Quick Answer -->
     <section class="quick-answer" role="contentinfo">
-      <div class="card bg-secondary/10 border border-secondary/20">
-        <div class="card-body p-4 md:p-6">
+      <div class="glass-elevated">
+        <div class="p-4 md:p-6">
           <p class="text-lg leading-relaxed">{muhurat.description}</p>
           <p class="text-neutral/60 mt-2">{muhurat.descriptionHindi}</p>
         </div>
@@ -166,8 +166,8 @@ const tithiNames: Record<number, string> = {
       <h2 class="font-heading text-2xl text-primary font-bold mb-4">
         Key Considerations
       </h2>
-      <div class="card bg-base-100 border border-base-200">
-        <div class="card-body p-4">
+      <div class="glass-card">
+        <div class="p-4">
           <ul class="space-y-3">
             {muhurat.considerations.map((consideration, index) => (
               <li class="flex items-start gap-3">
@@ -233,7 +233,7 @@ const tithiNames: Record<number, string> = {
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           {muhurat.idealMonths && (
-            <div class="card bg-base-200/50">
+            <div class="glass-card">
               <div class="card-body p-4">
                 <h3 class="font-medium text-primary mb-2">Ideal Hindu Months</h3>
                 <div class="flex flex-wrap gap-2">
@@ -245,7 +245,7 @@ const tithiNames: Record<number, string> = {
             </div>
           )}
           {muhurat.idealDays && (
-            <div class="card bg-base-200/50">
+            <div class="glass-card">
               <div class="card-body p-4">
                 <h3 class="font-medium text-primary mb-2">Ideal Weekdays</h3>
                 <div class="flex flex-wrap gap-2">
@@ -266,7 +266,7 @@ const tithiNames: Record<number, string> = {
         Frequently Asked Questions
       </h2>
       <div class="space-y-4">
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" checked />
           <div class="collapse-title font-medium">
             What is {muhurat.name} Muhurat?
@@ -276,7 +276,7 @@ const tithiNames: Record<number, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Which nakshatras are good for {muhurat.name}?
@@ -286,7 +286,7 @@ const tithiNames: Record<number, string> = {
           </div>
         </div>
 
-        <div class="collapse collapse-arrow bg-base-200/50">
+        <div class="collapse collapse-arrow glass-card">
           <input type="radio" name="faq" />
           <div class="collapse-title font-medium">
             Which tithis should be avoided?
