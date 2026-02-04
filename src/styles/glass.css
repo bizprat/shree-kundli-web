@@ -1,0 +1,245 @@
+/**
+ * Glassmorphism Design System for Shreeng
+ *
+ * Provides frosted glass effects for cards and surfaces.
+ * Designed to work on dark backgrounds (#0F0E1A - #1A1830).
+ *
+ * Classes:
+ * - .glass-card      : Default glass container
+ * - .glass-elevated  : More prominent cards
+ * - .glass-shubh     : Golden glow for auspicious content
+ * - .glass-ashubh    : Red glow for inauspicious content
+ * - .gradient-border : Golden gradient border effect
+ * - .grain-overlay   : Subtle noise texture for backgrounds
+ *
+ * IMPORTANT: Always test on budget Android devices.
+ * backdrop-filter can be slow on low-end GPUs.
+ */
+
+/* ═════════════════════════════════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Glass effect tokens */
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 12px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  /* Elevated glass */
+  --glass-elevated-bg: rgba(255, 255, 255, 0.06);
+  --glass-elevated-border: rgba(255, 255, 255, 0.12);
+  --glass-elevated-blur: 16px;
+  --glass-elevated-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+
+  /* Shubh (auspicious) glass - golden tint */
+  --glass-shubh-bg: rgba(245, 166, 35, 0.06);
+  --glass-shubh-border: rgba(245, 166, 35, 0.15);
+  --glass-shubh-shadow: 0 8px 32px rgba(245, 166, 35, 0.1);
+
+  /* Ashubh (inauspicious) glass - red tint */
+  --glass-ashubh-bg: rgba(248, 113, 113, 0.06);
+  --glass-ashubh-border: rgba(248, 113, 113, 0.12);
+  --glass-ashubh-shadow: 0 8px 32px rgba(248, 113, 113, 0.08);
+
+  /* Gradient tokens */
+  --gradient-gold: linear-gradient(135deg, #F5A623, #FFD700);
+  --gradient-violet: linear-gradient(135deg, #7C5CFC, #A78BFA);
+  --gradient-hero: linear-gradient(180deg, #0F0E1A 0%, #1A1830 50%, #0F0E1A 100%);
+
+  /* Border radius (matches theme.css) */
+  --rounded-box: 0.75rem;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   GLASS CARD - Default container
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-box);
+  box-shadow: var(--glass-shadow);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   GLASS ELEVATED - More prominent cards
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.glass-elevated {
+  background: var(--glass-elevated-bg);
+  backdrop-filter: blur(var(--glass-elevated-blur));
+  -webkit-backdrop-filter: blur(var(--glass-elevated-blur));
+  border: 1px solid var(--glass-elevated-border);
+  border-radius: var(--rounded-box);
+  box-shadow: var(--glass-elevated-shadow);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   GLASS SHUBH - Auspicious content (golden glow)
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.glass-shubh {
+  background: var(--glass-shubh-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-shubh-border);
+  border-radius: var(--rounded-box);
+  box-shadow: var(--glass-shubh-shadow);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   GLASS ASHUBH - Inauspicious content (red glow)
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.glass-ashubh {
+  background: var(--glass-ashubh-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-ashubh-border);
+  border-radius: var(--rounded-box);
+  box-shadow: var(--glass-ashubh-shadow);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   GRADIENT BORDER - Premium highlighted cards
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--gradient-gold);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   GRAIN OVERLAY - Subtle noise texture
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.grain-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url('/textures/grain.svg');
+  background-repeat: repeat;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Disable grain overlay if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay::before {
+    display: none;
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   HOVER STATES - Subtle interactive feedback
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.glass-card:hover,
+.glass-elevated:hover,
+.glass-shubh:hover,
+.glass-ashubh:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Focus state for accessibility */
+.glass-card:focus-visible,
+.glass-elevated:focus-visible,
+.glass-shubh:focus-visible,
+.glass-ashubh:focus-visible {
+  outline: 2px solid oklch(var(--p));
+  outline-offset: 2px;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   BUDGET ANDROID FALLBACK
+   For devices that don't support backdrop-filter
+   ═════════════════════════════════════════════════════════════════════════ */
+
+@supports not (backdrop-filter: blur(12px)) {
+  .glass-card {
+    background: rgba(26, 24, 48, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .glass-elevated {
+    background: rgba(37, 35, 66, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .glass-shubh {
+    background: rgba(26, 24, 48, 0.95);
+    border-color: rgba(245, 166, 35, 0.2);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .glass-ashubh {
+    background: rgba(26, 24, 48, 0.95);
+    border-color: rgba(248, 113, 113, 0.2);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+/* Glass header (sticky navigation) */
+.glass-header {
+  background: rgba(15, 14, 26, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .glass-header {
+    background: rgba(15, 14, 26, 0.98);
+  }
+}
+
+/* Glass input fields */
+.glass-input {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.5rem;
+}
+
+.glass-input:focus {
+  border-color: oklch(var(--p));
+  outline: none;
+}

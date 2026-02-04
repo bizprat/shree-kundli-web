@@ -1,47 +1,212 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Inter:wght@400;600&family=Outfit:wght@400;600&family=Playfair+Display:ital,wght@0,400;1,400&family=Tiro+Devanagari+Hindi&display=swap');
+/**
+ * Shreeng Global Styles
+ *
+ * This file imports all CSS modules and sets up the base styles.
+ * Order matters - fonts must be loaded before they're referenced.
+ */
+
+/* ═════════════════════════════════════════════════════════════════════════
+   CSS IMPORTS (order matters!)
+   ═════════════════════════════════════════════════════════════════════════ */
+
+/* Self-hosted fonts (Inter + Noto Sans Devanagari) */
+@import './fonts.css';
+
+/* DaisyUI cosmic theme tokens */
+@import './theme.css';
+
+/* Glassmorphism design system */
+@import './glass.css';
+
+/* Micro-animations */
+@import './animations.css';
+
+/* Tailwind CSS - must come after custom CSS to allow overrides */
 @import "tailwindcss";
+
+/* DaisyUI component library */
 @plugin "daisyui";
 
+
+/* ═════════════════════════════════════════════════════════════════════════
+   TAILWIND THEME CONFIGURATION
+   ═════════════════════════════════════════════════════════════════════════ */
+
 @theme {
-  --font-heading: "Cinzel Decorative", "Playfair Display", serif;
-  --font-body: "Outfit", "Inter", sans-serif;
+  /* Font families */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-hindi: 'Noto Sans Devanagari', 'Inter', system-ui, sans-serif;
+
+  /* Legacy aliases for compatibility */
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 }
 
-/* Spiritual Theme Definition */
-/* DaisyUI 5 reads CSS variables. We define them on the data-theme attribute scope */
+
+/* ═════════════════════════════════════════════════════════════════════════
+   BASE STYLES
+   ═════════════════════════════════════════════════════════════════════════ */
+
 @layer base {
-  [data-theme="spiritual"] {
-    /* Color Palette - Using OKLCH for best interpolation or Hex */
-    --color-primary: #1E1B4B;
-    --color-primary-content: #ffffff;
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-    --color-secondary: #FFB703;
-    --color-secondary-content: #1E1B4B;
+  /* Base body styles */
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-    --color-accent: #D97706;
-    --color-accent-content: #ffffff;
+  /* Hindi text styling */
+  .font-hindi,
+  [lang="hi"],
+  [lang="hi-IN"] {
+    font-family: var(--font-hindi);
+  }
 
-    --color-neutral: #3D4451;
-    --color-neutral-content: #ffffff;
+  /* Focus styles for accessibility */
+  :focus-visible {
+    outline: 2px solid oklch(var(--p));
+    outline-offset: 2px;
+  }
 
-    --color-base-100: #FDFCF6;
-    /* Warm Cream */
-    --color-base-200: #F5F4EF;
-    --color-base-300: #EBEAE5;
-    --color-base-content: #1E1B4B;
+  /* Remove default focus outline on buttons/links when not keyboard navigating */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
 
-    --color-info: #3ABFF8;
-    --color-success: #36D399;
-    --color-warning: #FBBD23;
-    --color-error: #F87272;
-
-    /* Rounded corners */
-    --radius-box: 1rem;
-    --radius-btn: 9999px;
+  /* Selection color */
+  ::selection {
+    background-color: oklch(var(--p) / 0.3);
+    color: oklch(var(--bc));
   }
 }
 
-/* Utilities */
-@utility text-shadow-glow {
-  text-shadow: 0 0 10px rgba(255, 183, 3, 0.3);
+
+/* ═════════════════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  /* Touch target minimum size (48x48px for accessibility) */
+  .touch-target {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* Text shadow glow effect (for headings) */
+  .text-shadow-glow {
+    text-shadow: 0 0 20px oklch(var(--p) / 0.4);
+  }
+
+  /* Text shadow subtle (for emphasis) */
+  .text-shadow-subtle {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Safe area insets for mobile devices */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Container with max-width for content */
+  .content-width {
+    max-width: 65ch;
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   COMPONENT OVERRIDES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* DaisyUI button refinements */
+  .btn {
+    text-transform: none;
+    font-weight: 500;
+  }
+
+  /* DaisyUI card refinements */
+  .card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+  }
+
+  /* Form input refinements */
+  .input,
+  .select,
+  .textarea {
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  .input:focus,
+  .select:focus,
+  .textarea:focus {
+    border-color: oklch(var(--p));
+    outline: none;
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   PRINT STYLES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+@media print {
+  /* Hide non-essential elements */
+  .no-print,
+  nav,
+  footer,
+  .ad-container {
+    display: none !important;
+  }
+
+  /* Reset backgrounds for printing */
+  body {
+    background: white;
+    color: black;
+  }
+
+  /* Ensure links show their URLs */
+  a[href]::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.8em;
+    color: #666;
+  }
 }

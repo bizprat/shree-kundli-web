@@ -1,0 +1,277 @@
+/**
+ * Animations for Shreeng
+ *
+ * Subtle micro-animations for interactive feedback.
+ * All animations respect prefers-reduced-motion.
+ *
+ * Classes:
+ * - .animate-fade-in     : Simple fade in
+ * - .animate-slide-up    : Slide up with fade
+ * - .animate-slide-down  : Slide down with fade
+ * - .animate-scale-in    : Scale up with fade
+ * - .animate-shimmer     : Loading shimmer effect
+ * - .animate-pulse-glow  : Pulsing glow (for attention)
+ * - .animate-spin-slow   : Slow rotation (for loading)
+ */
+
+/* ═════════════════════════════════════════════════════════════════════════
+   KEYFRAMES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(245, 166, 35, 0.2);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   ANIMATION CLASSES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.4s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   STAGGER ANIMATIONS (for lists)
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.4s; }
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   TRANSITION UTILITIES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.transition-fast {
+  transition: all 0.15s ease;
+}
+
+.transition-normal {
+  transition: all 0.25s ease;
+}
+
+.transition-slow {
+  transition: all 0.4s ease;
+}
+
+.transition-colors {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.transition-transform {
+  transition: transform 0.2s ease;
+}
+
+.transition-opacity {
+  transition: opacity 0.2s ease;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   HOVER TRANSFORM UTILITIES
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-scale-lg:hover {
+  transform: scale(1.05);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(245, 166, 35, 0.3);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   LOADING SKELETON
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.25rem;
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: 0.5em;
+}
+
+.skeleton-title {
+  height: 1.5em;
+  width: 60%;
+  margin-bottom: 1em;
+}
+
+.skeleton-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+
+.skeleton-card {
+  height: 8rem;
+  border-radius: var(--rounded-box);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION - Respect user preferences
+   ═════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-scale-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-shimmer,
+  .animate-pulse-glow,
+  .animate-spin-slow,
+  .animate-bounce-subtle,
+  .skeleton {
+    animation: none;
+  }
+}
