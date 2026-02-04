@@ -1,0 +1,115 @@
+{
+  "site": {
+    "name": "श्रीएंग",
+    "tagline": "वैदिक ज्योतिष और पंचांग",
+    "description": "आपके शहर के लिए सटीक हिंदू कैलेंडर, मुहूर्त समय और दैनिक राशिफल"
+  },
+  "nav": {
+    "home": "होम",
+    "panchang": "पंचांग",
+    "rashifal": "राशिफल",
+    "festivals": "त्योहार",
+    "kundli": "कुंडली",
+    "more": "और"
+  },
+  "panchang": {
+    "title": "आज का पंचांग",
+    "titleFor": "{city} का आज का पंचांग",
+    "tithi": "तिथि",
+    "nakshatra": "नक्षत्र",
+    "yoga": "योग",
+    "karana": "करण",
+    "vara": "वार",
+    "paksha": "पक्ष",
+    "sunrise": "सूर्योदय",
+    "sunset": "सूर्यास्त",
+    "moonrise": "चंद्रोदय",
+    "moonset": "चंद्रास्त"
+  },
+  "muhurat": {
+    "rahuKaal": "राहु काल",
+    "yamaganda": "यमगंड",
+    "gulikaKaal": "गुलिक काल",
+    "abhijit": "अभिजित मुहूर्त",
+    "brahma": "ब्रह्म मुहूर्त",
+    "shubh": "शुभ",
+    "ashubh": "अशुभ",
+    "avoidNewWork": "नए कार्य न करें",
+    "avoidAuspiciousWork": "शुभ कार्य न करें"
+  },
+  "choghadiya": {
+    "title": "चौघड़िया",
+    "titleFor": "{city} का चौघड़िया",
+    "day": "दिन का चौघड़िया",
+    "night": "रात का चौघड़िया",
+    "amrit": "अमृत",
+    "shubh": "शुभ",
+    "labh": "लाभ",
+    "char": "चर",
+    "rog": "रोग",
+    "kaal": "काल",
+    "udveg": "उद्वेग"
+  },
+  "rashifal": {
+    "title": "आज का राशिफल",
+    "daily": "दैनिक",
+    "weekly": "साप्ताहिक",
+    "monthly": "मासिक",
+    "yearly": "वार्षिक"
+  },
+  "festivals": {
+    "title": "त्योहार कैलेंडर",
+    "upcoming": "आगामी त्योहार",
+    "major": "मुख्य त्योहार",
+    "regional": "क्षेत्रीय त्योहार",
+    "vrat": "व्रत एवं उपवास",
+    "ekadashi": "एकादशी"
+  },
+  "kundli": {
+    "title": "कुंडली बनाएं",
+    "birthChart": "जन्म कुंडली",
+    "milan": "कुंडली मिलान",
+    "compatibility": "गुण मिलान",
+    "enterDetails": "अपना जन्म विवरण दर्ज करें"
+  },
+  "common": {
+    "today": "आज",
+    "tomorrow": "कल",
+    "yesterday": "बीता कल",
+    "viewAll": "सभी देखें",
+    "viewMore": "और देखें",
+    "loading": "लोड हो रहा है...",
+    "noResults": "कोई परिणाम नहीं मिला",
+    "search": "खोजें",
+    "selectCity": "शहर चुनें",
+    "changeCity": "शहर बदलें",
+    "popularCities": "लोकप्रिय शहर",
+    "relatedContent": "संबंधित सामग्री",
+    "shareOn": "शेयर करें"
+  },
+  "time": {
+    "am": "प्रातः",
+    "pm": "सायं",
+    "ist": "IST",
+    "until": "तक",
+    "from": "से",
+    "to": "तक",
+    "daysAgo": "{count} दिन पहले",
+    "daysLeft": "{count} दिन शेष",
+    "inDays": "{count} दिन में"
+  },
+  "footer": {
+    "about": "हमारे बारे में",
+    "contact": "संपर्क करें",
+    "privacy": "गोपनीयता",
+    "terms": "नियम",
+    "sitemap": "साइटमैप",
+    "copyright": "© {year} श्रीएंग। सर्वाधिकार सुरक्षित।"
+  },
+  "errors": {
+    "pageNotFound": "पृष्ठ नहीं मिला",
+    "cityNotFound": "शहर नहीं मिला",
+    "somethingWentWrong": "कुछ गलत हो गया",
+    "tryAgain": "पुनः प्रयास करें"
+  }
+}

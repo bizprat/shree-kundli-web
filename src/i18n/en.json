@@ -1,0 +1,115 @@
+{
+  "site": {
+    "name": "Shreeng",
+    "tagline": "Vedic Astrology & Panchang",
+    "description": "Accurate Hindu calendar, muhurat times, and daily horoscope for your city"
+  },
+  "nav": {
+    "home": "Home",
+    "panchang": "Panchang",
+    "rashifal": "Rashifal",
+    "festivals": "Festivals",
+    "kundli": "Kundli",
+    "more": "More"
+  },
+  "panchang": {
+    "title": "Today's Panchang",
+    "titleFor": "Today's Panchang for {city}",
+    "tithi": "Tithi",
+    "nakshatra": "Nakshatra",
+    "yoga": "Yoga",
+    "karana": "Karana",
+    "vara": "Vara",
+    "paksha": "Paksha",
+    "sunrise": "Sunrise",
+    "sunset": "Sunset",
+    "moonrise": "Moonrise",
+    "moonset": "Moonset"
+  },
+  "muhurat": {
+    "rahuKaal": "Rahu Kaal",
+    "yamaganda": "Yamaganda",
+    "gulikaKaal": "Gulika Kaal",
+    "abhijit": "Abhijit Muhurat",
+    "brahma": "Brahma Muhurat",
+    "shubh": "Auspicious",
+    "ashubh": "Inauspicious",
+    "avoidNewWork": "Avoid new beginnings",
+    "avoidAuspiciousWork": "Avoid auspicious work"
+  },
+  "choghadiya": {
+    "title": "Choghadiya",
+    "titleFor": "Choghadiya for {city}",
+    "day": "Day Choghadiya",
+    "night": "Night Choghadiya",
+    "amrit": "Amrit",
+    "shubh": "Shubh",
+    "labh": "Labh",
+    "char": "Char",
+    "rog": "Rog",
+    "kaal": "Kaal",
+    "udveg": "Udveg"
+  },
+  "rashifal": {
+    "title": "Today's Rashifal",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly"
+  },
+  "festivals": {
+    "title": "Festival Calendar",
+    "upcoming": "Upcoming Festivals",
+    "major": "Major Festival",
+    "regional": "Regional Festival",
+    "vrat": "Vrat & Fasting",
+    "ekadashi": "Ekadashi"
+  },
+  "kundli": {
+    "title": "Kundli Generator",
+    "birthChart": "Birth Chart",
+    "milan": "Kundli Milan",
+    "compatibility": "Compatibility",
+    "enterDetails": "Enter your birth details"
+  },
+  "common": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "viewAll": "View All",
+    "viewMore": "View More",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "search": "Search",
+    "selectCity": "Select City",
+    "changeCity": "Change City",
+    "popularCities": "Popular Cities",
+    "relatedContent": "Related Content",
+    "shareOn": "Share on"
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM",
+    "ist": "IST",
+    "until": "until",
+    "from": "from",
+    "to": "to",
+    "daysAgo": "{count} days ago",
+    "daysLeft": "{count} days left",
+    "inDays": "In {count} days"
+  },
+  "footer": {
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "sitemap": "Sitemap",
+    "copyright": "© {year} Shreeng. All rights reserved."
+  },
+  "errors": {
+    "pageNotFound": "Page Not Found",
+    "cityNotFound": "City not found",
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try again"
+  }
+}
