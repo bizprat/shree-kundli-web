@@ -1,60 +1,119 @@
 ---
+/**
+ * Layout Component (Legacy Compatibility)
+ *
+ * This is the original layout file updated to use the new cosmic theme
+ * and component architecture. Provides backward compatibility for
+ * existing pages while using the new design system.
+ *
+ * For new pages, prefer using Page.astro which provides more options.
+ */
+
 import '../styles/global.css';
 import SEO from '../components/SEO.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import BottomNav from '../components/layout/BottomNav.astro';
 
 interface Props {
   title: string;
   description?: string;
+  currentCity?: string;
+  currentCitySlug?: string;
+  activeNav?: 'home' | 'panchang' | 'festivals' | 'rashifal' | 'more';
+  pageType?: string;
+  lang?: 'en' | 'hi';
 }
 
-const { title, description = "Comprehensive Vedic Astrology & Panchang" } = Astro.props;
+const {
+  title,
+  description = "Comprehensive Vedic Astrology & Panchang",
+  currentCity,
+  currentCitySlug,
+  activeNav = 'home',
+  pageType = 'panchang',
+  lang = 'en',
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="spiritual" class="scroll-smooth">
+<html lang={lang} data-theme="cosmic" class="scroll-smooth grain-overlay">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0F0E1A" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Preload critical fonts -->
+    <link
+      rel="preload"
+      href="/fonts/inter-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+
+    {lang === 'hi' && (
+      <link
+        rel="preload"
+        href="/fonts/noto-devanagari.woff2"
+        as="font"
+        type="font/woff2"
+        crossorigin="anonymous"
+      />
+    )}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
     <SEO title={title} description={description} />
   </head>
-  <body class="min-h-screen bg-base-100 font-body text-neutral-900 antialiased selection:bg-secondary selection:text-white flex flex-col">
-    
-    <!-- Navbar (Placeholder) -->
-    <header class="navbar bg-base-100/90 backdrop-blur-md sticky top-0 z-50 border-b border-base-200/50">
-       <div class="flex-1">
-         <a href="/" class="btn btn-ghost font-heading text-xl text-primary font-bold">Shree Kundli</a>
-       </div>
-       <div class="flex-none hidden md:block">
-         <ul class="menu menu-horizontal px-1 font-medium">
-           <li><a>Panchang</a></li>
-           <li><a>Kundli</a></li>
-           <li><a>Festivals</a></li>
-         </ul>
-       </div>
-    </header>
+
+  <body class="min-h-screen bg-base-100 text-base-content antialiased flex flex-col">
+    <!-- Skip to main content -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-content focus:rounded-lg"
+    >
+      Skip to main content
+    </a>
+
+    <!-- Header -->
+    <Header
+      currentCity={currentCity}
+      currentCitySlug={currentCitySlug}
+      currentPath={currentPath}
+    />
 
     <!-- Main Content -->
-    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <main
+      id="main-content"
+      class="grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+    >
       <slot />
     </main>
 
-    <!-- Footer (Placeholder) -->
-    <footer class="footer items-center p-4 bg-primary text-primary-content">
-      <aside class="items-center grid-flow-col">
-         <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
-      </aside> 
-    </footer>
+    <!-- Footer -->
+    <Footer currentPageType={pageType} lang={lang} />
 
-    <!-- Bottom Nav (Mobile Only) -->
-    <div class="btm-nav md:hidden bg-base-100/90 backdrop-blur-md border-t border-base-200 z-50">
-        <button class="text-primary active">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-        </button>
-        <button class="text-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-        </button>
-        <button class="text-primary">
-             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-        </button>
-    </div>
-
+    <!-- Bottom Navigation (Mobile Only) -->
+    <BottomNav active={activeNav} />
   </body>
 </html>
+
+<style is:global>
+  /* Screen reader only class */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>

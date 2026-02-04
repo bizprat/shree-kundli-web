@@ -1,0 +1,120 @@
+---
+/**
+ * Page Layout
+ *
+ * Standard page layout that combines:
+ * - Base.astro (HTML shell, fonts, theme)
+ * - Header.astro (sticky navigation)
+ * - Footer.astro (internal links, legal)
+ * - BottomNav.astro (mobile navigation)
+ * - SEO.astro (meta tags, schema)
+ *
+ * Usage:
+ * <Page
+ *   title="Page Title"
+ *   description="Meta description"
+ *   activeNav="panchang"
+ * >
+ *   <main>Content here</main>
+ * </Page>
+ */
+
+import Base from './Base.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import BottomNav from '../components/layout/BottomNav.astro';
+import SEO from '../components/SEO.astro';
+
+interface Props {
+  /** Page title */
+  title: string;
+  /** Meta description */
+  description: string;
+  /** Language code */
+  lang?: 'en' | 'hi';
+  /** Currently selected city name */
+  currentCity?: string;
+  /** City slug for linking */
+  currentCitySlug?: string;
+  /** Active bottom nav item */
+  activeNav?: 'home' | 'panchang' | 'festivals' | 'rashifal' | 'more';
+  /** Page type for footer city links */
+  pageType?: string;
+  /** JSON-LD schema */
+  schema?: object | object[];
+  /** Canonical URL (defaults to current URL) */
+  canonicalUrl?: string;
+  /** OG image URL */
+  ogImage?: string;
+  /** Additional classes for main content */
+  class?: string;
+  /** Whether to show breadcrumb area */
+  showBreadcrumb?: boolean;
+}
+
+const {
+  title,
+  description,
+  lang = 'en',
+  currentCity,
+  currentCitySlug,
+  activeNav,
+  pageType = 'panchang',
+  schema,
+  canonicalUrl = Astro.url.href,
+  ogImage,
+  class: className,
+  showBreadcrumb = false,
+} = Astro.props;
+
+// Get current path for header active state
+const currentPath = Astro.url.pathname;
+---
+
+<Base title={title} description={description} lang={lang}>
+  <!-- SEO Meta Tags -->
+  <SEO
+    slot="head"
+    title={title}
+    description={description}
+    canonicalUrl={canonicalUrl}
+    schema={schema}
+    siteName="Shreeng"
+  />
+
+  <!-- Header -->
+  <Header
+    currentCity={currentCity}
+    currentCitySlug={currentCitySlug}
+    currentPath={currentPath}
+  />
+
+  <!-- Main Content -->
+  <main
+    id="main-content"
+    class:list={[
+      'container mx-auto px-4 py-6',
+      'min-h-[calc(100vh-14rem)]', // Ensure content fills viewport
+      className
+    ]}
+  >
+    <!-- Breadcrumb slot -->
+    {showBreadcrumb && (
+      <div class="mb-4">
+        <slot name="breadcrumb" />
+      </div>
+    )}
+
+    <!-- Page content -->
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <Footer currentPageType={pageType} lang={lang} />
+
+  <!-- Bottom Navigation (mobile only) -->
+  <BottomNav active={activeNav} />
+
+  <!-- Scripts slot -->
+  <slot name="scripts" slot="scripts" />
+</Base>

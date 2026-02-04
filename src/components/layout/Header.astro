@@ -1,0 +1,231 @@
+---
+/**
+ * Header Component
+ *
+ * Sticky frosted glass header with:
+ * - Logo (links to homepage)
+ * - Desktop navigation
+ * - City selector button
+ * - Mobile menu toggle
+ *
+ * Mobile: Logo + City + Hamburger (56px height)
+ * Desktop: Logo + Nav + City
+ */
+
+interface Props {
+  /** Currently selected city name */
+  currentCity?: string;
+  /** City slug for linking */
+  currentCitySlug?: string;
+  /** Current page path for active state */
+  currentPath?: string;
+}
+
+const {
+  currentCity = 'Select City',
+  currentCitySlug,
+  currentPath = '',
+} = Astro.props;
+
+// Navigation items
+const navItems = [
+  { label: 'Panchang', href: '/panchang', icon: '📅' },
+  { label: 'Rashifal', href: '/rashifal', icon: '🔮' },
+  { label: 'Festivals', href: '/festivals', icon: '🎉' },
+  { label: 'Kundli', href: '/kundli', icon: '📜' },
+];
+
+// Check if current path matches a nav item
+const isActive = (href: string) => currentPath.startsWith(href);
+---
+
+<header class="sticky top-0 z-40 glass-header">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between h-14">
+      <!-- Logo -->
+      <a
+        href="/"
+        class="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        aria-label="Shreeng - Home"
+      >
+        <span class="text-2xl" aria-hidden="true">🪐</span>
+        <span class="font-bold text-lg text-primary">Shreeng</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
+        {navItems.map(item => (
+          <a
+            href={item.href}
+            class:list={[
+              'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+              isActive(item.href)
+                ? 'bg-primary/10 text-primary'
+                : 'text-base-content/80 hover:text-primary hover:bg-base-300/50'
+            ]}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Right side: City + Mobile Menu -->
+      <div class="flex items-center gap-2">
+        <!-- City Selector Button -->
+        <button
+          type="button"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-neutral hover:text-base-content hover:bg-base-300/50 transition-colors touch-target"
+          aria-label={`Current city: ${currentCity}. Click to change`}
+          id="city-selector-trigger"
+        >
+          <span aria-hidden="true">📍</span>
+          <span class="max-w-[80px] md:max-w-[120px] truncate">{currentCity}</span>
+          <svg
+            class="w-4 h-4 opacity-60"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          type="button"
+          class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-neutral hover:text-base-content hover:bg-base-300/50 transition-colors touch-target"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          id="mobile-menu-toggle"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Drawer -->
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden fixed inset-0 z-50 bg-base-100/95 backdrop-blur-lg"
+    aria-label="Mobile navigation"
+  >
+    <div class="container mx-auto px-4 py-4">
+      <!-- Close button -->
+      <div class="flex justify-end mb-6">
+        <button
+          type="button"
+          class="flex items-center justify-center w-10 h-10 rounded-lg text-neutral hover:text-base-content hover:bg-base-300/50 transition-colors touch-target"
+          aria-label="Close menu"
+          id="mobile-menu-close"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Nav Items -->
+      <nav class="space-y-2">
+        {navItems.map(item => (
+          <a
+            href={item.href}
+            class:list={[
+              'flex items-center gap-3 px-4 py-3 rounded-lg text-lg font-medium transition-colors',
+              isActive(item.href)
+                ? 'bg-primary/10 text-primary'
+                : 'text-base-content hover:bg-base-300/50'
+            ]}
+          >
+            <span class="text-xl" aria-hidden="true">{item.icon}</span>
+            {item.label}
+          </a>
+        ))}
+
+        <!-- Divider -->
+        <div class="border-t border-base-300 my-4"></div>
+
+        <!-- Additional mobile menu items -->
+        <a href="/rahu-kaal" class="flex items-center gap-3 px-4 py-3 rounded-lg text-base-content hover:bg-base-300/50 transition-colors">
+          <span class="text-xl" aria-hidden="true">⏰</span>
+          Rahu Kaal
+        </a>
+        <a href="/choghadiya" class="flex items-center gap-3 px-4 py-3 rounded-lg text-base-content hover:bg-base-300/50 transition-colors">
+          <span class="text-xl" aria-hidden="true">📊</span>
+          Choghadiya
+        </a>
+        <a href="/muhurat" class="flex items-center gap-3 px-4 py-3 rounded-lg text-base-content hover:bg-base-300/50 transition-colors">
+          <span class="text-xl" aria-hidden="true">🕉️</span>
+          Shubh Muhurat
+        </a>
+        <a href="/kundli-milan" class="flex items-center gap-3 px-4 py-3 rounded-lg text-base-content hover:bg-base-300/50 transition-colors">
+          <span class="text-xl" aria-hidden="true">💍</span>
+          Kundli Matching
+        </a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<style>
+  .glass-header {
+    background: rgba(15, 14, 26, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  @supports not (backdrop-filter: blur(12px)) {
+    .glass-header {
+      background: rgba(15, 14, 26, 0.98);
+    }
+  }
+</style>
+
+<script>
+  // Mobile menu toggle functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('mobile-menu-toggle');
+    const menuClose = document.getElementById('mobile-menu-close');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuToggle && menuClose && mobileMenu) {
+      menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.remove('hidden');
+        menuToggle.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      });
+
+      menuClose.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+
+      // Close menu on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          menuToggle.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+  });
+</script>

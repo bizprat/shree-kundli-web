@@ -1,0 +1,230 @@
+---
+/**
+ * Bottom Navigation Component
+ *
+ * Fixed bottom navigation bar for mobile devices.
+ * Hidden on desktop (md+ breakpoints).
+ *
+ * Features:
+ * - 5 navigation items in thumb-zone
+ * - Active state indication
+ * - Safe area inset for notched devices
+ * - Touch targets > 48px
+ * - "More" opens a bottom sheet with additional links
+ */
+
+interface Props {
+  /** Currently active navigation item */
+  active?: 'home' | 'panchang' | 'festivals' | 'rashifal' | 'more';
+}
+
+const { active } = Astro.props;
+
+// Primary navigation items
+const navItems = [
+  { id: 'home', label: 'Home', icon: '🏠', href: '/' },
+  { id: 'panchang', label: 'Panchang', icon: '📅', href: '/panchang' },
+  { id: 'festivals', label: 'Festivals', icon: '🎉', href: '/festivals' },
+  { id: 'rashifal', label: 'Rashifal', icon: '🔮', href: '/rashifal' },
+  { id: 'more', label: 'More', icon: '≡', href: '#more-sheet' },
+];
+
+// Additional items for "More" sheet
+const moreItems = [
+  { label: 'Rahu Kaal', icon: '⏰', href: '/rahu-kaal' },
+  { label: 'Choghadiya', icon: '📊', href: '/choghadiya' },
+  { label: 'Shubh Muhurat', icon: '🕉️', href: '/muhurat' },
+  { label: 'Kundli Generator', icon: '📜', href: '/kundli' },
+  { label: 'Kundli Matching', icon: '💍', href: '/kundli-milan' },
+];
+---
+
+<!-- Mobile Bottom Navigation -->
+<nav
+  class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-base-200/95 backdrop-blur-lg border-t border-base-300"
+  style="padding-bottom: env(safe-area-inset-bottom, 0px);"
+  aria-label="Bottom navigation"
+>
+  <div class="flex justify-around items-stretch h-16">
+    {navItems.map(item => (
+      item.id === 'more' ? (
+        <button
+          type="button"
+          class:list={[
+            'flex flex-col items-center justify-center flex-1 transition-colors touch-target',
+            active === item.id ? 'text-primary' : 'text-neutral hover:text-base-content'
+          ]}
+          aria-expanded="false"
+          aria-controls="more-sheet"
+          id="more-toggle"
+        >
+          <span class="text-xl mb-0.5" aria-hidden="true">{item.icon}</span>
+          <span class="text-[10px] font-medium">{item.label}</span>
+        </button>
+      ) : (
+        <a
+          href={item.href}
+          class:list={[
+            'flex flex-col items-center justify-center flex-1 transition-colors touch-target',
+            active === item.id ? 'text-primary' : 'text-neutral hover:text-base-content'
+          ]}
+          aria-current={active === item.id ? 'page' : undefined}
+        >
+          <span class="text-xl mb-0.5" aria-hidden="true">{item.icon}</span>
+          <span class="text-[10px] font-medium">{item.label}</span>
+        </a>
+      )
+    ))}
+  </div>
+</nav>
+
+<!-- More Sheet (Bottom Drawer) -->
+<div
+  id="more-sheet"
+  class="md:hidden fixed inset-0 z-[60] hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="more-sheet-title"
+>
+  <!-- Backdrop -->
+  <div
+    class="absolute inset-0 bg-black/60 transition-opacity"
+    id="more-sheet-backdrop"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Sheet Content -->
+  <div
+    class="absolute bottom-0 left-0 right-0 bg-base-200 rounded-t-2xl transform transition-transform"
+    style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);"
+  >
+    <!-- Handle -->
+    <div class="flex justify-center py-3">
+      <div class="w-10 h-1 bg-base-300 rounded-full"></div>
+    </div>
+
+    <!-- Title -->
+    <h2 id="more-sheet-title" class="sr-only">More navigation options</h2>
+
+    <!-- Menu Items -->
+    <div class="px-4 pb-4 space-y-1">
+      {moreItems.map(item => (
+        <a
+          href={item.href}
+          class="flex items-center gap-4 px-4 py-3 rounded-lg text-base-content hover:bg-base-300/50 transition-colors"
+        >
+          <span class="text-xl" aria-hidden="true">{item.icon}</span>
+          <span class="font-medium">{item.label}</span>
+        </a>
+      ))}
+    </div>
+
+    <!-- Close Button -->
+    <div class="px-4 pb-2">
+      <button
+        type="button"
+        class="w-full py-3 rounded-lg bg-base-300 text-base-content font-medium hover:bg-base-300/80 transition-colors"
+        id="more-sheet-close"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Ensure touch targets are large enough */
+  .touch-target {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* Active indicator glow */
+  nav a[aria-current="page"],
+  nav button[aria-expanded="true"] {
+    position: relative;
+  }
+
+  nav a[aria-current="page"]::before,
+  nav button[aria-expanded="true"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 999px;
+  }
+
+  /* Sheet animation */
+  #more-sheet[data-open="true"] {
+    display: block;
+  }
+
+  #more-sheet[data-open="true"] > div:first-child {
+    opacity: 1;
+  }
+
+  #more-sheet[data-open="true"] > div:last-child {
+    transform: translateY(0);
+  }
+
+  #more-sheet > div:last-child {
+    transform: translateY(100%);
+  }
+</style>
+
+<script>
+  // More sheet toggle functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const moreToggle = document.getElementById('more-toggle');
+    const moreSheet = document.getElementById('more-sheet');
+    const moreSheetBackdrop = document.getElementById('more-sheet-backdrop');
+    const moreSheetClose = document.getElementById('more-sheet-close');
+
+    function openSheet() {
+      if (moreSheet && moreToggle) {
+        moreSheet.classList.remove('hidden');
+        moreSheet.setAttribute('data-open', 'true');
+        moreToggle.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+
+        // Animate in
+        requestAnimationFrame(() => {
+          moreSheet.querySelector('div:last-child')?.classList.add('translate-y-0');
+        });
+      }
+    }
+
+    function closeSheet() {
+      if (moreSheet && moreToggle) {
+        moreSheet.setAttribute('data-open', 'false');
+        moreToggle.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+
+        // Hide after animation
+        setTimeout(() => {
+          moreSheet.classList.add('hidden');
+        }, 200);
+      }
+    }
+
+    moreToggle?.addEventListener('click', openSheet);
+    moreSheetBackdrop?.addEventListener('click', closeSheet);
+    moreSheetClose?.addEventListener('click', closeSheet);
+
+    // Close on escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && moreSheet?.getAttribute('data-open') === 'true') {
+        closeSheet();
+      }
+    });
+
+    // Close sheet when clicking a link inside it
+    moreSheet?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeSheet);
+    });
+  });
+</script>

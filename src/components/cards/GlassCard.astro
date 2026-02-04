@@ -1,0 +1,76 @@
+---
+/**
+ * GlassCard Component
+ *
+ * A reusable glassmorphism card wrapper with multiple variants.
+ *
+ * Variants:
+ * - default   : Standard glass card with subtle blur
+ * - elevated  : More prominent card with stronger blur and shadow
+ * - shubh     : Golden-tinted glass for auspicious content
+ * - ashubh    : Red-tinted glass for inauspicious content
+ *
+ * Usage:
+ * <GlassCard variant="elevated" padding="lg">
+ *   <h2>Card Title</h2>
+ *   <p>Card content</p>
+ * </GlassCard>
+ */
+
+interface Props {
+  /** Card variant */
+  variant?: 'default' | 'elevated' | 'shubh' | 'ashubh';
+  /** HTML element to render as */
+  as?: keyof HTMLElementTagNameMap;
+  /** Padding size */
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** Additional CSS classes */
+  class?: string;
+  /** Whether to show gradient border */
+  gradientBorder?: boolean;
+  /** Whether card is interactive/clickable */
+  interactive?: boolean;
+}
+
+const {
+  variant = 'default',
+  as: Tag = 'div',
+  padding = 'md',
+  class: className = '',
+  gradientBorder = false,
+  interactive = false,
+} = Astro.props;
+
+// Variant classes
+const variantClasses = {
+  default: 'glass-card',
+  elevated: 'glass-elevated',
+  shubh: 'glass-shubh',
+  ashubh: 'glass-ashubh',
+};
+
+// Padding classes
+const paddingClasses = {
+  none: '',
+  sm: 'p-3',
+  md: 'p-4 md:p-6',
+  lg: 'p-6 md:p-8',
+};
+
+// Interactive classes
+const interactiveClasses = interactive
+  ? 'cursor-pointer hover:scale-[1.02] hover:border-primary/30 active:scale-[0.98] transition-all duration-200'
+  : '';
+---
+
+<Tag
+  class:list={[
+    variantClasses[variant],
+    paddingClasses[padding],
+    interactiveClasses,
+    gradientBorder && 'gradient-border',
+    className,
+  ]}
+>
+  <slot />
+</Tag>

@@ -1,0 +1,201 @@
+---
+/**
+ * Footer Component
+ *
+ * Site footer with:
+ * - Popular cities grid (internal linking for SEO)
+ * - Quick links by category
+ * - Language switcher
+ * - Copyright and legal links
+ *
+ * The Popular Cities section is the internal linking engine for pSEO.
+ * It dynamically links to the current page type for each city.
+ */
+
+import citiesData from '../../data/cities-sample.json';
+
+interface Props {
+  /** Current page type for city links (e.g., 'panchang', 'rahu-kaal') */
+  currentPageType?: string;
+  /** Current language */
+  lang?: 'en' | 'hi';
+}
+
+const {
+  currentPageType = 'panchang',
+  lang = 'en',
+} = Astro.props;
+
+// Get popular cities (Tier 1 and Tier 2)
+const popularCities = citiesData
+  .filter(city => city.tier === 1 || city.tier === 2)
+  .slice(0, 30);
+
+// Current year for copyright
+const currentYear = new Date().getFullYear();
+
+// Footer link sections
+const footerLinks = {
+  panchang: [
+    { label: 'Today', href: '/panchang' },
+    { label: 'Rahu Kaal', href: '/rahu-kaal' },
+    { label: 'Choghadiya', href: '/choghadiya' },
+    { label: 'Tithi', href: '/tithi' },
+    { label: 'Nakshatra', href: '/nakshatra' },
+  ],
+  rashifal: [
+    { label: 'मेष (Aries)', href: '/rashifal/mesh' },
+    { label: 'वृषभ (Taurus)', href: '/rashifal/vrishabh' },
+    { label: 'मिथुन (Gemini)', href: '/rashifal/mithun' },
+    { label: 'कर्क (Cancer)', href: '/rashifal/kark' },
+    { label: 'View All →', href: '/rashifal' },
+  ],
+  festivals: [
+    { label: 'Calendar', href: '/festivals' },
+    { label: 'Ekadashi', href: '/festivals?type=ekadashi' },
+    { label: 'Vrat & Upavas', href: '/festivals?type=vrat' },
+    { label: 'National', href: '/festivals?type=national' },
+  ],
+  tools: [
+    { label: 'Kundli Generator', href: '/kundli' },
+    { label: 'Kundli Matching', href: '/kundli-milan' },
+    { label: 'Shubh Muhurat', href: '/muhurat' },
+  ],
+};
+
+// Legal links
+const legalLinks = [
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Terms', href: '/terms' },
+  { label: 'Sitemap', href: '/sitemap-index.xml' },
+];
+---
+
+<footer class="bg-base-200 border-t border-base-300 mt-auto">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Popular Cities Section -->
+    <section class="mb-8" aria-labelledby="popular-cities-heading">
+      <h2 id="popular-cities-heading" class="text-lg font-semibold mb-4 text-primary">
+        Popular Cities
+      </h2>
+      <div class="flex flex-wrap gap-x-3 gap-y-2">
+        {popularCities.map((city, index) => (
+          <a
+            href={`/${currentPageType}/${city.slug}`}
+            class="text-sm text-neutral hover:text-primary transition-colors"
+          >
+            {city.name}{index < popularCities.length - 1 && <span class="text-base-300 ml-3">•</span>}
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Quick Links Grid -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 border-t border-base-300 pt-8" aria-label="Site navigation">
+      <!-- Panchang -->
+      <div>
+        <h3 class="font-semibold mb-3 text-base-content">Panchang</h3>
+        <ul class="space-y-2">
+          {footerLinks.panchang.map(link => (
+            <li>
+              <a href={link.href} class="text-sm text-neutral hover:text-primary transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Rashifal -->
+      <div>
+        <h3 class="font-semibold mb-3 text-base-content">Rashifal</h3>
+        <ul class="space-y-2">
+          {footerLinks.rashifal.map(link => (
+            <li>
+              <a href={link.href} class="text-sm text-neutral hover:text-primary transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Festivals -->
+      <div>
+        <h3 class="font-semibold mb-3 text-base-content">Festivals</h3>
+        <ul class="space-y-2">
+          {footerLinks.festivals.map(link => (
+            <li>
+              <a href={link.href} class="text-sm text-neutral hover:text-primary transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Tools -->
+      <div>
+        <h3 class="font-semibold mb-3 text-base-content">Tools</h3>
+        <ul class="space-y-2">
+          {footerLinks.tools.map(link => (
+            <li>
+              <a href={link.href} class="text-sm text-neutral hover:text-primary transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Bottom Bar -->
+    <section class="border-t border-base-300 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <!-- Logo + Copyright -->
+      <div class="flex items-center gap-2">
+        <span class="text-2xl" aria-hidden="true">🪐</span>
+        <span class="font-bold text-primary">Shreeng</span>
+        <span class="text-neutral text-sm">© {currentYear}</span>
+      </div>
+
+      <!-- Legal Links -->
+      <nav class="flex flex-wrap justify-center gap-4 text-sm text-neutral" aria-label="Legal">
+        {legalLinks.map(link => (
+          <a href={link.href} class="hover:text-primary transition-colors">
+            {link.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Language Switcher -->
+      <div class="flex items-center gap-2 text-sm" role="navigation" aria-label="Language">
+        <a
+          href="/"
+          class:list={[
+            'transition-colors',
+            lang === 'en' ? 'text-primary font-medium' : 'text-neutral hover:text-primary'
+          ]}
+          aria-current={lang === 'en' ? 'page' : undefined}
+        >
+          English
+        </a>
+        <span class="text-base-300">•</span>
+        <a
+          href="/hi"
+          class:list={[
+            'transition-colors',
+            lang === 'hi' ? 'text-primary font-medium' : 'text-neutral hover:text-primary'
+          ]}
+          aria-current={lang === 'hi' ? 'page' : undefined}
+        >
+          हिंदी
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Spacer for BottomNav on mobile -->
+  <div class="h-20 md:hidden" aria-hidden="true"></div>
+</footer>
