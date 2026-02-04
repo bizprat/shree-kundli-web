@@ -1,0 +1,312 @@
+---
+/**
+ * GeoDetector Island
+ *
+ * Client-side geolocation detection component.
+ * Detects user's city and offers to redirect.
+ *
+ * Priority chain:
+ * 1. localStorage (previously saved city)
+ * 2. Browser Geolocation API (if user grants permission)
+ * 3. Cloudflare headers (fallback, from SSR)
+ * 4. Default to New Delhi
+ *
+ * Usage:
+ * <GeoDetector baseUrl="/panchang" showPrompt={true} />
+ */
+
+import citiesData from '../../data/cities-sample.json';
+
+interface Props {
+  /** Base URL for city redirect */
+  baseUrl: string;
+  /** Whether to show prompt UI */
+  showPrompt?: boolean;
+  /** Default city slug */
+  defaultCity?: string;
+  /** CF header city (from SSR request) */
+  cfCity?: string;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  baseUrl,
+  showPrompt = true,
+  defaultCity = 'delhi',
+  cfCity,
+  class: className = '',
+} = Astro.props;
+
+// Prepare city data for matching
+const cities = citiesData.map((c) => ({
+  id: c.id,
+  name: c.name,
+  nameHindi: c.nameHindi,
+  slug: c.slug,
+  state: c.state,
+  latitude: c.latitude,
+  longitude: c.longitude,
+}));
+
+const citiesJson = JSON.stringify(cities);
+---
+
+<div
+  class:list={['geo-detector', className]}
+  data-base-url={baseUrl}
+  data-default-city={defaultCity}
+  data-cf-city={cfCity}
+>
+  {showPrompt && (
+    <div class="geo-prompt hidden glass-card p-4 rounded-lg mb-4 animate-slide-up">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl" aria-hidden="true">📍</span>
+          <div>
+            <p class="font-medium">
+              Showing for <span class="geo-detected-city text-primary">New Delhi</span>
+            </p>
+            <p class="text-sm text-neutral">
+              Based on your location
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="geo-accept btn btn-primary btn-sm"
+          >
+            Go
+          </button>
+          <button
+            type="button"
+            class="geo-dismiss btn btn-ghost btn-sm"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+
+<!-- City data for geolocation matching -->
+<script is:inline define:vars={{ citiesJson, baseUrl, defaultCity }}>
+  window.__GEO_CITIES_DATA__ = JSON.parse(citiesJson);
+  window.__GEO_BASE_URL__ = baseUrl;
+  window.__GEO_DEFAULT_CITY__ = defaultCity;
+</script>
+
+<script>
+  // GeoDetector Island Script
+  const SAVED_CITY_KEY = 'shreeng_user_city';
+  const GEO_DISMISSED_KEY = 'shreeng_geo_dismissed';
+
+  interface City {
+    id: number;
+    name: string;
+    nameHindi: string;
+    slug: string;
+    state: string;
+    latitude: number;
+    longitude: number;
+  }
+
+  const cities: City[] = (window as any).__GEO_CITIES_DATA__ || [];
+  const baseUrl: string = (window as any).__GEO_BASE_URL__ || '/panchang';
+  const defaultCitySlug: string = (window as any).__GEO_DEFAULT_CITY__ || 'delhi';
+
+  // Initialize all geo detectors
+  document.querySelectorAll('.geo-detector').forEach((container) => {
+    initGeoDetector(container as HTMLElement);
+  });
+
+  function initGeoDetector(container: HTMLElement) {
+    const prompt = container.querySelector('.geo-prompt') as HTMLElement | null;
+    const cityNameEl = container.querySelector('.geo-detected-city') as HTMLElement | null;
+    const acceptBtn = container.querySelector('.geo-accept') as HTMLButtonElement | null;
+    const dismissBtn = container.querySelector('.geo-dismiss') as HTMLButtonElement | null;
+    const cfCity = container.getAttribute('data-cf-city');
+
+    let detectedCity: City | null = null;
+
+    // Get saved city from localStorage
+    function getSavedCity(): string | null {
+      try {
+        return localStorage.getItem(SAVED_CITY_KEY);
+      } catch {
+        return null;
+      }
+    }
+
+    // Save city to localStorage
+    function saveCity(slug: string) {
+      try {
+        localStorage.setItem(SAVED_CITY_KEY, slug);
+      } catch {
+        // Ignore
+      }
+    }
+
+    // Check if geo prompt was dismissed
+    function isGeoDismissed(): boolean {
+      try {
+        const dismissed = localStorage.getItem(GEO_DISMISSED_KEY);
+        if (dismissed) {
+          const timestamp = parseInt(dismissed, 10);
+          // Dismiss for 7 days
+          return Date.now() - timestamp < 7 * 24 * 60 * 60 * 1000;
+        }
+      } catch {
+        // Ignore
+      }
+      return false;
+    }
+
+    // Mark geo prompt as dismissed
+    function dismissGeoPrompt() {
+      try {
+        localStorage.setItem(GEO_DISMISSED_KEY, String(Date.now()));
+      } catch {
+        // Ignore
+      }
+    }
+
+    // Find nearest city to coordinates
+    function findNearestCity(lat: number, lng: number): City | null {
+      if (cities.length === 0) return null;
+
+      const toRad = (deg: number) => (deg * Math.PI) / 180;
+
+      // Haversine distance
+      const haversine = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+        const R = 6371; // Earth's radius in km
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      };
+
+      let nearest: City | null = null;
+      let minDistance = Infinity;
+
+      for (const city of cities) {
+        const distance = haversine(lat, lng, city.latitude, city.longitude);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearest = city;
+        }
+      }
+
+      // Only return if within 100km
+      return minDistance <= 100 ? nearest : null;
+    }
+
+    // Find city by name (case-insensitive)
+    function findCityByName(name: string): City | null {
+      if (!name) return null;
+      const lower = name.toLowerCase();
+      return cities.find(
+        (c) => c.name.toLowerCase() === lower ||
+               c.nameHindi === name ||
+               c.slug === lower
+      ) || null;
+    }
+
+    // Show prompt with detected city
+    function showPrompt(city: City) {
+      if (!prompt || !cityNameEl || isGeoDismissed()) return;
+
+      detectedCity = city;
+      cityNameEl.textContent = city.name;
+      prompt.classList.remove('hidden');
+    }
+
+    // Navigate to city
+    function navigateToCity(city: City) {
+      saveCity(city.slug);
+      window.location.href = `${baseUrl}/${city.slug}`;
+    }
+
+    // Main detection flow
+    async function detect() {
+      // 1. Check localStorage for saved city
+      const savedSlug = getSavedCity();
+      if (savedSlug) {
+        // User already has a saved city, don't show prompt
+        return;
+      }
+
+      // 2. Check if current page is already a city page
+      const currentPath = window.location.pathname;
+      const cityMatch = currentPath.match(/\/(panchang|rahu-kaal|choghadiya)\/([^/]+)/);
+      if (cityMatch) {
+        // Already on a city page, don't show prompt
+        return;
+      }
+
+      // 3. Try Cloudflare headers (passed from SSR)
+      if (cfCity) {
+        const city = findCityByName(cfCity);
+        if (city) {
+          showPrompt(city);
+          return;
+        }
+      }
+
+      // 4. Try Browser Geolocation API
+      if ('geolocation' in navigator) {
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: false,
+              timeout: 5000,
+              maximumAge: 300000, // 5 minutes
+            });
+          });
+
+          const city = findNearestCity(position.coords.latitude, position.coords.longitude);
+          if (city) {
+            showPrompt(city);
+            return;
+          }
+        } catch {
+          // Geolocation denied or failed, continue to fallback
+        }
+      }
+
+      // 5. Fallback: Show default city prompt
+      const defaultCity = cities.find((c) => c.slug === defaultCitySlug);
+      if (defaultCity) {
+        showPrompt(defaultCity);
+      }
+    }
+
+    // Event: Accept button
+    if (acceptBtn) {
+      acceptBtn.addEventListener('click', () => {
+        if (detectedCity) {
+          navigateToCity(detectedCity);
+        }
+      });
+    }
+
+    // Event: Dismiss button
+    if (dismissBtn) {
+      dismissBtn.addEventListener('click', () => {
+        dismissGeoPrompt();
+        if (prompt) {
+          prompt.classList.add('hidden');
+        }
+      });
+    }
+
+    // Run detection on page load (with small delay to not block rendering)
+    setTimeout(detect, 500);
+  }
+</script>

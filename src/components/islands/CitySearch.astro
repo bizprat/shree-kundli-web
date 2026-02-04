@@ -1,0 +1,387 @@
+---
+/**
+ * CitySearch Island
+ *
+ * Client-side autocomplete city search component.
+ * Uses vanilla JS for minimal bundle size (<5KB).
+ *
+ * Features:
+ * - Debounced search input
+ * - Local city data search (instant)
+ * - Keyboard navigation (up/down/enter/escape)
+ * - Recent cities from localStorage
+ * - Mobile-friendly dropdown
+ *
+ * Usage:
+ * <CitySearch baseUrl="/panchang" placeholder="Search cities..." />
+ */
+
+import citiesData from '../../data/cities-sample.json';
+
+interface Props {
+  /** Base URL for city links (e.g., /panchang) */
+  baseUrl: string;
+  /** Placeholder text */
+  placeholder?: string;
+  /** Current city slug (to highlight) */
+  currentCitySlug?: string;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  baseUrl,
+  placeholder = 'Search city...',
+  currentCitySlug,
+  class: className = '',
+} = Astro.props;
+
+// Prepare city data for client-side search
+const cities = citiesData.map((c) => ({
+  id: c.id,
+  name: c.name,
+  nameHindi: c.nameHindi,
+  slug: c.slug,
+  state: c.state,
+  tier: c.tier,
+}));
+
+const citiesJson = JSON.stringify(cities);
+---
+
+<div
+  class:list={['city-search-container relative', className]}
+  data-base-url={baseUrl}
+  data-current-city={currentCitySlug}
+>
+  <!-- Search Input -->
+  <div class="relative">
+    <input
+      type="text"
+      class="city-search-input w-full px-4 py-2.5 pl-10 bg-base-200/50 border border-base-300 rounded-lg text-base-content placeholder-neutral focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+      placeholder={placeholder}
+      autocomplete="off"
+      aria-label="Search for a city"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+    />
+    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral pointer-events-none">
+      🔍
+    </span>
+    <button
+      type="button"
+      class="city-search-clear absolute right-3 top-1/2 -translate-y-1/2 text-neutral hover:text-base-content hidden"
+      aria-label="Clear search"
+    >
+      ✕
+    </button>
+  </div>
+
+  <!-- Results Dropdown -->
+  <div
+    class="city-search-dropdown absolute top-full left-0 right-0 mt-1 bg-base-200 border border-base-300 rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto hidden"
+    role="listbox"
+  >
+    <!-- Recent cities section -->
+    <div class="city-search-recent hidden">
+      <div class="px-3 py-2 text-xs text-neutral uppercase tracking-wider border-b border-base-300">
+        Recent
+      </div>
+      <ul class="city-search-recent-list"></ul>
+    </div>
+
+    <!-- Search results section -->
+    <div class="city-search-results">
+      <ul class="city-search-results-list"></ul>
+    </div>
+
+    <!-- No results message -->
+    <div class="city-search-no-results hidden px-4 py-3 text-neutral text-center">
+      No cities found
+    </div>
+
+    <!-- Loading state -->
+    <div class="city-search-loading hidden px-4 py-3 text-neutral text-center">
+      Searching...
+    </div>
+  </div>
+</div>
+
+<!-- City data for client-side search -->
+<script is:inline define:vars={{ citiesJson, baseUrl }}>
+  // Store cities data globally for this component
+  window.__CITY_SEARCH_DATA__ = JSON.parse(citiesJson);
+  window.__CITY_SEARCH_BASE_URL__ = baseUrl;
+</script>
+
+<script>
+  // CitySearch Island Script
+  const RECENT_CITIES_KEY = 'shreeng_recent_cities';
+  const MAX_RECENT = 5;
+  const DEBOUNCE_MS = 150;
+
+  interface City {
+    id: number;
+    name: string;
+    nameHindi: string;
+    slug: string;
+    state: string;
+    tier: number;
+  }
+
+  // Get cities data from window
+  const cities: City[] = (window as any).__CITY_SEARCH_DATA__ || [];
+  const baseUrl: string = (window as any).__CITY_SEARCH_BASE_URL__ || '/panchang';
+
+  // Initialize all city search containers
+  document.querySelectorAll('.city-search-container').forEach((container) => {
+    initCitySearch(container as HTMLElement);
+  });
+
+  function initCitySearch(container: HTMLElement) {
+    const input = container.querySelector('.city-search-input') as HTMLInputElement;
+    const dropdown = container.querySelector('.city-search-dropdown') as HTMLElement;
+    const clearBtn = container.querySelector('.city-search-clear') as HTMLButtonElement;
+    const resultsList = container.querySelector('.city-search-results-list') as HTMLUListElement;
+    const recentSection = container.querySelector('.city-search-recent') as HTMLElement;
+    const recentList = container.querySelector('.city-search-recent-list') as HTMLUListElement;
+    const noResults = container.querySelector('.city-search-no-results') as HTMLElement;
+
+    let activeIndex = -1;
+    let debounceTimer: number;
+    let currentResults: City[] = [];
+
+    // Get recent cities from localStorage
+    function getRecentCities(): City[] {
+      try {
+        const stored = localStorage.getItem(RECENT_CITIES_KEY);
+        if (stored) {
+          const slugs = JSON.parse(stored) as string[];
+          return slugs
+            .map((slug) => cities.find((c) => c.slug === slug))
+            .filter((c): c is City => c !== undefined);
+        }
+      } catch {
+        // Ignore localStorage errors
+      }
+      return [];
+    }
+
+    // Save city to recent
+    function saveToRecent(city: City) {
+      try {
+        const recent = getRecentCities();
+        const filtered = recent.filter((c) => c.slug !== city.slug);
+        const updated = [city, ...filtered].slice(0, MAX_RECENT);
+        localStorage.setItem(RECENT_CITIES_KEY, JSON.stringify(updated.map((c) => c.slug)));
+      } catch {
+        // Ignore localStorage errors
+      }
+    }
+
+    // Search cities
+    function searchCities(query: string): City[] {
+      if (!query || query.length < 2) return [];
+
+      const lower = query.toLowerCase();
+
+      return cities
+        .map((city) => {
+          let score = 0;
+
+          // Exact match
+          if (city.name.toLowerCase() === lower) score += 100;
+          if (city.nameHindi === query) score += 100;
+
+          // Starts with
+          if (city.name.toLowerCase().startsWith(lower)) score += 50;
+          if (city.nameHindi.startsWith(query)) score += 50;
+
+          // Contains
+          if (city.name.toLowerCase().includes(lower)) score += 25;
+          if (city.nameHindi.includes(query)) score += 25;
+
+          // Boost by tier
+          if (city.tier === 1) score += 10;
+          if (city.tier === 2) score += 5;
+
+          return { city, score };
+        })
+        .filter((r) => r.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 8)
+        .map((r) => r.city);
+    }
+
+    // Create city list item element (safe DOM method - no innerHTML)
+    function createCityItem(city: City, index: number): HTMLLIElement {
+      const li = document.createElement('li');
+      li.setAttribute('role', 'option');
+      li.setAttribute('data-index', String(index));
+      li.setAttribute('data-slug', city.slug);
+      li.className = `city-search-item px-4 py-2.5 cursor-pointer hover:bg-primary/10 transition-colors ${index === activeIndex ? 'bg-primary/10' : ''}`;
+
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'font-medium';
+      nameDiv.textContent = city.name;
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'text-xs text-neutral';
+      infoDiv.textContent = `${city.nameHindi} • ${city.state}`;
+
+      li.appendChild(nameDiv);
+      li.appendChild(infoDiv);
+
+      return li;
+    }
+
+    // Show dropdown
+    function showDropdown() {
+      dropdown.classList.remove('hidden');
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    // Hide dropdown
+    function hideDropdown() {
+      dropdown.classList.add('hidden');
+      input.setAttribute('aria-expanded', 'false');
+      activeIndex = -1;
+    }
+
+    // Render results using safe DOM methods
+    function renderResults(targetList: HTMLUListElement, results: City[]) {
+      // Clear existing items
+      while (targetList.firstChild) {
+        targetList.removeChild(targetList.firstChild);
+      }
+
+      // Add new items
+      results.forEach((city, index) => {
+        targetList.appendChild(createCityItem(city, index));
+      });
+    }
+
+    // Update results
+    function updateResults() {
+      const query = input.value.trim();
+
+      if (!query) {
+        // Show recent cities
+        const recent = getRecentCities();
+        if (recent.length > 0) {
+          currentResults = recent;
+          renderResults(resultsList, []);
+          renderResults(recentList, recent);
+          recentSection.classList.remove('hidden');
+          noResults.classList.add('hidden');
+          showDropdown();
+        } else {
+          hideDropdown();
+        }
+        return;
+      }
+
+      // Search
+      currentResults = searchCities(query);
+      recentSection.classList.add('hidden');
+
+      if (currentResults.length > 0) {
+        renderResults(resultsList, currentResults);
+        noResults.classList.add('hidden');
+        showDropdown();
+      } else {
+        renderResults(resultsList, []);
+        noResults.classList.remove('hidden');
+        showDropdown();
+      }
+
+      // Show/hide clear button
+      clearBtn.classList.toggle('hidden', !query);
+    }
+
+    // Navigate to city
+    function navigateToCity(city: City) {
+      saveToRecent(city);
+      window.location.href = `${baseUrl}/${city.slug}`;
+    }
+
+    // Event: Input
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(updateResults, DEBOUNCE_MS);
+    });
+
+    // Event: Focus
+    input.addEventListener('focus', () => {
+      updateResults();
+    });
+
+    // Event: Blur (delayed to allow click)
+    input.addEventListener('blur', () => {
+      setTimeout(hideDropdown, 200);
+    });
+
+    // Event: Keydown
+    input.addEventListener('keydown', (e) => {
+      if (!dropdown.classList.contains('hidden')) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          activeIndex = Math.min(activeIndex + 1, currentResults.length - 1);
+          updateResults();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          activeIndex = Math.max(activeIndex - 1, 0);
+          updateResults();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (activeIndex >= 0 && currentResults[activeIndex]) {
+            navigateToCity(currentResults[activeIndex]);
+          }
+        } else if (e.key === 'Escape') {
+          hideDropdown();
+          input.blur();
+        }
+      }
+    });
+
+    // Event: Click on result item
+    dropdown.addEventListener('click', (e) => {
+      const item = (e.target as HTMLElement).closest('.city-search-item');
+      if (item) {
+        const slug = item.getAttribute('data-slug');
+        const city = cities.find((c) => c.slug === slug);
+        if (city) {
+          navigateToCity(city);
+        }
+      }
+    });
+
+    // Event: Clear button
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      clearBtn.classList.add('hidden');
+      input.focus();
+      updateResults();
+    });
+  }
+</script>
+
+<style>
+  .city-search-dropdown {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(var(--p)) transparent;
+  }
+
+  .city-search-dropdown::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .city-search-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .city-search-dropdown::-webkit-scrollbar-thumb {
+    background-color: oklch(var(--p) / 0.3);
+    border-radius: 3px;
+  }
+</style>
