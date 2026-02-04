@@ -1,0 +1,100 @@
+---
+/**
+ * PopularCities Section Component
+ *
+ * Displays a grid of popular cities for internal linking (SEO).
+ * Used in footers and hub pages.
+ *
+ * Usage:
+ * <PopularCities pageType="panchang" />
+ * <PopularCities pageType="rahu-kaal" tier={1} />
+ */
+
+import citiesData from '../../data/cities-sample.json';
+
+interface Props {
+  /** Page type for URL generation */
+  pageType: string;
+  /** City tier filter (1 = metro, 2 = major, 3 = regional) */
+  tier?: number;
+  /** Maximum number of cities to show */
+  limit?: number;
+  /** Section title */
+  title?: string;
+  /** Show Hindi names */
+  showHindi?: boolean;
+  /** Variant display style */
+  variant?: 'grid' | 'list' | 'compact';
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  pageType,
+  tier = 2,
+  limit = 30,
+  title = 'Popular Cities',
+  showHindi = true,
+  variant = 'grid',
+  class: className = '',
+} = Astro.props;
+
+// Filter and limit cities
+const cities = citiesData
+  .filter((c) => c.tier <= tier)
+  .slice(0, limit);
+---
+
+<section class:list={['my-8', className]}>
+  <h2 class="text-lg font-semibold mb-4 text-primary">{title}</h2>
+
+  {variant === 'grid' && (
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+      {cities.map((city) => (
+        <a
+          href={`/${pageType}/${city.slug}`}
+          class="glass-card p-3 text-center hover:border-primary/50 hover:scale-[1.02] transition-all"
+        >
+          <div class="font-medium text-sm truncate">{city.name}</div>
+          {showHindi && (
+            <div class="text-xs text-neutral font-hindi truncate">{city.nameHindi}</div>
+          )}
+        </a>
+      ))}
+    </div>
+  )}
+
+  {variant === 'list' && (
+    <div class="flex flex-wrap gap-2">
+      {cities.map((city) => (
+        <a
+          href={`/${pageType}/${city.slug}`}
+          class="text-sm text-neutral hover:text-primary transition-colors"
+        >
+          {city.name}
+          {showHindi && (
+            <span class="font-hindi text-xs ml-0.5 opacity-70">({city.nameHindi})</span>
+          )}
+        </a>
+      ))}
+    </div>
+  )}
+
+  {variant === 'compact' && (
+    <div class="flex flex-wrap gap-x-3 gap-y-1">
+      {cities.map((city, index) => (
+        <>
+          <a
+            href={`/${pageType}/${city.slug}`}
+            class="text-sm text-neutral hover:text-primary transition-colors"
+          >
+            {city.name}
+          </a>
+          {index < cities.length - 1 && (
+            <span class="text-base-300">•</span>
+          )}
+        </>
+      ))}
+    </div>
+  )}
+</section>

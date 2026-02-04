@@ -1,0 +1,141 @@
+---
+/**
+ * RashiGrid Section Component
+ *
+ * Displays a 4x3 or 6x2 grid of all 12 zodiac signs (rashis).
+ * Links to daily rashifal pages.
+ *
+ * Usage:
+ * <RashiGrid />
+ * <RashiGrid variant="compact" />
+ */
+
+import rashisData from '../../data/rashis.json';
+import GlassCard from '../cards/GlassCard.astro';
+
+interface Props {
+  /** Section title */
+  title?: string;
+  /** Display variant */
+  variant?: 'default' | 'compact' | 'detailed';
+  /** Show element colors */
+  showElements?: boolean;
+  /** Link prefix (default: /rashifal/) */
+  linkPrefix?: string;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  title = 'Today\'s Rashifal',
+  variant = 'default',
+  showElements = true,
+  linkPrefix = '/rashifal/',
+  class: className = '',
+} = Astro.props;
+
+const rashis = rashisData;
+
+// Element color mapping
+const elementColors: Record<string, string> = {
+  fire: 'text-error',
+  earth: 'text-success',
+  air: 'text-info',
+  water: 'text-secondary',
+};
+
+const elementBgColors: Record<string, string> = {
+  fire: 'bg-error/10',
+  earth: 'bg-success/10',
+  air: 'bg-info/10',
+  water: 'bg-secondary/10',
+};
+---
+
+<section class:list={['my-8', className]}>
+  <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+    <span aria-hidden="true">🔮</span>
+    <span>{title}</span>
+  </h2>
+
+  {variant === 'default' && (
+    <div class="grid grid-cols-4 md:grid-cols-6 gap-3">
+      {rashis.map((rashi) => (
+        <a href={`${linkPrefix}${rashi.slug}`} class="group">
+          <GlassCard
+            class="text-center hover:border-primary/50 transition-all group-hover:scale-105"
+            padding="sm"
+            interactive
+          >
+            <div
+              class:list={[
+                'text-2xl mb-1',
+                showElements && elementColors[rashi.element],
+              ]}
+            >
+              {rashi.symbol}
+            </div>
+            <div class="font-hindi text-sm">{rashi.nameHindi}</div>
+            <div class="text-xs text-neutral">{rashi.name}</div>
+          </GlassCard>
+        </a>
+      ))}
+    </div>
+  )}
+
+  {variant === 'compact' && (
+    <div class="grid grid-cols-6 gap-2">
+      {rashis.map((rashi) => (
+        <a
+          href={`${linkPrefix}${rashi.slug}`}
+          class="glass-card p-2 text-center hover:border-primary/50 transition-all hover:scale-105"
+        >
+          <div class:list={['text-xl', showElements && elementColors[rashi.element]]}>
+            {rashi.symbol}
+          </div>
+          <div class="text-[10px] text-neutral truncate">{rashi.nameHindi}</div>
+        </a>
+      ))}
+    </div>
+  )}
+
+  {variant === 'detailed' && (
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {rashis.map((rashi) => (
+        <a href={`${linkPrefix}${rashi.slug}`} class="group">
+          <GlassCard
+            class:list={[
+              'hover:border-primary/50 transition-all group-hover:scale-[1.02]',
+              showElements && elementBgColors[rashi.element],
+            ]}
+            padding="md"
+            interactive
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class:list={[
+                  'text-3xl',
+                  showElements && elementColors[rashi.element],
+                ]}
+              >
+                {rashi.symbol}
+              </div>
+              <div>
+                <div class="font-hindi font-medium">{rashi.nameHindi}</div>
+                <div class="text-sm text-neutral">{rashi.name}</div>
+                <div class="text-xs text-neutral/70">{rashi.dateRange}</div>
+              </div>
+            </div>
+            <div class="mt-2 flex flex-wrap gap-1">
+              {rashi.traits.slice(0, 2).map((trait) => (
+                <span class="text-[10px] bg-base-300/50 px-1.5 py-0.5 rounded">
+                  {trait}
+                </span>
+              ))}
+            </div>
+          </GlassCard>
+        </a>
+      ))}
+    </div>
+  )}
+</section>

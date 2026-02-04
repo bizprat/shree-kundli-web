@@ -1,0 +1,222 @@
+---
+/**
+ * UpcomingFestivals Section Component
+ *
+ * Displays a list of upcoming festivals with countdown.
+ * Used on homepage and panchang pages.
+ *
+ * Usage:
+ * <UpcomingFestivals festivals={festivalList} limit={5} />
+ */
+
+import GlassCard from '../cards/GlassCard.astro';
+import CountdownTimer from '../data-display/CountdownTimer.astro';
+import StatusBadge from '../data-display/StatusBadge.astro';
+
+interface Festival {
+  id: string;
+  name: string;
+  nameHindi: string;
+  slug: string;
+  date: string | Date;
+  type?: 'major' | 'regional' | 'vrat';
+  description?: string;
+}
+
+interface Props {
+  /** List of festivals */
+  festivals?: Festival[];
+  /** Maximum number to show */
+  limit?: number;
+  /** Section title */
+  title?: string;
+  /** Show "View All" link */
+  showViewAll?: boolean;
+  /** Display variant */
+  variant?: 'default' | 'compact' | 'detailed';
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  festivals,
+  limit = 5,
+  title = 'Upcoming Festivals',
+  showViewAll = true,
+  variant = 'default',
+  class: className = '',
+} = Astro.props;
+
+// Demo data if no festivals provided
+const demoFestivals: Festival[] = [
+  {
+    id: 'mahashivratri',
+    name: 'Mahashivratri',
+    nameHindi: 'महाशिवरात्रि',
+    slug: 'mahashivratri',
+    date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+    type: 'major',
+    description: 'Night of Lord Shiva',
+  },
+  {
+    id: 'holi',
+    name: 'Holi',
+    nameHindi: 'होली',
+    slug: 'holi',
+    date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+    type: 'major',
+    description: 'Festival of Colors',
+  },
+  {
+    id: 'ram-navami',
+    name: 'Ram Navami',
+    nameHindi: 'राम नवमी',
+    slug: 'ram-navami',
+    date: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
+    type: 'major',
+    description: 'Birthday of Lord Rama',
+  },
+  {
+    id: 'ekadashi',
+    name: 'Ekadashi Vrat',
+    nameHindi: 'एकादशी व्रत',
+    slug: 'ekadashi',
+    date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    type: 'vrat',
+    description: 'Fasting day',
+  },
+];
+
+const displayFestivals = (festivals || demoFestivals)
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  .slice(0, limit);
+
+const typeIcons: Record<string, string> = {
+  major: '🎉',
+  regional: '🏛️',
+  vrat: '🙏',
+};
+
+const typeBadgeStatus: Record<string, 'active' | 'info' | 'neutral'> = {
+  major: 'active',
+  regional: 'info',
+  vrat: 'neutral',
+};
+---
+
+<section class:list={['my-8', className]}>
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold flex items-center gap-2">
+      <span aria-hidden="true">🎉</span>
+      <span>{title}</span>
+    </h2>
+
+    {showViewAll && (
+      <a
+        href="/festivals"
+        class="text-sm text-primary hover:text-primary/80 transition-colors"
+      >
+        View All →
+      </a>
+    )}
+  </div>
+
+  {variant === 'default' && (
+    <div class="space-y-3">
+      {displayFestivals.map((festival) => (
+        <a href={`/festivals/${festival.slug}`} class="block group">
+          <GlassCard
+            class="hover:border-primary/50 transition-all group-hover:scale-[1.01]"
+            padding="sm"
+            interactive
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-2xl shrink-0" aria-hidden="true">
+                  {typeIcons[festival.type || 'major']}
+                </span>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <span class="font-medium truncate">{festival.name}</span>
+                    {festival.type && (
+                      <StatusBadge
+                        status={typeBadgeStatus[festival.type]}
+                        label={festival.type}
+                        size="xs"
+                      />
+                    )}
+                  </div>
+                  <div class="text-sm text-neutral font-hindi">{festival.nameHindi}</div>
+                </div>
+              </div>
+              <div class="shrink-0 ml-3">
+                <CountdownTimer
+                  targetDate={festival.date}
+                  variant="compact"
+                />
+              </div>
+            </div>
+          </GlassCard>
+        </a>
+      ))}
+    </div>
+  )}
+
+  {variant === 'compact' && (
+    <GlassCard padding="sm">
+      <div class="divide-y divide-base-300/50">
+        {displayFestivals.map((festival) => (
+          <a
+            href={`/festivals/${festival.slug}`}
+            class="flex items-center justify-between py-2 first:pt-0 last:pb-0 hover:text-primary transition-colors"
+          >
+            <div class="flex items-center gap-2 min-w-0">
+              <span aria-hidden="true">{typeIcons[festival.type || 'major']}</span>
+              <span class="truncate">{festival.name}</span>
+            </div>
+            <CountdownTimer targetDate={festival.date} variant="compact" />
+          </a>
+        ))}
+      </div>
+    </GlassCard>
+  )}
+
+  {variant === 'detailed' && (
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {displayFestivals.map((festival) => (
+        <a href={`/festivals/${festival.slug}`} class="block group">
+          <GlassCard
+            class="h-full hover:border-primary/50 transition-all group-hover:scale-[1.02]"
+            padding="md"
+            interactive
+          >
+            <div class="flex items-start gap-3">
+              <div class="text-3xl" aria-hidden="true">
+                {typeIcons[festival.type || 'major']}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="font-semibold truncate">{festival.name}</h3>
+                  {festival.type && (
+                    <StatusBadge
+                      status={typeBadgeStatus[festival.type]}
+                      label={festival.type}
+                      size="xs"
+                    />
+                  )}
+                </div>
+                <div class="text-sm text-neutral font-hindi mb-2">{festival.nameHindi}</div>
+                {festival.description && (
+                  <p class="text-sm text-neutral/80 mb-3 line-clamp-2">
+                    {festival.description}
+                  </p>
+                )}
+                <CountdownTimer targetDate={festival.date} variant="inline" />
+              </div>
+            </div>
+          </GlassCard>
+        </a>
+      ))}
+    </div>
+  )}
+</section>

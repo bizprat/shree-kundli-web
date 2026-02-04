@@ -1,0 +1,223 @@
+---
+/**
+ * TodayPanchang Section Component
+ *
+ * Displays today's panchang summary in a glass card.
+ * Used on homepage and city overview pages.
+ *
+ * Usage:
+ * <TodayPanchang
+ *   tithi={{ name: "Shukla Shashthi", nameHindi: "शुक्ल षष्ठी" }}
+ *   nakshatra={{ name: "Revati", nameHindi: "रेवती" }}
+ *   ...
+ * />
+ */
+
+import GlassCard from '../cards/GlassCard.astro';
+import DataRow from '../data-display/DataRow.astro';
+import TimeDisplay from '../data-display/TimeDisplay.astro';
+import StatusBadge from '../data-display/StatusBadge.astro';
+
+interface PanchangElement {
+  name: string;
+  nameHindi: string;
+  endTime?: string;
+}
+
+interface Props {
+  /** Tithi data */
+  tithi?: PanchangElement;
+  /** Nakshatra data */
+  nakshatra?: PanchangElement;
+  /** Yoga data */
+  yoga?: PanchangElement;
+  /** Karana data */
+  karana?: PanchangElement;
+  /** Vara (weekday) data */
+  vara?: PanchangElement;
+  /** Sunrise time */
+  sunrise?: string;
+  /** Sunset time */
+  sunset?: string;
+  /** Moonrise time */
+  moonrise?: string;
+  /** Is Rahu Kaal active now */
+  isRahuKaalActive?: boolean;
+  /** Rahu Kaal times */
+  rahuKaal?: { start: string; end: string };
+  /** City name */
+  city?: string;
+  /** City slug for links */
+  citySlug?: string;
+  /** Section title */
+  title?: string;
+  /** Additional CSS classes */
+  class?: string;
+}
+
+const {
+  tithi,
+  nakshatra,
+  yoga,
+  karana,
+  vara,
+  sunrise,
+  sunset,
+  moonrise,
+  isRahuKaalActive = false,
+  rahuKaal,
+  city,
+  citySlug,
+  title = 'Today\'s Panchang',
+  class: className = '',
+} = Astro.props;
+
+// Placeholder data for demo (when no data provided)
+const defaultData = {
+  tithi: { name: 'Shukla Shashthi', nameHindi: 'शुक्ल षष्ठी' },
+  nakshatra: { name: 'Revati', nameHindi: 'रेवती' },
+  yoga: { name: 'Shubha', nameHindi: 'शुभ' },
+  karana: { name: 'Bava', nameHindi: 'बव' },
+  vara: { name: 'Tuesday', nameHindi: 'मंगलवार' },
+  sunrise: '6:42 AM',
+  sunset: '5:48 PM',
+};
+
+const displayTithi = tithi || defaultData.tithi;
+const displayNakshatra = nakshatra || defaultData.nakshatra;
+const displayYoga = yoga || defaultData.yoga;
+const displayKarana = karana || defaultData.karana;
+const displayVara = vara || defaultData.vara;
+const displaySunrise = sunrise || defaultData.sunrise;
+const displaySunset = sunset || defaultData.sunset;
+---
+
+<section class:list={['my-8', className]}>
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold flex items-center gap-2">
+      <span aria-hidden="true">📅</span>
+      <span>{title}</span>
+      {city && <span class="text-neutral font-normal text-sm">• {city}</span>}
+    </h2>
+
+    {citySlug && (
+      <a
+        href={`/panchang/${citySlug}`}
+        class="text-sm text-primary hover:text-primary/80 transition-colors"
+      >
+        View Full →
+      </a>
+    )}
+  </div>
+
+  <GlassCard variant="elevated" padding="md">
+    <!-- Rahu Kaal Alert (if active) -->
+    {isRahuKaalActive && rahuKaal && (
+      <div class="glass-ashubh -m-4 md:-m-6 mb-4 md:mb-6 p-3 rounded-t-xl flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span aria-hidden="true">⚠️</span>
+          <span class="text-sm font-medium">Rahu Kaal Active</span>
+        </div>
+        <StatusBadge status="ashubh" label={`${rahuKaal.start} - ${rahuKaal.end}`} size="sm" />
+      </div>
+    )}
+
+    <!-- Main Panchang Data -->
+    <div class="space-y-0">
+      <DataRow
+        label="Tithi"
+        labelHindi="तिथि"
+        value={displayTithi.name}
+        valueHindi={displayTithi.nameHindi}
+        icon="🌙"
+        href={citySlug ? `/tithi/${displayTithi.name.toLowerCase().replace(/\s+/g, '-')}` : undefined}
+      />
+
+      <DataRow
+        label="Nakshatra"
+        labelHindi="नक्षत्र"
+        value={displayNakshatra.name}
+        valueHindi={displayNakshatra.nameHindi}
+        icon="⭐"
+        href={citySlug ? `/nakshatra/${displayNakshatra.name.toLowerCase()}` : undefined}
+      />
+
+      <DataRow
+        label="Yoga"
+        labelHindi="योग"
+        value={displayYoga.name}
+        valueHindi={displayYoga.nameHindi}
+        icon="🔮"
+      />
+
+      <DataRow
+        label="Karana"
+        labelHindi="करण"
+        value={displayKarana.name}
+        valueHindi={displayKarana.nameHindi}
+        icon="📿"
+      />
+
+      <DataRow
+        label="Vara"
+        labelHindi="वार"
+        value={displayVara.name}
+        valueHindi={displayVara.nameHindi}
+        icon="📆"
+      />
+    </div>
+
+    <!-- Sun/Moon Times -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-base-300/50">
+      <TimeDisplay
+        time={displaySunrise}
+        label="Sunrise"
+        labelHindi="सूर्योदय"
+        icon="🌅"
+        size="sm"
+      />
+
+      <TimeDisplay
+        time={displaySunset}
+        label="Sunset"
+        labelHindi="सूर्यास्त"
+        icon="🌇"
+        size="sm"
+      />
+
+      {moonrise && (
+        <TimeDisplay
+          time={moonrise}
+          label="Moonrise"
+          labelHindi="चंद्रोदय"
+          icon="🌙"
+          size="sm"
+        />
+      )}
+    </div>
+
+    <!-- Quick Links -->
+    {citySlug && (
+      <div class="mt-4 pt-4 border-t border-base-300/50 flex flex-wrap gap-2">
+        <a
+          href={`/rahu-kaal/${citySlug}`}
+          class="text-xs bg-base-300/50 px-3 py-1.5 rounded-full hover:bg-primary/20 hover:text-primary transition-colors"
+        >
+          ⚠️ Rahu Kaal
+        </a>
+        <a
+          href={`/choghadiya/${citySlug}`}
+          class="text-xs bg-base-300/50 px-3 py-1.5 rounded-full hover:bg-primary/20 hover:text-primary transition-colors"
+        >
+          ⏱️ Choghadiya
+        </a>
+        <a
+          href="/muhurat"
+          class="text-xs bg-base-300/50 px-3 py-1.5 rounded-full hover:bg-primary/20 hover:text-primary transition-colors"
+        >
+          🕐 Shubh Muhurat
+        </a>
+      </div>
+    )}
+  </GlassCard>
+</section>
