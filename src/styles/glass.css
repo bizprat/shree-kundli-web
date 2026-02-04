@@ -48,7 +48,7 @@
   --gradient-violet: linear-gradient(135deg, #7C5CFC, #A78BFA);
   --gradient-hero: linear-gradient(180deg, #0F0E1A 0%, #1A1830 50%, #0F0E1A 100%);
 
-  /* Border radius (matches theme.css) */
+  /* Border radius (matches cosmic theme in global.css) */
   --rounded-box: 0.75rem;
 }
 
@@ -175,7 +175,7 @@
 .glass-elevated:focus-visible,
 .glass-shubh:focus-visible,
 .glass-ashubh:focus-visible {
-  outline: 2px solid oklch(var(--p));
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -240,6 +240,6 @@
 }
 
 .glass-input:focus {
-  border-color: oklch(var(--p));
+  border-color: var(--color-primary);
   outline: none;
 }
