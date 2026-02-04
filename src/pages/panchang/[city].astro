@@ -3,13 +3,20 @@
  * City Panchang Page
  *
  * Today's panchang for a specific city with:
- * - Answer-first tithi, nakshatra display
- * - Detailed timing table
+ * - Answer-first tithi, nakshatra display (QuickAnswer)
+ * - Context bar for navigation between panchang/rahu-kaal/choghadiya
+ * - Glassmorphism cards
  * - Dataset schema for AI extraction
  */
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
-import CitySelector from '../../components/CitySelector.astro';
+import GlassCard from '../../components/cards/GlassCard.astro';
+import QuickAnswer from '../../components/data-display/QuickAnswer.astro';
+import DataRow from '../../components/data-display/DataRow.astro';
+import TimeDisplay from '../../components/data-display/TimeDisplay.astro';
+import StatusBadge from '../../components/data-display/StatusBadge.astro';
+import ContextBar from '../../components/navigation/ContextBar.astro';
+import PopularCities from '../../components/sections/PopularCities.astro';
 import type { BreadcrumbItem, City } from '../../lib/types';
 
 // Load data
@@ -105,7 +112,7 @@ const panchang = {
 };
 
 // Page meta
-const title = `Today's Panchang for ${city.name} - ${todayFormatted} | ${city.nameHindi} पंचांग | Shree Kundli`;
+const title = `Today's Panchang for ${city.name} - ${todayFormatted} | ${city.nameHindi} पंचांग | Shreeng`;
 const description = `${panchang.tithi.nameHindi} (${panchang.tithi.name}) tithi, ${panchang.nakshatra.nameHindi} (${panchang.nakshatra.name}) nakshatra. Sunrise ${panchang.sun.sunrise}, Rahu Kaal ${panchang.rahuKaal.start}-${panchang.rahuKaal.end}. Accurate panchang for ${city.name}.`;
 
 // Breadcrumbs
@@ -146,7 +153,7 @@ const datasetSchema = {
   ],
   creator: {
     '@type': 'Organization',
-    name: 'Shree Kundli',
+    name: 'Shreeng',
   },
   license: 'https://creativecommons.org/licenses/by/4.0/',
 };
@@ -176,212 +183,249 @@ const faqSchema = {
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout
+  title={title}
+  description={description}
+  currentCity={city.name}
+  currentCitySlug={city.slug}
+  activeNav="panchang"
+>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(datasetSchema)} slot="head" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
 
-  <div class="space-y-8">
+  <div class="space-y-6">
     <!-- Breadcrumb -->
     <Breadcrumb items={breadcrumbs} />
 
-    <!-- Header with City Selector -->
-    <header class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-      <div>
-        <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-          {city.name} Panchang
-        </h1>
-        <p class="text-lg text-neutral/70 mt-1">
-          {city.nameHindi} पंचांग • {city.state}
-        </p>
-        <p class="text-sm text-neutral/50 mt-1">
-          <time datetime={todayIso}>{todayFormatted}</time>
-        </p>
-      </div>
-
-      <div class="w-full md:w-64">
-        <CitySelector
-          cities={cities}
-          currentCity={city}
-          baseUrl="/panchang"
-        />
-      </div>
+    <!-- Page Header -->
+    <header class="mb-2">
+      <h1 class="text-2xl md:text-3xl font-bold">
+        <span class="text-primary">{city.name}</span> Panchang
+        <span class="font-hindi text-xl text-neutral font-normal ml-2">
+          {city.nameHindi} पंचांग
+        </span>
+      </h1>
+      <p class="text-sm text-neutral mt-1">
+        <time datetime={todayIso}>{todayFormatted}</time> • {city.state}
+      </p>
     </header>
 
+    <!-- Context Bar (City + Date + Tabs) -->
+    <ContextBar
+      city={city.name}
+      citySlug={city.slug}
+      date={todayFormatted}
+      activeTab="panchang"
+    />
+
     <!-- Quick Answer (AI Extraction Target) -->
-    <section class="quick-answer" role="contentinfo" aria-label="Today's Panchang Summary">
-      <div class="card bg-secondary/10 border border-secondary/20">
-        <div class="card-body p-4 md:p-6">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <!-- Tithi -->
-            <div>
-              <p class="text-xs text-neutral/50 uppercase tracking-wide">Tithi</p>
-              <p class="text-xl font-bold text-primary">{panchang.tithi.nameHindi}</p>
-              <p class="text-sm text-neutral/60">{panchang.tithi.name}</p>
-              <p class="text-xs text-neutral/40 mt-1">Until {panchang.tithi.endTime}</p>
-            </div>
+    <QuickAnswer highlight>
+      <p>
+        <strong>Today's Panchang for {city.name}</strong> —
+        Tithi: <span class="font-hindi">{panchang.tithi.nameHindi}</span> ({panchang.tithi.name}),
+        Nakshatra: <span class="font-hindi">{panchang.nakshatra.nameHindi}</span> ({panchang.nakshatra.name}),
+        Sunrise: <time datetime={panchang.sun.sunriseIso}>{panchang.sun.sunrise}</time>,
+        Sunset: <time datetime={panchang.sun.sunsetIso}>{panchang.sun.sunset}</time>.
+        Rahu Kaal: <time datetime={panchang.rahuKaal.startIso}>{panchang.rahuKaal.start}</time> - <time datetime={panchang.rahuKaal.endIso}>{panchang.rahuKaal.end}</time> (avoid new ventures).
+      </p>
+    </QuickAnswer>
 
-            <!-- Nakshatra -->
-            <div>
-              <p class="text-xs text-neutral/50 uppercase tracking-wide">Nakshatra</p>
-              <p class="text-xl font-bold text-primary">{panchang.nakshatra.nameHindi}</p>
-              <p class="text-sm text-neutral/60">{panchang.nakshatra.name}</p>
-              <p class="text-xs text-neutral/40 mt-1">Until {panchang.nakshatra.endTime}</p>
-            </div>
-
-            <!-- Sunrise -->
-            <div>
-              <p class="text-xs text-neutral/50 uppercase tracking-wide">Sunrise</p>
-              <p class="text-xl font-bold text-primary tabular-nums">
-                <time datetime={panchang.sun.sunriseIso}>{panchang.sun.sunrise}</time>
-              </p>
-              <p class="text-sm text-neutral/60">IST</p>
-            </div>
-
-            <!-- Rahu Kaal -->
-            <div>
-              <p class="text-xs text-neutral/50 uppercase tracking-wide">Rahu Kaal</p>
-              <p class="text-xl font-bold text-error tabular-nums">
-                <time datetime={panchang.rahuKaal.startIso}>{panchang.rahuKaal.start}</time>
-                {' - '}
-                <time datetime={panchang.rahuKaal.endIso}>{panchang.rahuKaal.end}</time>
-              </p>
-              <p class="text-sm text-neutral/60">Avoid new work</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Detailed Panchang -->
-    <section>
-      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
-        Detailed Panchang
+    <!-- Main Panchang Data -->
+    <section aria-label="Panchang Details">
+      <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+        <span aria-hidden="true">📅</span>
+        <span>Panchangam</span>
+        <span class="font-hindi text-neutral text-base font-normal">पंचांग</span>
       </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Panchang Elements -->
-        <div class="card bg-base-100 border border-base-200">
-          <div class="card-body p-4">
-            <h3 class="font-semibold text-primary mb-3">Panchangam</h3>
-            <table class="table table-sm">
-              <tbody>
-                <tr>
-                  <td class="text-neutral/60">Tithi</td>
-                  <td class="font-medium">{panchang.tithi.nameHindi} ({panchang.tithi.name})</td>
-                </tr>
-                <tr>
-                  <td class="text-neutral/60">Paksha</td>
-                  <td class="font-medium">{panchang.tithi.pakshaHindi} ({panchang.tithi.paksha})</td>
-                </tr>
-                <tr>
-                  <td class="text-neutral/60">Nakshatra</td>
-                  <td class="font-medium">{panchang.nakshatra.nameHindi} ({panchang.nakshatra.name})</td>
-                </tr>
-                <tr>
-                  <td class="text-neutral/60">Yoga</td>
-                  <td class="font-medium">{panchang.yoga.nameHindi} ({panchang.yoga.name})</td>
-                </tr>
-                <tr>
-                  <td class="text-neutral/60">Karana</td>
-                  <td class="font-medium">{panchang.karana.nameHindi} ({panchang.karana.name})</td>
-                </tr>
-                <tr>
-                  <td class="text-neutral/60">Vara</td>
-                  <td class="font-medium">{panchang.vara.nameHindi} ({panchang.vara.name})</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <GlassCard variant="elevated" padding="md">
+        <DataRow
+          label="Tithi"
+          labelHindi="तिथि"
+          value={panchang.tithi.name}
+          valueHindi={panchang.tithi.nameHindi}
+          icon="🌙"
+          href={`/tithi/${panchang.tithi.name.toLowerCase().replace(/\s+/g, '-')}`}
+          variant="highlight"
+        />
+        <DataRow
+          label="Paksha"
+          labelHindi="पक्ष"
+          value={panchang.tithi.paksha}
+          valueHindi={panchang.tithi.pakshaHindi}
+          icon="🌓"
+        />
+        <DataRow
+          label="Nakshatra"
+          labelHindi="नक्षत्र"
+          value={panchang.nakshatra.name}
+          valueHindi={panchang.nakshatra.nameHindi}
+          icon="⭐"
+          href={`/nakshatra/${panchang.nakshatra.name.toLowerCase()}`}
+        />
+        <DataRow
+          label="Yoga"
+          labelHindi="योग"
+          value={panchang.yoga.name}
+          valueHindi={panchang.yoga.nameHindi}
+          icon="☯️"
+          href={`/yoga/${panchang.yoga.name.toLowerCase()}`}
+        />
+        <DataRow
+          label="Karana"
+          labelHindi="करण"
+          value={panchang.karana.name}
+          valueHindi={panchang.karana.nameHindi}
+          icon="📿"
+        />
+        <DataRow
+          label="Vara"
+          labelHindi="वार"
+          value={panchang.vara.name}
+          valueHindi={panchang.vara.nameHindi}
+          icon="📆"
+          href={`/vara/${panchang.vara.name.toLowerCase()}`}
+        />
+      </GlassCard>
+    </section>
 
-        <!-- Timings -->
-        <div class="card bg-base-100 border border-base-200">
-          <div class="card-body p-4">
-            <h3 class="font-semibold text-primary mb-3">Sun & Moon</h3>
-            <table class="table table-sm">
-              <tbody>
-                <tr>
-                  <td class="text-neutral/60">Sunrise</td>
-                  <td class="font-medium tabular-nums">
-                    <time datetime={panchang.sun.sunriseIso}>{panchang.sun.sunrise}</time>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-neutral/60">Sunset</td>
-                  <td class="font-medium tabular-nums">
-                    <time datetime={panchang.sun.sunsetIso}>{panchang.sun.sunset}</time>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-neutral/60">Moonrise</td>
-                  <td class="font-medium tabular-nums">{panchang.moon.moonrise}</td>
-                </tr>
-                <tr>
-                  <td class="text-neutral/60">Moonset</td>
-                  <td class="font-medium tabular-nums">{panchang.moon.moonset}</td>
-                </tr>
-              </tbody>
-            </table>
+    <!-- Sun & Moon Times -->
+    <section aria-label="Sun and Moon Times" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span aria-hidden="true">☀️</span>
+          <span>Sun Times</span>
+        </h2>
+        <GlassCard padding="md">
+          <div class="grid grid-cols-2 gap-4">
+            <TimeDisplay
+              time={panchang.sun.sunrise}
+              label="Sunrise"
+              labelHindi="सूर्योदय"
+              icon="🌅"
+              datetime={panchang.sun.sunriseIso}
+              variant="shubh"
+            />
+            <TimeDisplay
+              time={panchang.sun.sunset}
+              label="Sunset"
+              labelHindi="सूर्यास्त"
+              icon="🌇"
+              datetime={panchang.sun.sunsetIso}
+            />
           </div>
-        </div>
+        </GlassCard>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span aria-hidden="true">🌙</span>
+          <span>Moon Times</span>
+        </h2>
+        <GlassCard padding="md">
+          <div class="grid grid-cols-2 gap-4">
+            <TimeDisplay
+              time={panchang.moon.moonrise}
+              label="Moonrise"
+              labelHindi="चंद्रोदय"
+              icon="🌙"
+            />
+            <TimeDisplay
+              time={panchang.moon.moonset}
+              label="Moonset"
+              labelHindi="चंद्रास्त"
+              icon="🌑"
+            />
+          </div>
+        </GlassCard>
       </div>
     </section>
 
     <!-- Inauspicious Timings -->
-    <section>
-      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
-        Inauspicious Timings
+    <section aria-label="Inauspicious Timings">
+      <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+        <span aria-hidden="true">⚠️</span>
+        <span>Inauspicious Timings</span>
+        <span class="font-hindi text-neutral text-base font-normal">अशुभ समय</span>
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="card bg-error/10 border border-error/20">
-          <div class="card-body p-4 text-center">
-            <h3 class="font-semibold text-error">Rahu Kaal</h3>
-            <p class="text-2xl font-bold text-error tabular-nums mt-2">
+        <!-- Rahu Kaal -->
+        <a href={`/rahu-kaal/${city.slug}`} class="block group">
+          <GlassCard variant="ashubh" padding="md" interactive class="text-center h-full">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <span class="text-xl" aria-hidden="true">⚠️</span>
+              <h3 class="font-semibold text-error">Rahu Kaal</h3>
+              <StatusBadge status="ashubh" label="Avoid" size="xs" />
+            </div>
+            <p class="text-2xl font-bold text-error tabular-nums">
               {panchang.rahuKaal.start} - {panchang.rahuKaal.end}
             </p>
-            <p class="text-sm text-neutral/60 mt-1">Avoid new beginnings</p>
-          </div>
-        </div>
+            <p class="text-sm text-neutral mt-1">Avoid new beginnings</p>
+          </GlassCard>
+        </a>
 
-        <div class="card bg-warning/10 border border-warning/20">
-          <div class="card-body p-4 text-center">
+        <!-- Yamaganda -->
+        <GlassCard variant="ashubh" padding="md" class="text-center">
+          <div class="flex items-center justify-center gap-2 mb-2">
+            <span class="text-xl" aria-hidden="true">⏰</span>
             <h3 class="font-semibold text-warning">Yamaganda</h3>
-            <p class="text-2xl font-bold text-warning tabular-nums mt-2">
-              {panchang.yamaganda.start} - {panchang.yamaganda.end}
-            </p>
-            <p class="text-sm text-neutral/60 mt-1">Avoid auspicious work</p>
           </div>
-        </div>
+          <p class="text-2xl font-bold text-warning tabular-nums">
+            {panchang.yamaganda.start} - {panchang.yamaganda.end}
+          </p>
+          <p class="text-sm text-neutral mt-1">Avoid auspicious work</p>
+        </GlassCard>
 
-        <div class="card bg-warning/10 border border-warning/20">
-          <div class="card-body p-4 text-center">
+        <!-- Gulika Kaal -->
+        <GlassCard variant="ashubh" padding="md" class="text-center">
+          <div class="flex items-center justify-center gap-2 mb-2">
+            <span class="text-xl" aria-hidden="true">⏱️</span>
             <h3 class="font-semibold text-warning">Gulika Kaal</h3>
-            <p class="text-2xl font-bold text-warning tabular-nums mt-2">
-              {panchang.gulikaKaal.start} - {panchang.gulikaKaal.end}
-            </p>
-            <p class="text-sm text-neutral/60 mt-1">Inauspicious period</p>
           </div>
-        </div>
+          <p class="text-2xl font-bold text-warning tabular-nums">
+            {panchang.gulikaKaal.start} - {panchang.gulikaKaal.end}
+          </p>
+          <p class="text-sm text-neutral mt-1">Inauspicious period</p>
+        </GlassCard>
+      </div>
+    </section>
+
+    <!-- Related Links -->
+    <section aria-label="Related Information" class="pt-4">
+      <h2 class="text-lg font-semibold mb-4">More for {city.name}</h2>
+      <div class="flex flex-wrap gap-3">
+        <a href={`/rahu-kaal/${city.slug}`} class="btn btn-outline btn-sm">
+          ⚠️ Rahu Kaal Details
+        </a>
+        <a href={`/choghadiya/${city.slug}`} class="btn btn-outline btn-sm">
+          ⏱️ Choghadiya
+        </a>
+        <a href="/muhurat" class="btn btn-outline btn-sm">
+          🕐 Shubh Muhurat
+        </a>
+        <a href="/festivals" class="btn btn-outline btn-sm">
+          🎉 Festivals
+        </a>
       </div>
     </section>
 
     <!-- Location Info -->
-    <section class="text-sm text-neutral/50">
+    <section class="text-sm text-neutral/60 pt-4 border-t border-base-300/50">
       <p>
-        Panchang calculated for {city.name}, {city.state} (Lat: {city.latitude.toFixed(4)}°, Long: {city.longitude.toFixed(4)}°)
+        Panchang calculated for <strong>{city.name}, {city.state}</strong>
+        (Lat: {city.latitude.toFixed(4)}°, Long: {city.longitude.toFixed(4)}°)
         using Lahiri Ayanamsa and Swiss Ephemeris.
       </p>
     </section>
 
-    <!-- Navigation -->
-    <div class="flex flex-wrap gap-3 pt-4">
-      <a href="/panchang" class="btn btn-outline min-h-12">
-        ← All Cities
-      </a>
-      <a href={`/rahu-kaal/${city.slug}`} class="btn btn-ghost min-h-12">
-        Rahu Kaal Details →
-      </a>
-    </div>
+    <!-- Popular Cities (SEO) -->
+    <PopularCities
+      pageType="panchang"
+      title="Panchang for Other Cities"
+      tier={2}
+      limit={18}
+      variant="compact"
+    />
   </div>
 </Layout>

@@ -1,16 +1,23 @@
 ---
 /**
- * Homepage - Shree Kundli
+ * Homepage - Shreeng
  *
  * AI-optimized landing page with:
+ * - Hero section with cosmic gradient
  * - Quick answer for "today's panchang" queries
- * - City selector for location-specific content
+ * - Rashi grid for zodiac navigation
+ * - Upcoming festivals section
  * - Feature cards for main sections
+ * - Popular cities for SEO
  * - JSON-LD WebSite schema
  */
 import Layout from '../layouts/Layout.astro';
-import CitySelector from '../components/CitySelector.astro';
-import FeatureCard from '../components/FeatureCard.astro';
+import GlassCard from '../components/cards/GlassCard.astro';
+import HeroSection from '../components/sections/HeroSection.astro';
+import TodayPanchang from '../components/sections/TodayPanchang.astro';
+import RashiGrid from '../components/sections/RashiGrid.astro';
+import UpcomingFestivals from '../components/sections/UpcomingFestivals.astro';
+import PopularCities from '../components/sections/PopularCities.astro';
 import type { City } from '../lib/types';
 
 // Load cities data
@@ -29,283 +36,278 @@ const dateOptions: Intl.DateTimeFormatOptions = {
   day: 'numeric',
 };
 const todayFormatted = today.toLocaleDateString('en-IN', dateOptions);
-const todayHindi = today.toLocaleDateString('hi-IN', dateOptions);
-const todayIso = today.toISOString().split('T')[0];
 
 // Page meta
-const title = 'Shree Kundli - Vedic Astrology, Panchang & Kundli | श्री कुंडली';
+const title = 'Shreeng - Vedic Astrology, Panchang & Kundli | श्रीएंग';
 const description = `Check today's panchang, tithi, nakshatra, rahu kaal for ${defaultCity.name}. Free kundli, rashifal, muhurat finder & Hindu festival calendar. Accurate Vedic astrology powered by Swiss Ephemeris.`;
 
 // WebSite schema for homepage
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Shree Kundli',
-  alternateName: ['श्री कुंडली', 'Shri Kundali'],
-  url: Astro.site?.toString() || 'https://shreekundli.com',
+  name: 'Shreeng',
+  alternateName: ['श्रीएंग', 'Shreeng Astrology'],
+  url: Astro.site?.toString() || 'https://shreeng.com',
   description: 'Comprehensive Vedic Astrology platform for Panchang, Kundli, Rashifal, Muhurat and Hindu Festival information.',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: `${Astro.site || 'https://shreekundli.com'}/search?q={search_term_string}`,
+      urlTemplate: `${Astro.site || 'https://shreeng.com'}/search?q={search_term_string}`,
     },
     'query-input': 'required name=search_term_string',
   },
   inLanguage: ['en-IN', 'hi-IN'],
   publisher: {
     '@type': 'Organization',
-    name: 'Shree Kundli',
+    name: 'Shreeng',
   },
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} activeNav="home">
   <!-- JSON-LD Schema -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify(websiteSchema)} slot="head" />
 
-  <div class="space-y-12">
+  <div class="space-y-8 md:space-y-12">
     <!-- Hero Section -->
-    <section class="text-center py-8 md:py-12 space-y-6">
-      <div class="space-y-3">
-        <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-primary tracking-tight">
-          श्री कुंडली
-        </h1>
-        <p class="text-lg md:text-xl text-neutral/70 font-body max-w-xl mx-auto">
-          Ancient Vedic Wisdom for the <span class="text-secondary font-semibold">Modern Era</span>
-        </p>
-      </div>
+    <HeroSection
+      title="Vedic Astrology & Panchang"
+      subtitle="Accurate Hindu calendar, muhurat times, and daily horoscope for your city"
+      currentCity={defaultCity.name}
+      currentCitySlug={defaultCity.slug}
+      todayDate={todayFormatted}
+    />
 
-      <!-- City Selector -->
-      <div class="max-w-md mx-auto mt-8">
-        <label class="text-sm text-neutral/60 mb-2 block text-left">
-          Select your city for accurate timings
-        </label>
-        <CitySelector
-          cities={cities}
-          currentCity={defaultCity}
-          baseUrl="/panchang"
-        />
-      </div>
-    </section>
+    <!-- Today's Panchang Quick Summary -->
+    <TodayPanchang
+      city={defaultCity.name}
+      citySlug={defaultCity.slug}
+      title="Today's Panchang"
+    />
 
-    <!-- Quick Panchang Summary (AI Extraction Target) -->
-    <section class="quick-answer" role="contentinfo" aria-label="Today's Panchang Summary">
-      <div class="card bg-primary/5 border border-primary/20">
-        <div class="card-body p-4 md:p-6">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <p class="text-sm text-neutral/60">
-                <time datetime={todayIso}>{todayFormatted}</time>
-              </p>
-              <h2 class="font-heading text-2xl md:text-3xl text-primary font-bold mt-1">
-                आज का पंचांग
-              </h2>
-              <p class="text-neutral/70 mt-1">
-                Today's Panchang for {defaultCity.name} ({defaultCity.nameHindi})
-              </p>
-            </div>
-
-            <a
-              href={`/panchang/${defaultCity.slug}`}
-              class="btn btn-secondary min-h-12"
-            >
-              View Full Panchang →
-            </a>
-          </div>
-
-          <!-- Quick Data (Placeholder - will be dynamic) -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-primary/10">
-            <div>
-              <p class="text-xs text-neutral/50 uppercase tracking-wide">Tithi</p>
-              <p class="font-semibold text-primary">शुक्ल षष्ठी</p>
-              <p class="text-sm text-neutral/60">Shukla Shashthi</p>
-            </div>
-            <div>
-              <p class="text-xs text-neutral/50 uppercase tracking-wide">Nakshatra</p>
-              <p class="font-semibold text-primary">रोहिणी</p>
-              <p class="text-sm text-neutral/60">Rohini</p>
-            </div>
-            <div>
-              <p class="text-xs text-neutral/50 uppercase tracking-wide">Sunrise</p>
-              <p class="font-semibold text-primary tabular-nums">07:05 AM</p>
-              <p class="text-sm text-neutral/60">IST</p>
-            </div>
-            <div>
-              <p class="text-xs text-neutral/50 uppercase tracking-wide">Rahu Kaal</p>
-              <p class="font-semibold text-primary tabular-nums">07:30 - 09:00</p>
-              <p class="text-sm text-neutral/60">Avoid new work</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- Rashifal Grid -->
+    <RashiGrid
+      title="Today's Rashifal"
+      variant="default"
+    />
 
     <!-- Main Features Grid -->
-    <section aria-label="Main Features">
-      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
-        Explore Vedic Astrology
+    <section aria-label="Main Features" class="my-8">
+      <h2 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-2">
+        <span aria-hidden="true">✨</span>
+        <span>Explore Vedic Astrology</span>
       </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FeatureCard
-          title="Daily Panchang"
-          titleHindi="आज का पंचांग"
-          description="Tithi, nakshatra, yoga, karana, and auspicious timings for your city"
-          href="/panchang"
-          icon="calendar"
-          variant="primary"
-        />
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Panchang -->
+        <a href="/panchang" class="group">
+          <GlassCard class="h-full hover:border-primary/50 transition-all group-hover:scale-[1.02]" padding="md" interactive>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl shrink-0">📅</div>
+              <div>
+                <h3 class="font-semibold text-lg group-hover:text-primary transition-colors">
+                  Daily Panchang
+                </h3>
+                <p class="text-sm text-neutral font-hindi mb-1">आज का पंचांग</p>
+                <p class="text-sm text-neutral/80">
+                  Tithi, nakshatra, yoga, karana for your city
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </a>
 
-        <FeatureCard
-          title="Rashifal"
-          titleHindi="राशिफल"
-          description="Daily, weekly, and monthly horoscope for all 12 zodiac signs"
-          href="/rashifal"
-          icon="star"
-        />
+        <!-- Rahu Kaal -->
+        <a href="/rahu-kaal" class="group">
+          <GlassCard class="h-full hover:border-error/30 transition-all group-hover:scale-[1.02]" padding="md" interactive>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl shrink-0">⚠️</div>
+              <div>
+                <h3 class="font-semibold text-lg group-hover:text-error transition-colors">
+                  Rahu Kaal
+                </h3>
+                <p class="text-sm text-neutral font-hindi mb-1">राहु काल</p>
+                <p class="text-sm text-neutral/80">
+                  Inauspicious timing to avoid new ventures
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </a>
 
-        <FeatureCard
-          title="Rahu Kaal"
-          titleHindi="राहु काल"
-          description="Check today's inauspicious Rahu Kaal timings for your location"
-          href="/rahu-kaal"
-          icon="clock"
-        />
+        <!-- Choghadiya -->
+        <a href="/choghadiya" class="group">
+          <GlassCard class="h-full hover:border-success/30 transition-all group-hover:scale-[1.02]" padding="md" interactive>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl shrink-0">⏱️</div>
+              <div>
+                <h3 class="font-semibold text-lg group-hover:text-success transition-colors">
+                  Choghadiya
+                </h3>
+                <p class="text-sm text-neutral font-hindi mb-1">चौघड़िया</p>
+                <p class="text-sm text-neutral/80">
+                  Auspicious time periods for activities
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </a>
 
-        <FeatureCard
-          title="Muhurat Finder"
-          titleHindi="शुभ मुहूर्त"
-          description="Find auspicious dates for wedding, griha pravesh, and more"
-          href="/muhurat"
-          icon="sun"
-        />
+        <!-- Muhurat -->
+        <a href="/muhurat" class="group">
+          <GlassCard class="h-full hover:border-primary/50 transition-all group-hover:scale-[1.02]" padding="md" interactive>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl shrink-0">🕐</div>
+              <div>
+                <h3 class="font-semibold text-lg group-hover:text-primary transition-colors">
+                  Shubh Muhurat
+                </h3>
+                <p class="text-sm text-neutral font-hindi mb-1">शुभ मुहूर्त</p>
+                <p class="text-sm text-neutral/80">
+                  Auspicious dates for wedding, griha pravesh
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </a>
 
-        <FeatureCard
-          title="Festival Calendar"
-          titleHindi="त्योहार कैलेंडर"
-          description="Hindu festival dates, puja timings, and vidhi for 2026"
-          href="/festivals"
-          icon="moon"
-        />
+        <!-- Festivals -->
+        <a href="/festivals" class="group">
+          <GlassCard class="h-full hover:border-secondary/30 transition-all group-hover:scale-[1.02]" padding="md" interactive>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl shrink-0">🎉</div>
+              <div>
+                <h3 class="font-semibold text-lg group-hover:text-secondary transition-colors">
+                  Festival Calendar
+                </h3>
+                <p class="text-sm text-neutral font-hindi mb-1">त्योहार कैलेंडर</p>
+                <p class="text-sm text-neutral/80">
+                  Hindu festivals, vrat dates & puja timings
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </a>
 
-        <FeatureCard
-          title="Kundli Generator"
-          titleHindi="जन्म कुंडली"
-          description="Create your free birth chart with detailed analysis"
-          href="/kundli"
-          icon="star"
-          variant="secondary"
-        />
-
-        <FeatureCard
-          title="Kundli Milan"
-          titleHindi="कुंडली मिलान"
-          description="Check marriage compatibility with Guna Milan scoring"
-          href="/kundli-milan"
-          icon="sun"
-        />
-
-        <FeatureCard
-          title="Choghadiya"
-          titleHindi="चौघड़िया"
-          description="Auspicious time periods for daily activities"
-          href="/choghadiya"
-          icon="clock"
-        />
+        <!-- Kundli -->
+        <a href="/kundli" class="group">
+          <GlassCard variant="elevated" class="h-full hover:border-primary/50 transition-all group-hover:scale-[1.02] gradient-border" padding="md" interactive>
+            <div class="flex items-start gap-4">
+              <div class="text-3xl shrink-0">🌟</div>
+              <div>
+                <h3 class="font-semibold text-lg text-primary group-hover:text-primary/80 transition-colors">
+                  Kundli Generator
+                </h3>
+                <p class="text-sm text-neutral font-hindi mb-1">जन्म कुंडली</p>
+                <p class="text-sm text-neutral/80">
+                  Create free birth chart with analysis
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </a>
       </div>
     </section>
 
+    <!-- Upcoming Festivals -->
+    <UpcomingFestivals
+      title="Upcoming Festivals"
+      limit={4}
+      variant="default"
+    />
+
     <!-- Panchang Elements -->
-    <section aria-label="Panchang Elements">
-      <h2 class="font-heading text-2xl text-primary font-bold mb-4">
-        Panchang Elements - पंचांग तत्व
+    <section aria-label="Panchang Elements" class="my-8">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span aria-hidden="true">📿</span>
+        <span>Panchang Elements</span>
+        <span class="font-hindi text-neutral text-base font-normal">पंचांग तत्व</span>
       </h2>
-      <p class="text-neutral/60 mb-6">
-        Learn about the five elements that make up the Hindu Panchang
+      <p class="text-neutral/80 mb-6 text-sm">
+        The five elements that make up the Hindu Panchang
       </p>
 
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <a href="/tithi" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
-          <div class="card-body p-4 text-center">
-            <span class="text-3xl mb-2">🌙</span>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+        <a href="/tithi" class="group">
+          <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
+            <span class="text-3xl mb-2 block" aria-hidden="true">🌙</span>
             <p class="font-semibold text-primary">Tithi</p>
-            <p class="text-xs text-neutral/60">तिथि - Lunar Day</p>
-          </div>
+            <p class="text-xs text-neutral font-hindi">तिथि</p>
+            <p class="text-[10px] text-neutral/70 mt-1">Lunar Day</p>
+          </GlassCard>
         </a>
-        <a href="/nakshatra" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
-          <div class="card-body p-4 text-center">
-            <span class="text-3xl mb-2">⭐</span>
+
+        <a href="/nakshatra" class="group">
+          <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
+            <span class="text-3xl mb-2 block" aria-hidden="true">⭐</span>
             <p class="font-semibold text-primary">Nakshatra</p>
-            <p class="text-xs text-neutral/60">नक्षत्र - Lunar Mansion</p>
-          </div>
+            <p class="text-xs text-neutral font-hindi">नक्षत्र</p>
+            <p class="text-[10px] text-neutral/70 mt-1">Lunar Mansion</p>
+          </GlassCard>
         </a>
-        <a href="/yoga" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
-          <div class="card-body p-4 text-center">
-            <span class="text-3xl mb-2">☯️</span>
+
+        <a href="/yoga" class="group">
+          <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
+            <span class="text-3xl mb-2 block" aria-hidden="true">☯️</span>
             <p class="font-semibold text-primary">Yoga</p>
-            <p class="text-xs text-neutral/60">योग - Sun-Moon Yoga</p>
-          </div>
+            <p class="text-xs text-neutral font-hindi">योग</p>
+            <p class="text-[10px] text-neutral/70 mt-1">Sun-Moon Yoga</p>
+          </GlassCard>
         </a>
-        <a href="/karana" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
-          <div class="card-body p-4 text-center">
-            <span class="text-3xl mb-2">📿</span>
+
+        <a href="/karana" class="group">
+          <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
+            <span class="text-3xl mb-2 block" aria-hidden="true">📿</span>
             <p class="font-semibold text-primary">Karana</p>
-            <p class="text-xs text-neutral/60">करण - Half Tithi</p>
-          </div>
+            <p class="text-xs text-neutral font-hindi">करण</p>
+            <p class="text-[10px] text-neutral/70 mt-1">Half Tithi</p>
+          </GlassCard>
         </a>
-        <a href="/vara" class="card bg-base-100 border border-base-200 hover:border-secondary/30 hover:shadow-md transition-all">
-          <div class="card-body p-4 text-center">
-            <span class="text-3xl mb-2">📅</span>
+
+        <a href="/vara" class="group">
+          <GlassCard class="text-center hover:border-primary/50 transition-all group-hover:scale-105" padding="sm" interactive>
+            <span class="text-3xl mb-2 block" aria-hidden="true">📅</span>
             <p class="font-semibold text-primary">Vara</p>
-            <p class="text-xs text-neutral/60">वार - Day of Week</p>
-          </div>
+            <p class="text-xs text-neutral font-hindi">वार</p>
+            <p class="text-[10px] text-neutral/70 mt-1">Day of Week</p>
+          </GlassCard>
         </a>
       </div>
     </section>
 
     <!-- Popular Cities -->
-    <section aria-label="Popular Cities">
-      <h2 class="font-heading text-2xl text-primary font-bold mb-6">
-        Popular Cities
-      </h2>
-
-      <div class="flex flex-wrap gap-2">
-        {cities.filter(c => c.tier === 1).slice(0, 12).map((city) => (
-          <a
-            href={`/panchang/${city.slug}`}
-            class="btn btn-sm btn-outline min-h-10 font-normal"
-          >
-            {city.name}
-            <span class="text-neutral/50 text-xs">({city.nameHindi})</span>
-          </a>
-        ))}
-      </div>
-    </section>
+    <PopularCities
+      pageType="panchang"
+      title="Popular Cities"
+      tier={1}
+      limit={12}
+      variant="grid"
+    />
 
     <!-- Trust Signals -->
-    <section class="text-center py-8 border-t border-base-200">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+    <section class="py-8 border-t border-base-300/50">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto text-center">
         <div>
-          <p class="text-3xl font-heading font-bold text-primary">50+</p>
-          <p class="text-sm text-neutral/60">Cities Covered</p>
+          <p class="text-3xl font-bold text-primary">50+</p>
+          <p class="text-sm text-neutral">Cities Covered</p>
         </div>
         <div>
-          <p class="text-3xl font-heading font-bold text-primary">27</p>
-          <p class="text-sm text-neutral/60">Nakshatras</p>
+          <p class="text-3xl font-bold text-primary">27</p>
+          <p class="text-sm text-neutral">Nakshatras</p>
         </div>
         <div>
-          <p class="text-3xl font-heading font-bold text-primary">12</p>
-          <p class="text-sm text-neutral/60">Rashis</p>
+          <p class="text-3xl font-bold text-primary">12</p>
+          <p class="text-sm text-neutral">Rashis</p>
         </div>
         <div>
-          <p class="text-3xl font-heading font-bold text-primary">Swiss</p>
-          <p class="text-sm text-neutral/60">Ephemeris Accuracy</p>
+          <p class="text-3xl font-bold text-primary">Swiss</p>
+          <p class="text-sm text-neutral">Ephemeris Accuracy</p>
         </div>
       </div>
 
-      <p class="text-sm text-neutral/50 mt-6">
-        Calculations based on <dfn>Lahiri Ayanamsa</dfn> (Indian Government standard)
+      <p class="text-sm text-neutral/60 mt-6 text-center">
+        Calculations based on <dfn class="not-italic text-primary/80">Lahiri Ayanamsa</dfn> (Indian Government standard)
       </p>
     </section>
   </div>
