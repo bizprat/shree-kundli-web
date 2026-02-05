@@ -238,7 +238,7 @@ const schemasJson = allSchemas.map((s) => JSON.stringify(s));
 <meta name="ai-content-declaration" content="factual-data, real-time-calculation" />
 
 <!-- Preconnect to API (performance) -->
-<link rel="preconnect" href={import.meta.env.SHREE_KUNDLI_API_URL || 'https://api.shreekundli.com'} />
+<link rel="preconnect" href={new URL(import.meta.env.SHREENG_API_URL || 'https://api.shreeng.com/v2').origin} />
 
 <!-- JSON-LD Structured Data -->
 {schemasJson.map((schemaJson) => (
