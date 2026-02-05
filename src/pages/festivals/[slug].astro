@@ -115,7 +115,7 @@ const relatedFestivals = festivals
   .slice(0, 4);
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} activeNav="festivals">
   <script is:inline type="application/ld+json" set:html={JSON.stringify(eventSchema)} slot="head" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
 

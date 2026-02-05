@@ -246,6 +246,19 @@
   }
 }
 
+/* Glass context bar (sticky sub-navigation on city pages) */
+.glass-context-bar {
+  background: rgba(15, 14, 26, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .glass-context-bar {
+    background: rgba(15, 14, 26, 0.98);
+  }
+}
+
 /* Glass input fields */
 .glass-input {
   background: var(--glass-bg);

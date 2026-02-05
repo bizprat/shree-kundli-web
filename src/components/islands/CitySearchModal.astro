@@ -1,0 +1,548 @@
+---
+/**
+ * CitySearchModal Island
+ *
+ * Full-screen city search modal triggered by Header's "Select City" button.
+ * Combines instant local search with debounced API search.
+ *
+ * Features:
+ * - Full-screen on mobile, centered modal on desktop
+ * - Instant local search (49 cities from cities-sample.json)
+ * - Debounced API search via /api/city-search proxy (300ms)
+ * - Recent cities from localStorage
+ * - CF auto-detected city suggestion
+ * - Keyboard navigation (Escape, ArrowUp/Down, Enter)
+ * - Safe DOM methods (no innerHTML)
+ *
+ * Usage:
+ * <CitySearchModal client:idle cfCity="Patna" />
+ */
+
+import citiesData from '../../data/cities-sample.json';
+
+interface Props {
+  /** Cloudflare-detected city name (suggestion for first-time visitors) */
+  cfCity?: string;
+}
+
+const { cfCity } = Astro.props;
+
+// Prepare minimal city data for client-side local search
+const cities = citiesData.map((c) => ({
+  id: c.id,
+  name: c.name,
+  nameHindi: c.nameHindi,
+  slug: c.slug,
+  state: c.state,
+  tier: c.tier,
+}));
+
+const citiesJson = JSON.stringify(cities);
+---
+
+<!-- Modal Overlay -->
+<div
+  id="city-search-modal"
+  class="fixed inset-0 z-[70] hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="city-search-title"
+>
+  <!-- Backdrop -->
+  <div
+    class="absolute inset-0 bg-black/60"
+    id="city-modal-backdrop"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Modal Panel -->
+  <div class="absolute inset-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-lg md:max-h-[80vh] md:rounded-2xl bg-base-100 flex flex-col overflow-hidden">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 py-3 border-b border-base-300/50 shrink-0">
+      <h2 id="city-search-title" class="font-semibold text-lg">Select City</h2>
+      <button
+        type="button"
+        class="p-2 rounded-lg text-neutral hover:text-base-content hover:bg-base-300/50 transition-colors touch-target"
+        id="city-modal-close"
+        aria-label="Close city search"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Search Input -->
+    <div class="px-4 py-3 shrink-0">
+      <div class="relative">
+        <input
+          type="text"
+          id="city-modal-input"
+          class="w-full px-4 py-3 pl-10 glass-input text-base-content placeholder-neutral text-base"
+          placeholder="Type city name..."
+          autocomplete="off"
+          aria-label="Search for a city"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="city-modal-results"
+        />
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral pointer-events-none" aria-hidden="true">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </span>
+        <span
+          id="city-modal-spinner"
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral hidden"
+          aria-hidden="true"
+        >
+          <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- CF Suggestion Banner -->
+    {cfCity && (
+      <div
+        id="city-modal-cf-banner"
+        class="mx-4 mb-2 px-3 py-2.5 rounded-lg bg-primary/10 border border-primary/20 hidden"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-sm text-neutral">
+            Detected: <strong class="text-primary">{cfCity}</strong>
+          </span>
+          <button
+            type="button"
+            class="text-xs px-2.5 py-1 rounded bg-primary text-primary-content font-medium hover:bg-primary/80 transition-colors"
+            id="city-modal-cf-accept"
+            data-city={cfCity}
+          >
+            Use
+          </button>
+        </div>
+      </div>
+    )}
+
+    <!-- Results Area -->
+    <div
+      id="city-modal-results"
+      class="flex-1 overflow-y-auto overscroll-contain"
+      role="listbox"
+    >
+      <!-- Recent cities section -->
+      <div id="city-modal-recent" class="hidden">
+        <div class="px-4 py-2 text-xs text-neutral uppercase tracking-wider border-b border-base-300/30">
+          Recent
+        </div>
+        <ul id="city-modal-recent-list"></ul>
+      </div>
+
+      <!-- Search results -->
+      <ul id="city-modal-search-list"></ul>
+
+      <!-- No results -->
+      <div id="city-modal-empty" class="hidden px-4 py-8 text-center">
+        <p class="text-neutral">No cities found</p>
+        <p class="text-xs text-neutral/60 mt-1">Try a different spelling</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inject city data for client-side search -->
+<script is:inline define:vars={{ citiesJson, cfCity: cfCity || '' }}>
+  window.__CITY_MODAL_DATA__ = JSON.parse(citiesJson);
+  window.__CITY_MODAL_CF__ = cfCity;
+</script>
+
+<script>
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CitySearchModal Island Script
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  const SAVED_CITY_KEY = 'shreeng_user_city';
+  const RECENT_CITIES_KEY = 'shreeng_recent_cities';
+  const MAX_RECENT = 5;
+  const DEBOUNCE_MS = 300;
+  const API_ENDPOINT = '/api/city-search';
+
+  interface CityResult {
+    id: number;
+    name: string;
+    nameHindi: string;
+    slug: string;
+    state: string;
+    tier?: number;
+    hasPage?: boolean;
+  }
+
+  // Get data from window (injected by define:vars)
+  const localCities: CityResult[] = (window as any).__CITY_MODAL_DATA__ || [];
+  const cfCity: string = (window as any).__CITY_MODAL_CF__ || '';
+
+  // DOM references
+  const modal = document.getElementById('city-search-modal');
+  const backdrop = document.getElementById('city-modal-backdrop');
+  const closeBtn = document.getElementById('city-modal-close');
+  const input = document.getElementById('city-modal-input') as HTMLInputElement | null;
+  const spinner = document.getElementById('city-modal-spinner');
+  const cfBanner = document.getElementById('city-modal-cf-banner');
+  const cfAcceptBtn = document.getElementById('city-modal-cf-accept');
+  const recentSection = document.getElementById('city-modal-recent');
+  const recentList = document.getElementById('city-modal-recent-list');
+  const searchList = document.getElementById('city-modal-search-list');
+  const emptyState = document.getElementById('city-modal-empty');
+  const trigger = document.getElementById('city-selector-trigger');
+
+  let activeIndex = -1;
+  let currentResults: CityResult[] = [];
+  let debounceTimer: number;
+  let abortController: AbortController | null = null;
+
+  // ─── localStorage helpers ──────────────────────────────────────────────
+
+  function getSavedCity(): string | null {
+    try { return localStorage.getItem(SAVED_CITY_KEY); }
+    catch { return null; }
+  }
+
+  function getRecentCities(): CityResult[] {
+    try {
+      const stored = localStorage.getItem(RECENT_CITIES_KEY);
+      if (!stored) return [];
+      const slugs: string[] = JSON.parse(stored);
+      return slugs
+        .map(slug => localCities.find(c => c.slug === slug))
+        .filter((c): c is CityResult => c !== undefined);
+    } catch { return []; }
+  }
+
+  function saveCity(city: CityResult) {
+    try {
+      localStorage.setItem(SAVED_CITY_KEY, city.slug);
+      const recent = getRecentCities();
+      const updated = [city, ...recent.filter(c => c.slug !== city.slug)].slice(0, MAX_RECENT);
+      localStorage.setItem(RECENT_CITIES_KEY, JSON.stringify(updated.map(c => c.slug)));
+    } catch { /* ignore */ }
+  }
+
+  // ─── Search logic ──────────────────────────────────────────────────────
+
+  function searchLocal(query: string): CityResult[] {
+    if (!query || query.length < 2) return [];
+    const lower = query.toLowerCase();
+
+    return localCities
+      .map(city => {
+        let score = 0;
+        if (city.name.toLowerCase() === lower) score += 100;
+        if (city.nameHindi === query) score += 100;
+        if (city.name.toLowerCase().startsWith(lower)) score += 50;
+        if (city.nameHindi.startsWith(query)) score += 50;
+        if (city.name.toLowerCase().includes(lower)) score += 25;
+        if (city.nameHindi.includes(query)) score += 25;
+        if (city.tier === 1) score += 10;
+        if (city.tier === 2) score += 5;
+        return { city, score };
+      })
+      .filter(r => r.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 8)
+      .map(r => r.city);
+  }
+
+  async function searchAPI(query: string): Promise<CityResult[]> {
+    if (!query || query.length < 2) return [];
+
+    // Cancel previous in-flight request
+    if (abortController) abortController.abort();
+    abortController = new AbortController();
+
+    try {
+      const resp = await fetch(
+        `${API_ENDPOINT}?q=${encodeURIComponent(query)}&limit=10`,
+        { signal: abortController.signal }
+      );
+      if (!resp.ok) return [];
+      return resp.json();
+    } catch {
+      return []; // Aborted or network error
+    }
+  }
+
+  // ─── DOM helpers ───────────────────────────────────────────────────────
+
+  function createCityItem(city: CityResult, index: number): HTMLLIElement {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'option');
+    li.setAttribute('data-index', String(index));
+    li.setAttribute('data-slug', city.slug);
+    li.className = [
+      'city-item flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors',
+      index === activeIndex ? 'bg-primary/10' : 'hover:bg-base-300/50',
+    ].join(' ');
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'text-neutral shrink-0';
+    iconSpan.setAttribute('aria-hidden', 'true');
+    iconSpan.textContent = '📍';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'min-w-0 flex-1';
+
+    const nameSpan = document.createElement('div');
+    nameSpan.className = 'font-medium truncate';
+    nameSpan.textContent = city.name;
+
+    const stateSpan = document.createElement('div');
+    stateSpan.className = 'text-xs text-neutral truncate';
+    stateSpan.textContent = city.state;
+
+    textDiv.appendChild(nameSpan);
+    textDiv.appendChild(stateSpan);
+
+    li.appendChild(iconSpan);
+    li.appendChild(textDiv);
+
+    return li;
+  }
+
+  function clearList(list: HTMLElement | null) {
+    if (!list) return;
+    while (list.firstChild) list.removeChild(list.firstChild);
+  }
+
+  function renderResults(results: CityResult[]) {
+    clearList(searchList);
+    activeIndex = -1;
+    currentResults = results;
+
+    if (results.length === 0 && input?.value.trim()) {
+      emptyState?.classList.remove('hidden');
+    } else {
+      emptyState?.classList.add('hidden');
+      results.forEach((city, i) => {
+        searchList?.appendChild(createCityItem(city, i));
+      });
+    }
+  }
+
+  function showRecent() {
+    const recent = getRecentCities();
+    if (recent.length === 0) {
+      recentSection?.classList.add('hidden');
+      return;
+    }
+
+    clearList(recentList);
+    currentResults = recent;
+    recent.forEach((city, i) => {
+      recentList?.appendChild(createCityItem(city, i));
+    });
+    recentSection?.classList.remove('hidden');
+  }
+
+  function updateActiveHighlight() {
+    const allItems = modal?.querySelectorAll('.city-item');
+    allItems?.forEach((item, i) => {
+      if (i === activeIndex) {
+        item.classList.add('bg-primary/10');
+        item.classList.remove('hover:bg-base-300/50');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('bg-primary/10');
+        item.classList.add('hover:bg-base-300/50');
+      }
+    });
+  }
+
+  // ─── Navigation ────────────────────────────────────────────────────────
+
+  function getBaseUrl(): string {
+    const path = window.location.pathname;
+    if (path.startsWith('/rahu-kaal')) return '/rahu-kaal';
+    if (path.startsWith('/choghadiya')) return '/choghadiya';
+    return '/panchang';
+  }
+
+  function navigateToCity(city: CityResult) {
+    saveCity(city);
+    window.location.href = `${getBaseUrl()}/${city.slug}`;
+  }
+
+  // ─── Modal open/close ─────────────────────────────────────────────────
+
+  function openModal() {
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Show CF suggestion if no saved city
+    if (cfCity && !getSavedCity() && cfBanner) {
+      cfBanner.classList.remove('hidden');
+    }
+
+    // Show recent cities on empty
+    showRecent();
+    emptyState?.classList.add('hidden');
+    clearList(searchList);
+
+    // Focus input after animation frame
+    requestAnimationFrame(() => {
+      input?.focus();
+    });
+  }
+
+  function closeModal() {
+    if (!modal || !input) return;
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+    input.value = '';
+    activeIndex = -1;
+    currentResults = [];
+    clearList(searchList);
+    recentSection?.classList.add('hidden');
+    emptyState?.classList.add('hidden');
+    cfBanner?.classList.add('hidden');
+    spinner?.classList.add('hidden');
+  }
+
+  // ─── Search handler ────────────────────────────────────────────────────
+
+  function handleInput() {
+    const query = input?.value.trim() || '';
+
+    // Reset states
+    clearTimeout(debounceTimer);
+    recentSection?.classList.add('hidden');
+    emptyState?.classList.add('hidden');
+
+    if (!query || query.length < 2) {
+      clearList(searchList);
+      showRecent();
+      spinner?.classList.add('hidden');
+      return;
+    }
+
+    // Instant local search
+    const localResults = searchLocal(query);
+    renderResults(localResults);
+
+    // Debounced API search
+    spinner?.classList.remove('hidden');
+    debounceTimer = window.setTimeout(async () => {
+      const apiResults = await searchAPI(query);
+      spinner?.classList.add('hidden');
+
+      if (input?.value.trim() !== query) return; // Input changed, discard
+
+      // API results are authoritative — use them directly when available
+      if (apiResults.length > 0) {
+        renderResults(apiResults);
+      }
+      // If API returned nothing, keep the local results already shown
+    }, DEBOUNCE_MS);
+  }
+
+  // ─── Event listeners ──────────────────────────────────────────────────
+
+  // Open modal from header button
+  trigger?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal();
+  });
+
+  // Close modal
+  closeBtn?.addEventListener('click', closeModal);
+  backdrop?.addEventListener('click', closeModal);
+
+  // Search input
+  input?.addEventListener('input', handleInput);
+
+  // CF accept button
+  cfAcceptBtn?.addEventListener('click', () => {
+    const cityName = cfAcceptBtn.getAttribute('data-city');
+    if (!cityName) return;
+    const city = localCities.find(
+      c => c.name.toLowerCase() === cityName.toLowerCase()
+    );
+    if (city) {
+      navigateToCity(city);
+    } else {
+      // CF city not in local data — fill input and search
+      if (input) {
+        input.value = cityName;
+        handleInput();
+      }
+      cfBanner?.classList.add('hidden');
+    }
+  });
+
+  // Click on result item (event delegation)
+  const resultsContainer = document.getElementById('city-modal-results');
+  resultsContainer?.addEventListener('click', (e) => {
+    const item = (e.target as HTMLElement).closest('.city-item');
+    if (!item) return;
+    const slug = item.getAttribute('data-slug');
+    const city = currentResults.find(c => c.slug === slug);
+    if (city) navigateToCity(city);
+  });
+
+  // Keyboard navigation
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+
+    const total = currentResults.length;
+    if (!total) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIndex = Math.min(activeIndex + 1, total - 1);
+      updateActiveHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIndex = Math.max(activeIndex - 1, 0);
+      updateActiveHighlight();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (activeIndex >= 0 && currentResults[activeIndex]) {
+        navigateToCity(currentResults[activeIndex]);
+      }
+    }
+  });
+
+  // Global Escape key (when focus is elsewhere)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+</script>
+
+<style>
+  /* Smooth results scrolling */
+  #city-modal-results {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(var(--p) / 0.3) transparent;
+  }
+
+  #city-modal-results::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #city-modal-results::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #city-modal-results::-webkit-scrollbar-thumb {
+    background-color: oklch(var(--p) / 0.3);
+    border-radius: 3px;
+  }
+</style>

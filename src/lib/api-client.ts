@@ -10,6 +10,8 @@
  */
 
 const API_BASE = import.meta.env.SHREENG_API_URL || 'http://localhost:3333/v2';
+// Geocode endpoints live at root, not under /v2
+const API_ROOT = API_BASE.replace(/\/v2\/?$/, '');
 const API_KEY = import.meta.env.SHREENG_API_KEY;
 
 // Types for API responses
@@ -156,6 +158,36 @@ export interface GeoSearchResult {
   population?: number;
 }
 
+/** Raw geocode result from Shreeng Engine */
+export interface GeoRawResult {
+  locationId: number;
+  name: string;
+  state: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  timezone: string;
+  elevation?: number;
+  matchedName?: string;
+  similarity?: number;
+  distanceMeters?: number;
+}
+
+/** Wrapped API response from Shreeng Engine */
+export interface ApiWrappedResponse<T> {
+  success: boolean;
+  data: T;
+  meta: {
+    timestamp: string;
+    responseTimeMs: number;
+    cache?: {
+      ttl: number;
+      profile: string;
+      key: string;
+    };
+  };
+}
+
 export interface ApiError {
   message: string;
   code?: string;
@@ -173,9 +205,10 @@ interface ApiOptions {
 async function apiGet<T>(
   path: string,
   params: Record<string, string | number | boolean> = {},
-  options: ApiOptions = {}
+  options: ApiOptions & { root?: boolean } = {}
 ): Promise<T> {
-  const url = new URL(`${API_BASE}${path}`);
+  const base = options.root ? API_ROOT : API_BASE;
+  const url = new URL(`${base}${path}`);
 
   // Add query parameters
   Object.entries(params).forEach(([key, value]) => {
@@ -320,24 +353,50 @@ export async function getUpcomingFestivals(
 
 /**
  * Search for cities
+ * API returns { success, data: [...], meta } — unwrap and map fields
  */
 export async function searchCities(
   query: string,
   country: string = 'IN',
   limit: number = 8
 ): Promise<GeoSearchResult[]> {
-  return apiGet('/geocode/search', { city: query, country, limit });
+  const raw = await apiGet<ApiWrappedResponse<GeoRawResult[]>>(
+    '/geocode/search', { city: query, country, limit }, { root: true }
+  );
+
+  return (raw.data || []).map((r) => ({
+    id: r.locationId,
+    name: r.name,
+    state: r.state,
+    country: r.country,
+    latitude: r.latitude,
+    longitude: r.longitude,
+    timezone: r.timezone,
+  }));
 }
 
 /**
  * Reverse geocode (lat/lng to city)
+ * API returns { success, data: [...], meta } — unwrap and map fields
  */
 export async function reverseGeocode(
   lat: number,
   lng: number
 ): Promise<GeoSearchResult | null> {
-  const results = await apiGet<GeoSearchResult[]>('/geocode/reverse', { lat, lng, limit: 1 });
-  return results[0] || null;
+  const raw = await apiGet<ApiWrappedResponse<GeoRawResult[]>>(
+    '/geocode/reverse', { lat, lng, limit: 1 }, { root: true }
+  );
+  const r = raw.data?.[0];
+  if (!r) return null;
+  return {
+    id: r.locationId,
+    name: r.name,
+    state: r.state,
+    country: r.country,
+    latitude: r.latitude,
+    longitude: r.longitude,
+    timezone: r.timezone,
+  };
 }
 
 /**

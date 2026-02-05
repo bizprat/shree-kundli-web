@@ -126,7 +126,7 @@ const prevRashi = rashis[currentIndex - 1] || rashis[rashis.length - 1];
 const nextRashi = rashis[currentIndex + 1] || rashis[0];
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} activeNav="rashifal">
   <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} slot="head" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
 

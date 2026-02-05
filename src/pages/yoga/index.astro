@@ -86,7 +86,7 @@ const charaYogas = yogas.filter(y => y.category === 'Chara');
 const ugraYogas = yogas.filter(y => y.category === 'Ugra');
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} activeNav="panchang">
   <script is:inline type="application/ld+json" set:html={JSON.stringify(yogaListSchema)} slot="head" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
 

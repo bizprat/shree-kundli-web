@@ -79,7 +79,7 @@ function getMuhuratIcon(id: string): 'home' | 'heart' | 'star' | 'sun' | 'calend
 }
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} activeNav="more">
   <script is:inline type="application/ld+json" set:html={JSON.stringify(muhuratListSchema)} slot="head" />
 
   <div class="space-y-8">

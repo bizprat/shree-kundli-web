@@ -14,6 +14,11 @@ import SEO from '../components/SEO.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import BottomNav from '../components/layout/BottomNav.astro';
+import CitySearchModal from '../components/islands/CitySearchModal.astro';
+import citiesData from '../data/cities-sample.json';
+import type { City } from '../lib/types';
+
+const localCities = citiesData as City[];
 
 interface Props {
   title: string;
@@ -36,6 +41,30 @@ const {
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
+
+// ─── Cloudflare auto-detection (SSR pages only) ─────────────────────────
+// CF injects geo data on every request. On SSR pages we can read it to
+// auto-detect the user's city for the Header display and modal suggestion.
+let cfDetectedCity: string | undefined;
+let cfDetectedSlug: string | undefined;
+try {
+  const cf = (Astro.locals as any).runtime?.cf;
+  if (cf?.city) {
+    const matched = localCities.find(
+      (c) => c.name.toLowerCase() === cf.city.toLowerCase()
+    );
+    if (matched) {
+      cfDetectedCity = matched.name;
+      cfDetectedSlug = matched.slug;
+    } else {
+      cfDetectedCity = cf.city;
+    }
+  }
+} catch { /* SSG build — no runtime context */ }
+
+// Use CF city as fallback when the page doesn't specify one
+const headerCity = currentCity || cfDetectedCity;
+const headerCitySlug = currentCitySlug || cfDetectedSlug;
 ---
 
 <!doctype html>
@@ -82,10 +111,13 @@ const currentPath = Astro.url.pathname;
 
     <!-- Header -->
     <Header
-      currentCity={currentCity}
-      currentCitySlug={currentCitySlug}
+      currentCity={headerCity}
+      currentCitySlug={headerCitySlug}
       currentPath={currentPath}
     />
+
+    <!-- City Search Modal (triggered by Header's "Select City" button) -->
+    <CitySearchModal cfCity={cfDetectedCity} />
 
     <!-- Main Content -->
     <main

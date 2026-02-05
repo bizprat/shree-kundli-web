@@ -129,7 +129,7 @@ const faqSchema = {
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} activeNav="panchang" currentCity={city.name} currentCitySlug={city.slug}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(datasetSchema)} slot="head" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
 
