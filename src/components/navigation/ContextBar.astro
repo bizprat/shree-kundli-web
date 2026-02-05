@@ -2,7 +2,7 @@
 /**
  * ContextBar Component
  *
- * Sticky navigation bar showing city, date, and tab navigation.
+ * Sticky navigation bar showing date and tab navigation.
  * Used on daily pages (panchang, rahu-kaal, choghadiya).
  *
  * Usage:
@@ -68,20 +68,8 @@ const tabs = [
     className,
   ]}
 >
-  <!-- City + Date Row -->
-  <div class="flex items-center justify-between mb-3">
-    <!-- City Selector Trigger -->
-    <button
-      class="flex items-center gap-2 text-sm hover:text-primary transition-colors touch-target"
-      aria-label="Change city"
-      data-city-selector
-    >
-      <span aria-hidden="true">📍</span>
-      <span class="font-medium max-w-[150px] truncate">{city}</span>
-      <span class="text-neutral" aria-hidden="true">▾</span>
-    </button>
-
-    <!-- Date Display -->
+  <!-- Date Row -->
+  <div class="flex items-center justify-center mb-3">
     <div class="flex items-center gap-2 text-sm text-neutral">
       <span aria-hidden="true">📅</span>
       <time>{date}</time>

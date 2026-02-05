@@ -57,15 +57,15 @@ const linkProps = href ? { href, class: 'hover:text-primary transition-colors' }
   {...linkProps}
 >
   <!-- Label side -->
-  <div class="flex items-center gap-2 min-w-0">
+  <div class="flex items-center gap-2 min-w-0 flex-1">
     {icon && <span class="text-lg shrink-0">{icon}</span>}
-    <span class:list={['text-neutral', href && 'group-hover:text-base-content transition-colors']}>
+    <span class:list={['text-neutral truncate', href && 'group-hover:text-base-content transition-colors']}>
       {label}
     </span>
   </div>
 
   <!-- Value side -->
-  <div class="font-medium text-right min-w-0 ml-4">
+  <div class="font-medium text-end shrink-0 ml-4">
     <span>{value}</span>
     {href && (
       <span class="ml-1 text-neutral opacity-0 group-hover:opacity-100 transition-opacity">→</span>
