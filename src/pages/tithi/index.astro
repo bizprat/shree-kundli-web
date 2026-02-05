@@ -10,31 +10,12 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { TithiData } from '../../data/types';
+import { tithiNatureColors as natureColors, elementIcons } from '../../lib/color-maps';
 
 // Load tithis data
 import tithisData from '../../data/tithis.json';
-
-interface Tithi {
-  id: number;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  meaning: string;
-  meaningHindi: string;
-  number: number;
-  deity: string;
-  deityHindi: string;
-  nature: string;
-  natureHindi: string;
-  element: string;
-  auspicious: boolean;
-  goodFor: string[];
-  avoid: string[];
-  festivals: string[];
-  description: string;
-}
-
-const tithis = tithisData as Tithi[];
+const tithis = tithisData as TithiData[];
 
 // Page meta
 const title = 'Tithi - Lunar Days in Hindu Calendar | Complete Guide | Shree Kundli';
@@ -97,24 +78,6 @@ const faqSchema = {
     },
   ],
 };
-
-// Nature colors
-const natureColors: Record<string, string> = {
-  'Nanda (Joy)': 'bg-green-500/10 text-green-600 border-green-500/20',
-  'Bhadra (Auspicious)': 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-  'Jaya (Victory)': 'bg-purple-500/10 text-purple-600 border-purple-500/20',
-  'Rikta (Empty)': 'bg-red-500/10 text-red-600 border-red-500/20',
-  'Purna (Full)': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-  'Purna (Full/Complete)': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-  'Nanda (Joy for ancestors)': 'bg-slate-500/10 text-slate-600 border-slate-500/20',
-};
-
-// Element icons
-const elementIcons: Record<string, string> = {
-  Fire: '🔥',
-  Earth: '🌍',
-  Water: '💧',
-};
 ---
 
 <Layout title={title} description={description}>
@@ -152,9 +115,9 @@ const elementIcons: Record<string, string> = {
               <p class="text-sm text-neutral/60">Nanda</p>
               <p class="font-semibold text-green-600">1, 6, 11</p>
             </div>
-            <div class="text-center p-3 bg-blue-500/10 rounded-lg">
+            <div class="text-center p-3 bg-info/10 rounded-lg">
               <p class="text-sm text-neutral/60">Bhadra</p>
-              <p class="font-semibold text-blue-600">2, 7, 12</p>
+              <p class="font-semibold text-info">2, 7, 12</p>
             </div>
             <div class="text-center p-3 bg-purple-500/10 rounded-lg">
               <p class="text-sm text-neutral/60">Jaya</p>
@@ -284,7 +247,7 @@ const elementIcons: Record<string, string> = {
               <p class="text-xs text-neutral/50 mt-1">Tithis: 1, 6, 11</p>
             </div>
             <div>
-              <p class="font-semibold text-blue-600 mb-1">Bhadra</p>
+              <p class="font-semibold text-info mb-1">Bhadra</p>
               <p class="text-neutral/60">Auspicious</p>
               <p class="text-xs text-neutral/50 mt-1">Tithis: 2, 7, 12</p>
             </div>

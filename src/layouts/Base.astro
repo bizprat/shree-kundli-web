@@ -56,10 +56,10 @@ const {
   <title>{title}</title>
   {description && <meta name="description" content={description} />}
 
-  <!-- Preload critical fonts -->
+  <!-- Preload critical font (regular weight used on every page) -->
   <link
     rel="preload"
-    href="/fonts/inter-latin.woff2"
+    href="/fonts/inter-400.woff2"
     as="font"
     type="font/woff2"
     crossorigin="anonymous"
@@ -69,7 +69,7 @@ const {
   {lang === 'hi' && (
     <link
       rel="preload"
-      href="/fonts/noto-devanagari.woff2"
+      href="/fonts/noto-sans-devanagari-400.woff2"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
@@ -79,6 +79,19 @@ const {
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <!-- Google Analytics (production only) -->
+  {import.meta.env.PROD && (
+    <>
+      <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-W10Q8N9937"></script>
+      <script is:inline>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-W10Q8N9937');
+      </script>
+    </>
+  )}
 
   <!-- Slot for additional head content (SEO component, custom meta, etc.) -->
   <slot name="head" />

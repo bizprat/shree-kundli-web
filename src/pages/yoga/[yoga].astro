@@ -11,33 +11,18 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { YogaData } from '../../data/types';
+import { yogaNatureColors as natureColors, categoryColors } from '../../lib/color-maps';
 
 // Load yogas data
 import yogasData from '../../data/yogas.json';
 
-interface Yoga {
-  id: number;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  meaning: string;
-  meaningHindi: string;
-  nature: string;
-  natureHindi: string;
-  deity: string;
-  deityHindi: string;
-  goodFor: string[];
-  notGoodFor: string[];
-  description: string;
-  category: string;
-}
-
-const yogas = yogasData as Yoga[];
+const yogas = yogasData as YogaData[];
 
 // Generate static paths
 export async function getStaticPaths() {
   const yogasModule = await import('../../data/yogas.json');
-  const yogas = yogasModule.default as Yoga[];
+  const yogas = yogasModule.default as YogaData[];
 
   return yogas.map((yoga) => ({
     params: { yoga: yoga.slug },
@@ -46,7 +31,7 @@ export async function getStaticPaths() {
 }
 
 // Get yoga from props
-const { yoga } = Astro.props as { yoga: Yoga };
+const { yoga } = Astro.props as { yoga: YogaData };
 
 // Page meta
 const title = `${yoga.name} Yoga (${yoga.nameHindi}) - ${yoga.meaning} | Panchang Guide | Shree Kundli`;
@@ -113,22 +98,6 @@ const faqSchema = {
 const currentIndex = yogas.findIndex(y => y.id === yoga.id);
 const prevYoga = yogas[currentIndex - 1] || yogas[yogas.length - 1];
 const nextYoga = yogas[currentIndex + 1] || yogas[0];
-
-// Nature colors
-const natureColors: Record<string, string> = {
-  'Highly Auspicious': 'bg-green-500/20 text-green-700 border-green-500/30',
-  'Auspicious': 'bg-green-500/10 text-green-600 border-green-500/20',
-  'Mixed': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-  'Inauspicious': 'bg-red-500/10 text-red-600 border-red-500/20',
-  'Highly Inauspicious': 'bg-red-500/20 text-red-700 border-red-500/30',
-};
-
-// Category colors
-const categoryColors: Record<string, string> = {
-  'Sthira': 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-  'Chara': 'bg-purple-500/10 text-purple-600 border-purple-500/20',
-  'Ugra': 'bg-red-500/10 text-red-600 border-red-500/20',
-};
 
 // Category descriptions
 const categoryDescriptions: Record<string, string> = {

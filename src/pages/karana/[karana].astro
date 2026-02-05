@@ -11,37 +11,19 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { KaranaData } from '../../data/types';
+import { karanaNatureColors as natureColors, categoryColors as typeColors, elementIcons } from '../../lib/color-maps';
 
 // Load karanas data
 import karanasData from '../../data/karanas.json';
 
-interface Karana {
-  id: number;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  meaning: string;
-  meaningHindi: string;
-  type: string;
-  typeHindi: string;
-  nature: string;
-  natureHindi: string;
-  deity: string;
-  deityHindi: string;
-  element: string;
-  goodFor: string[];
-  notGoodFor: string[];
-  description: string;
-  occurrence: string;
-  alternativeName?: string;
-}
 
-const karanas = karanasData as Karana[];
+const karanas = karanasData as KaranaData[];
 
 // Generate static paths
 export async function getStaticPaths() {
   const karanasModule = await import('../../data/karanas.json');
-  const karanas = karanasModule.default as Karana[];
+  const karanas = karanasModule.default as KaranaData[];
 
   return karanas.map((karana) => ({
     params: { karana: karana.slug },
@@ -50,7 +32,7 @@ export async function getStaticPaths() {
 }
 
 // Get karana from props
-const { karana } = Astro.props as { karana: Karana };
+const { karana } = Astro.props as { karana: KaranaData };
 
 // Page meta
 const title = `${karana.name} Karana (${karana.nameHindi}) - ${karana.meaning} | Panchang Guide | Shree Kundli`;
@@ -118,26 +100,6 @@ const currentIndex = karanas.findIndex(k => k.id === karana.id);
 const prevKarana = karanas[currentIndex - 1] || karanas[karanas.length - 1];
 const nextKarana = karanas[currentIndex + 1] || karanas[0];
 
-// Nature colors
-const natureColors: Record<string, string> = {
-  'Auspicious': 'bg-green-500/10 text-green-600 border-green-500/20',
-  'Mixed': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-  'Inauspicious': 'bg-red-500/10 text-red-600 border-red-500/20',
-};
-
-// Type colors
-const typeColors: Record<string, string> = {
-  'Chara': 'bg-purple-500/10 text-purple-600 border-purple-500/20',
-  'Sthira': 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-};
-
-// Element icons
-const elementIcons: Record<string, string> = {
-  Fire: '🔥',
-  Earth: '🌍',
-  Air: '💨',
-  Water: '💧',
-};
 
 // Nature emoji
 const natureEmoji: Record<string, string> = {

@@ -10,28 +10,13 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { YogaData } from '../../data/types';
+import { yogaNatureColors as natureColors, categoryColors } from '../../lib/color-maps';
 
 // Load yogas data
 import yogasData from '../../data/yogas.json';
 
-interface Yoga {
-  id: number;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  meaning: string;
-  meaningHindi: string;
-  nature: string;
-  natureHindi: string;
-  deity: string;
-  deityHindi: string;
-  goodFor: string[];
-  notGoodFor: string[];
-  description: string;
-  category: string;
-}
-
-const yogas = yogasData as Yoga[];
+const yogas = yogasData as YogaData[];
 
 // Page meta
 const title = 'Yoga - 27 Yogas in Hindu Panchang | Complete Guide | Shree Kundli';
@@ -95,22 +80,6 @@ const faqSchema = {
   ],
 };
 
-// Nature colors
-const natureColors: Record<string, string> = {
-  'Highly Auspicious': 'bg-green-500/20 text-green-700 border-green-500/30',
-  'Auspicious': 'bg-green-500/10 text-green-600 border-green-500/20',
-  'Mixed': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-  'Inauspicious': 'bg-red-500/10 text-red-600 border-red-500/20',
-  'Highly Inauspicious': 'bg-red-500/20 text-red-700 border-red-500/30',
-};
-
-// Category colors
-const categoryColors: Record<string, string> = {
-  'Sthira': 'bg-blue-500/10 text-blue-600',
-  'Chara': 'bg-purple-500/10 text-purple-600',
-  'Ugra': 'bg-red-500/10 text-red-600',
-};
-
 // Group yogas by category
 const sthiraYogas = yogas.filter(y => y.category === 'Sthira');
 const charaYogas = yogas.filter(y => y.category === 'Chara');
@@ -149,8 +118,8 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
             Yogas indicate the auspiciousness of time for various activities.
           </p>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
-            <div class="p-3 bg-blue-500/10 rounded-lg">
-              <p class="font-semibold text-blue-600">Sthira (Fixed)</p>
+            <div class="p-3 bg-info/10 rounded-lg">
+              <p class="font-semibold text-info">Sthira (Fixed)</p>
               <p class="text-sm text-neutral/60">Stable, permanent activities</p>
               <p class="text-xs text-neutral/50 mt-1">{sthiraYogas.length} yogas</p>
             </div>
@@ -265,16 +234,16 @@ const ugraYogas = yogas.filter(y => y.category === 'Ugra');
         Yoga Categories
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="card bg-blue-500/5 border border-blue-500/20">
+        <div class="card bg-info/5 border border-info/20">
           <div class="card-body p-4">
-            <h3 class="font-semibold text-blue-600 mb-2">Sthira - Fixed</h3>
+            <h3 class="font-semibold text-info mb-2">Sthira - Fixed</h3>
             <p class="text-sm text-neutral/70 mb-3">
               Best for permanent, long-lasting activities like construction, foundation laying,
               and commitments meant to endure.
             </p>
             <div class="flex flex-wrap gap-1">
               {sthiraYogas.map(y => (
-                <span class="text-xs bg-blue-500/10 text-blue-600 px-1.5 py-0.5 rounded">{y.nameHindi}</span>
+                <span class="text-xs bg-info/10 text-info px-1.5 py-0.5 rounded">{y.nameHindi}</span>
               ))}
             </div>
           </div>

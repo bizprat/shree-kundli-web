@@ -8,6 +8,9 @@
  * - Glassmorphism cards
  * - Dataset schema for AI extraction
  */
+// SSR: render on each request for fresh daily panchang data
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import GlassCard from '../../components/cards/GlassCard.astro';
@@ -19,23 +22,16 @@ import ContextBar from '../../components/navigation/ContextBar.astro';
 import PopularCities from '../../components/sections/PopularCities.astro';
 import type { BreadcrumbItem, City } from '../../lib/types';
 
-// Load data
+// Load city data for lookup
 import citiesData from '../../data/cities-sample.json';
 const cities = citiesData as City[];
 
-// Generate static paths
-export async function getStaticPaths() {
-  const citiesModule = await import('../../data/cities-sample.json');
-  const cities = citiesModule.default as City[];
-
-  return cities.map((city) => ({
-    params: { city: city.slug },
-    props: { city },
-  }));
+// Look up city from URL params
+const { city: citySlug } = Astro.params;
+const city = cities.find((c) => c.slug === citySlug);
+if (!city) {
+  return Astro.redirect('/404');
 }
-
-// Get city from props
-const { city } = Astro.props as { city: City };
 
 // Today's date
 const today = new Date();

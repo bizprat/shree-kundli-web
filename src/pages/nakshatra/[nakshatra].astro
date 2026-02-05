@@ -11,35 +11,17 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { NakshatraData } from '../../data/types';
+import { planetColors, elementIcons } from '../../lib/color-maps';
 
 // Load nakshatras data
 import nakshatrasData from '../../data/nakshatras.json';
-
-interface Nakshatra {
-  id: number;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  symbol: string;
-  symbolHindi: string;
-  deity: string;
-  deityHindi: string;
-  rulingPlanet: string;
-  rulingPlanetHindi: string;
-  nature: string;
-  gana: string;
-  animal: string;
-  element: string;
-  qualities: string[];
-  degree: string;
-}
-
-const nakshatras = nakshatrasData as Nakshatra[];
+const nakshatras = nakshatrasData as NakshatraData[];
 
 // Generate static paths
 export async function getStaticPaths() {
   const nakshatrasModule = await import('../../data/nakshatras.json');
-  const nakshatras = nakshatrasModule.default as Nakshatra[];
+  const nakshatras = nakshatrasModule.default as NakshatraData[];
 
   return nakshatras.map((nakshatra) => ({
     params: { nakshatra: nakshatra.slug },
@@ -48,7 +30,7 @@ export async function getStaticPaths() {
 }
 
 // Get nakshatra from props
-const { nakshatra } = Astro.props as { nakshatra: Nakshatra };
+const { nakshatra } = Astro.props as { nakshatra: NakshatraData };
 
 // Page meta
 const title = `${nakshatra.name} Nakshatra (${nakshatra.nameHindi}) - Characteristics & Meaning | Shree Kundli`;
@@ -116,26 +98,6 @@ const currentIndex = nakshatras.findIndex(n => n.id === nakshatra.id);
 const prevNakshatra = nakshatras[currentIndex - 1] || nakshatras[nakshatras.length - 1];
 const nextNakshatra = nakshatras[currentIndex + 1] || nakshatras[0];
 
-// Planet colors
-const planetColors: Record<string, string> = {
-  Sun: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
-  Moon: 'bg-slate-200/50 text-slate-600 border-slate-300/50',
-  Mars: 'bg-red-500/10 text-red-600 border-red-500/20',
-  Mercury: 'bg-green-500/10 text-green-600 border-green-500/20',
-  Jupiter: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
-  Venus: 'bg-pink-500/10 text-pink-600 border-pink-500/20',
-  Saturn: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-  Rahu: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
-  Ketu: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-};
-
-// Element icons
-const elementIcons: Record<string, string> = {
-  Fire: '🔥',
-  Earth: '🌍',
-  Air: '💨',
-  Water: '💧',
-};
 ---
 
 <Layout title={title} description={description}>

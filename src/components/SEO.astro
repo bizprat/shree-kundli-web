@@ -197,7 +197,8 @@ const schemasJson = allSchemas.map((s) => JSON.stringify(s));
 <!-- Language -->
 <meta http-equiv="content-language" content={locale === 'hi' ? 'hi-IN' : 'en-IN'} />
 <link rel="alternate" hreflang="en" href={canonical.toString().replace('/hi/', '/')} />
-<link rel="alternate" hreflang="hi" href={canonical.toString().includes('/hi/') ? canonical : canonical.toString().replace(siteUrl, `${siteUrl}/hi`)} />
+<link rel="alternate" hreflang="x-default" href={canonical.toString().replace('/hi/', '/')} />
+<!-- TODO: Add hreflang="hi" when /hi/ pages are created -->
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>

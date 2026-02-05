@@ -10,32 +10,14 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { KaranaData } from '../../data/types';
+import { karanaNatureColors as natureColors, categoryColors as typeColors, elementIcons } from '../../lib/color-maps';
 
 // Load karanas data
 import karanasData from '../../data/karanas.json';
 
-interface Karana {
-  id: number;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  meaning: string;
-  meaningHindi: string;
-  type: string;
-  typeHindi: string;
-  nature: string;
-  natureHindi: string;
-  deity: string;
-  deityHindi: string;
-  element: string;
-  goodFor: string[];
-  notGoodFor: string[];
-  description: string;
-  occurrence: string;
-  alternativeName?: string;
-}
 
-const karanas = karanasData as Karana[];
+const karanas = karanasData as KaranaData[];
 
 // Page meta
 const title = 'Karana - 11 Karanas in Hindu Panchang | Complete Guide | Shree Kundli';
@@ -103,26 +85,6 @@ const faqSchema = {
 const charaKaranas = karanas.filter(k => k.type === 'Chara');
 const sthiraKaranas = karanas.filter(k => k.type === 'Sthira');
 
-// Nature colors
-const natureColors: Record<string, string> = {
-  'Auspicious': 'bg-green-500/10 text-green-600 border-green-500/20',
-  'Mixed': 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-  'Inauspicious': 'bg-red-500/10 text-red-600 border-red-500/20',
-};
-
-// Type colors
-const typeColors: Record<string, string> = {
-  'Chara': 'bg-purple-500/10 text-purple-600',
-  'Sthira': 'bg-blue-500/10 text-blue-600',
-};
-
-// Element icons
-const elementIcons: Record<string, string> = {
-  Fire: '🔥',
-  Earth: '🌍',
-  Air: '💨',
-  Water: '💧',
-};
 ---
 
 <Layout title={title} description={description}>
@@ -166,12 +128,12 @@ const elementIcons: Record<string, string> = {
                 ))}
               </div>
             </div>
-            <div class="p-4 bg-blue-500/10 rounded-lg">
-              <h3 class="font-semibold text-blue-600 mb-2">Sthira - Fixed</h3>
+            <div class="p-4 bg-info/10 rounded-lg">
+              <h3 class="font-semibold text-info mb-2">Sthira - Fixed</h3>
               <p class="text-sm text-neutral/60 mb-2">4 karanas, each occurs once/month</p>
               <div class="flex flex-wrap gap-1">
                 {sthiraKaranas.map(k => (
-                  <span class="text-xs bg-blue-500/20 text-blue-700 px-1.5 py-0.5 rounded">{k.nameHindi}</span>
+                  <span class="text-xs bg-info/20 text-info px-1.5 py-0.5 rounded">{k.nameHindi}</span>
                 ))}
               </div>
             </div>

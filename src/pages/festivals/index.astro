@@ -10,33 +10,12 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { FestivalData } from '../../data/types';
 
 // Load festivals data
 import festivalsData from '../../data/festivals.json';
 
-interface FestivalPanchang {
-  tithi?: string;
-  paksha?: string;
-  masa?: string;
-  note?: string;
-}
-
-interface Festival {
-  id: string;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  description: string;
-  descriptionHindi: string;
-  type: 'major' | 'regional' | 'observance';
-  category: string;
-  rituals: string[];
-  panchang: FestivalPanchang;
-  trafficPriority: number;
-  regions: string[];
-}
-
-const festivals = festivalsData as Festival[];
+const festivals = festivalsData as FestivalData[];
 
 // Sort festivals by traffic priority (most important first)
 const sortedFestivals = [...festivals].sort(

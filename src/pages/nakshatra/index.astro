@@ -10,37 +10,19 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { NakshatraData } from '../../data/types';
+import { planetColors } from '../../lib/color-maps';
 
 // Load nakshatras data
 import nakshatrasData from '../../data/nakshatras.json';
-
-interface Nakshatra {
-  id: number;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  symbol: string;
-  symbolHindi: string;
-  deity: string;
-  deityHindi: string;
-  rulingPlanet: string;
-  rulingPlanetHindi: string;
-  nature: string;
-  gana: string;
-  animal: string;
-  element: string;
-  qualities: string[];
-  degree: string;
-}
-
-const nakshatras = nakshatrasData as Nakshatra[];
+const nakshatras = nakshatrasData as NakshatraData[];
 
 // Group by ruling planet
 const nakshatrasByPlanet = nakshatras.reduce((acc, nak) => {
   if (!acc[nak.rulingPlanet]) acc[nak.rulingPlanet] = [];
   acc[nak.rulingPlanet].push(nak);
   return acc;
-}, {} as Record<string, Nakshatra[]>);
+}, {} as Record<string, NakshatraData[]>);
 
 // Page meta
 const title = '27 Nakshatras - Complete Guide to Lunar Mansions | Shree Kundli';
@@ -72,18 +54,6 @@ const nakshatraListSchema = {
   })),
 };
 
-// Planet colors
-const planetColors: Record<string, string> = {
-  Sun: 'bg-orange-500/10 border-orange-500/20 text-orange-600',
-  Moon: 'bg-slate-200/50 border-slate-300/50 text-slate-600',
-  Mars: 'bg-red-500/10 border-red-500/20 text-red-600',
-  Mercury: 'bg-green-500/10 border-green-500/20 text-green-600',
-  Jupiter: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-600',
-  Venus: 'bg-pink-500/10 border-pink-500/20 text-pink-600',
-  Saturn: 'bg-blue-500/10 border-blue-500/20 text-blue-600',
-  Rahu: 'bg-purple-500/10 border-purple-500/20 text-purple-600',
-  Ketu: 'bg-amber-500/10 border-amber-500/20 text-amber-600',
-};
 ---
 
 <Layout title={title} description={description}>

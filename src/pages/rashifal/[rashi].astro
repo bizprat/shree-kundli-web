@@ -11,34 +11,18 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { RashiData } from '../../data/types';
+import { elementColors, elementBg } from '../../lib/color-maps';
 
 // Load rashis data
 import rashisData from '../../data/rashis.json';
 
-interface Rashi {
-  id: number;
-  name: string;
-  nameHindi: string;
-  slug: string;
-  symbol: string;
-  element: string;
-  quality: string;
-  rulingPlanet: string;
-  rulingPlanetHindi: string;
-  luckyNumbers: number[];
-  luckyColors: string[];
-  luckyDay: string;
-  bodyPart: string;
-  traits: string[];
-  dateRange: string;
-}
-
-const rashis = rashisData as Rashi[];
+const rashis = rashisData as RashiData[];
 
 // Generate static paths
 export async function getStaticPaths() {
   const rashisModule = await import('../../data/rashis.json');
-  const rashis = rashisModule.default as Rashi[];
+  const rashis = rashisModule.default as RashiData[];
 
   return rashis.map((rashi) => ({
     params: { rashi: rashi.slug },
@@ -47,7 +31,7 @@ export async function getStaticPaths() {
 }
 
 // Get rashi from props
-const { rashi } = Astro.props as { rashi: Rashi };
+const { rashi } = Astro.props as { rashi: RashiData };
 
 // Today's date
 const today = new Date();
@@ -77,21 +61,6 @@ const dailyHoroscope = {
   career: 'Professional growth is indicated. Take initiative in workplace matters.',
   health: 'Maintain balance between work and rest. Light exercise is beneficial.',
   rating: 4,
-};
-
-// Element colors
-const elementColors: Record<string, string> = {
-  fire: 'text-orange-500',
-  earth: 'text-green-600',
-  air: 'text-blue-400',
-  water: 'text-cyan-500',
-};
-
-const elementBg: Record<string, string> = {
-  fire: 'bg-orange-500/10 border-orange-500/20',
-  earth: 'bg-green-600/10 border-green-600/20',
-  air: 'bg-blue-400/10 border-blue-400/20',
-  water: 'bg-cyan-500/10 border-cyan-500/20',
 };
 
 // Article schema

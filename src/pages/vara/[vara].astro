@@ -11,41 +11,17 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { VaraData } from '../../data/types';
+import { planetColors, planetSymbols } from '../../lib/color-maps';
 
 // Load varas data
 import varasData from '../../data/varas.json';
-
-interface Vara {
-  id: number;
-  name: string;
-  nameHindi: string;
-  nameEnglish: string;
-  slug: string;
-  planet: string;
-  planetHindi: string;
-  planetSanskrit: string;
-  deity: string;
-  deityHindi: string;
-  color: string;
-  colorHindi: string;
-  element: string;
-  direction: string;
-  metal: string;
-  gemstone: string;
-  nature: string;
-  goodFor: string[];
-  notGoodFor: string[];
-  fasting: string;
-  mantra: string;
-  description: string;
-}
-
-const varas = varasData as Vara[];
+const varas = varasData as VaraData[];
 
 // Generate static paths
 export async function getStaticPaths() {
   const varasModule = await import('../../data/varas.json');
-  const varas = varasModule.default as Vara[];
+  const varas = varasModule.default as VaraData[];
 
   return varas.map((vara) => ({
     params: { vara: vara.slug },
@@ -54,7 +30,7 @@ export async function getStaticPaths() {
 }
 
 // Get vara from props
-const { vara } = Astro.props as { vara: Vara };
+const { vara } = Astro.props as { vara: VaraData };
 
 // Page meta
 const title = `${vara.name} (${vara.nameHindi}) - ${vara.nameEnglish} in Vedic Astrology | Shree Kundli`;
@@ -129,29 +105,6 @@ const faqSchema = {
 const currentIndex = varas.findIndex(v => v.id === vara.id);
 const prevVara = varas[currentIndex - 1] || varas[varas.length - 1];
 const nextVara = varas[currentIndex + 1] || varas[0];
-
-// Planet colors for styling
-const planetColors: Record<string, string> = {
-  'Sun': 'bg-orange-500/10 text-orange-600 border-orange-500/20',
-  'Moon': 'bg-slate-500/10 text-slate-600 border-slate-500/20',
-  'Mars': 'bg-red-500/10 text-red-600 border-red-500/20',
-  'Mercury': 'bg-green-500/10 text-green-600 border-green-500/20',
-  'Jupiter': 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
-  'Venus': 'bg-pink-500/10 text-pink-600 border-pink-500/20',
-  'Saturn': 'bg-blue-900/10 text-blue-900 border-blue-900/20',
-};
-
-// Planet symbols
-const planetSymbols: Record<string, string> = {
-  'Sun': '☀️',
-  'Moon': '🌙',
-  'Mars': '♂️',
-  'Mercury': '☿️',
-  'Jupiter': '♃',
-  'Venus': '♀️',
-  'Saturn': '♄',
-};
-
 // Nature styling
 const isAuspicious = vara.nature === 'Highly Auspicious' || vara.nature === 'Auspicious';
 ---

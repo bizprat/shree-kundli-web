@@ -10,36 +10,12 @@
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import type { BreadcrumbItem } from '../../lib/types';
+import type { VaraData } from '../../data/types';
+import { planetColors, planetSymbols } from '../../lib/color-maps';
 
 // Load varas data
 import varasData from '../../data/varas.json';
-
-interface Vara {
-  id: number;
-  name: string;
-  nameHindi: string;
-  nameEnglish: string;
-  slug: string;
-  planet: string;
-  planetHindi: string;
-  planetSanskrit: string;
-  deity: string;
-  deityHindi: string;
-  color: string;
-  colorHindi: string;
-  element: string;
-  direction: string;
-  metal: string;
-  gemstone: string;
-  nature: string;
-  goodFor: string[];
-  notGoodFor: string[];
-  fasting: string;
-  mantra: string;
-  description: string;
-}
-
-const varas = varasData as Vara[];
+const varas = varasData as VaraData[];
 
 // Page meta
 const title = 'Vara - Days of the Week in Vedic Astrology | Complete Guide | Shree Kundli';
@@ -103,27 +79,6 @@ const faqSchema = {
   ],
 };
 
-// Planet colors for styling
-const planetColors: Record<string, string> = {
-  'Sun': 'bg-orange-500/10 text-orange-600 border-orange-500/20',
-  'Moon': 'bg-slate-500/10 text-slate-600 border-slate-500/20',
-  'Mars': 'bg-red-500/10 text-red-600 border-red-500/20',
-  'Mercury': 'bg-green-500/10 text-green-600 border-green-500/20',
-  'Jupiter': 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
-  'Venus': 'bg-pink-500/10 text-pink-600 border-pink-500/20',
-  'Saturn': 'bg-blue-900/10 text-blue-900 border-blue-900/20',
-};
-
-// Planet symbols
-const planetSymbols: Record<string, string> = {
-  'Sun': '☀️',
-  'Moon': '🌙',
-  'Mars': '♂️',
-  'Mercury': '☿️',
-  'Jupiter': '♃',
-  'Venus': '♀️',
-  'Saturn': '♄',
-};
 ---
 
 <Layout title={title} description={description}>
@@ -336,7 +291,7 @@ const planetSymbols: Record<string, string> = {
             </p>
           </div>
         </div>
-        <div class="card bg-blue-900/5 border border-blue-900/20">
+        <div class="card bg-info/5 border border-info/20">
           <div class="card-body p-4">
             <div class="flex items-center gap-3 mb-2">
               <span class="text-3xl">♄</span>
@@ -372,7 +327,7 @@ const planetSymbols: Record<string, string> = {
               <p class="text-neutral/60">For Vishnu/Brihaspati - wisdom & fortune</p>
             </div>
             <div>
-              <p class="font-semibold text-blue-900 mb-1">Shanivar Vrat (Saturday)</p>
+              <p class="font-semibold text-info mb-1">Shanivar Vrat (Saturday)</p>
               <p class="text-neutral/60">For Shani - karma & longevity</p>
             </div>
           </div>
