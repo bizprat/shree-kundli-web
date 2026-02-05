@@ -5,18 +5,16 @@
  * geocode API. Client-side JS calls this instead of the external API directly
  * (per CLAUDE.md: never call external API from client-side JavaScript).
  *
+ * Reads CF-IPCountry header to prioritize results from the user's country.
+ *
  * GET /api/city-search?q=patna&limit=8
  *
- * Response: Array of { id, name, nameHindi, state, slug, latitude, longitude, tier?, hasPage }
+ * Response: Array of { id, name, state, country, slug, latitude, longitude }
  */
 export const prerender = false;
 
 import { searchCities } from '../../lib/api-client';
-import citiesData from '../../data/cities-sample.json';
-import type { City } from '../../lib/types';
 import type { APIRoute } from 'astro';
-
-const localCities = citiesData as City[];
 
 /** Generate a URL slug from a city name */
 function toSlug(name: string): string {
@@ -37,25 +35,25 @@ export const GET: APIRoute = async ({ request }) => {
     });
   }
 
+  // Read user's country from Cloudflare header for result prioritization
+  const priorityCountry = request.headers.get('CF-IPCountry') || undefined;
+
   try {
-    const results = await searchCities(q, 'IN', limit);
+    console.log('[city-search] query:', q, 'priorityCountry:', priorityCountry, 'limit:', limit);
+    const results = await searchCities(q, { priorityCountry, limit });
+    console.log('[city-search] results count:', results.length);
 
-    const enriched = results.map((r) => {
-      const local = localCities.find((c) => c.id === r.id);
-      return {
-        id: r.id,
-        name: r.name,
-        nameHindi: r.nameHindi || '',
-        state: local?.state || r.state,
-        slug: local?.slug || toSlug(r.name),
-        latitude: r.latitude,
-        longitude: r.longitude,
-        tier: local?.tier,
-        hasPage: !!local,
-      };
-    });
+    const mapped = results.map((r) => ({
+      id: r.id,
+      name: r.name,
+      state: r.state || '',
+      country: r.country || '',
+      slug: toSlug(r.name),
+      latitude: r.latitude,
+      longitude: r.longitude,
+    }));
 
-    return new Response(JSON.stringify(enriched), {
+    return new Response(JSON.stringify(mapped), {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=3600',
@@ -63,8 +61,10 @@ export const GET: APIRoute = async ({ request }) => {
     });
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : JSON.stringify(err);
+    const errStack = err instanceof Error ? err.stack : '';
     console.error('[city-search] ERROR:', errMsg);
-    return new Response(JSON.stringify([]), {
+    console.error('[city-search] STACK:', errStack);
+    return new Response(JSON.stringify({ error: errMsg }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

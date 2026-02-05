@@ -3,11 +3,10 @@
  * CitySearchModal Island
  *
  * Full-screen city search modal triggered by Header's "Select City" button.
- * Combines instant local search with debounced API search.
+ * All city data comes from the backend geocode API via /api/city-search proxy.
  *
  * Features:
  * - Full-screen on mobile, centered modal on desktop
- * - Instant local search (49 cities from cities-sample.json)
  * - Debounced API search via /api/city-search proxy (300ms)
  * - Recent cities from localStorage
  * - CF auto-detected city suggestion
@@ -15,10 +14,8 @@
  * - Safe DOM methods (no innerHTML)
  *
  * Usage:
- * <CitySearchModal client:idle cfCity="Patna" />
+ * <CitySearchModal cfCity="Patna" />
  */
-
-import citiesData from '../../data/cities-sample.json';
 
 interface Props {
   /** Cloudflare-detected city name (suggestion for first-time visitors) */
@@ -26,18 +23,6 @@ interface Props {
 }
 
 const { cfCity } = Astro.props;
-
-// Prepare minimal city data for client-side local search
-const cities = citiesData.map((c) => ({
-  id: c.id,
-  name: c.name,
-  nameHindi: c.nameHindi,
-  slug: c.slug,
-  state: c.state,
-  tier: c.tier,
-}));
-
-const citiesJson = JSON.stringify(cities);
 ---
 
 <!-- Modal Overlay -->
@@ -152,9 +137,8 @@ const citiesJson = JSON.stringify(cities);
   </div>
 </div>
 
-<!-- Inject city data for client-side search -->
-<script is:inline define:vars={{ citiesJson, cfCity: cfCity || '' }}>
-  window.__CITY_MODAL_DATA__ = JSON.parse(citiesJson);
+<!-- Inject CF city for client-side access -->
+<script is:inline define:vars={{ cfCity: cfCity || '' }}>
   window.__CITY_MODAL_CF__ = cfCity;
 </script>
 
@@ -172,15 +156,14 @@ const citiesJson = JSON.stringify(cities);
   interface CityResult {
     id: number;
     name: string;
-    nameHindi: string;
     slug: string;
     state: string;
-    tier?: number;
-    hasPage?: boolean;
+    country: string;
+    latitude: number;
+    longitude: number;
   }
 
-  // Get data from window (injected by define:vars)
-  const localCities: CityResult[] = (window as any).__CITY_MODAL_DATA__ || [];
+  // Get CF city from window (injected by define:vars)
   const cfCity: string = (window as any).__CITY_MODAL_CF__ || '';
 
   // DOM references
@@ -213,10 +196,12 @@ const citiesJson = JSON.stringify(cities);
     try {
       const stored = localStorage.getItem(RECENT_CITIES_KEY);
       if (!stored) return [];
-      const slugs: string[] = JSON.parse(stored);
-      return slugs
-        .map(slug => localCities.find(c => c.slug === slug))
-        .filter((c): c is CityResult => c !== undefined);
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) return [];
+      // Filter out old-format entries (plain slug strings) — only keep full objects
+      return parsed.filter(
+        (c: any) => c && typeof c === 'object' && c.name && c.slug
+      ) as CityResult[];
     } catch { return []; }
   }
 
@@ -225,34 +210,11 @@ const citiesJson = JSON.stringify(cities);
       localStorage.setItem(SAVED_CITY_KEY, city.slug);
       const recent = getRecentCities();
       const updated = [city, ...recent.filter(c => c.slug !== city.slug)].slice(0, MAX_RECENT);
-      localStorage.setItem(RECENT_CITIES_KEY, JSON.stringify(updated.map(c => c.slug)));
+      localStorage.setItem(RECENT_CITIES_KEY, JSON.stringify(updated));
     } catch { /* ignore */ }
   }
 
   // ─── Search logic ──────────────────────────────────────────────────────
-
-  function searchLocal(query: string): CityResult[] {
-    if (!query || query.length < 2) return [];
-    const lower = query.toLowerCase();
-
-    return localCities
-      .map(city => {
-        let score = 0;
-        if (city.name.toLowerCase() === lower) score += 100;
-        if (city.nameHindi === query) score += 100;
-        if (city.name.toLowerCase().startsWith(lower)) score += 50;
-        if (city.nameHindi.startsWith(query)) score += 50;
-        if (city.name.toLowerCase().includes(lower)) score += 25;
-        if (city.nameHindi.includes(query)) score += 25;
-        if (city.tier === 1) score += 10;
-        if (city.tier === 2) score += 5;
-        return { city, score };
-      })
-      .filter(r => r.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 8)
-      .map(r => r.city);
-  }
 
   async function searchAPI(query: string): Promise<CityResult[]> {
     if (!query || query.length < 2) return [];
@@ -299,7 +261,7 @@ const citiesJson = JSON.stringify(cities);
 
     const stateSpan = document.createElement('div');
     stateSpan.className = 'text-xs text-neutral truncate';
-    stateSpan.textContent = city.state;
+    stateSpan.textContent = [city.state, city.country].filter(Boolean).join(', ');
 
     textDiv.appendChild(nameSpan);
     textDiv.appendChild(stateSpan);
@@ -427,10 +389,6 @@ const citiesJson = JSON.stringify(cities);
       return;
     }
 
-    // Instant local search
-    const localResults = searchLocal(query);
-    renderResults(localResults);
-
     // Debounced API search
     spinner?.classList.remove('hidden');
     debounceTimer = window.setTimeout(async () => {
@@ -439,11 +397,7 @@ const citiesJson = JSON.stringify(cities);
 
       if (input?.value.trim() !== query) return; // Input changed, discard
 
-      // API results are authoritative — use them directly when available
-      if (apiResults.length > 0) {
-        renderResults(apiResults);
-      }
-      // If API returned nothing, keep the local results already shown
+      renderResults(apiResults);
     }, DEBOUNCE_MS);
   }
 
@@ -466,19 +420,12 @@ const citiesJson = JSON.stringify(cities);
   cfAcceptBtn?.addEventListener('click', () => {
     const cityName = cfAcceptBtn.getAttribute('data-city');
     if (!cityName) return;
-    const city = localCities.find(
-      c => c.name.toLowerCase() === cityName.toLowerCase()
-    );
-    if (city) {
-      navigateToCity(city);
-    } else {
-      // CF city not in local data — fill input and search
-      if (input) {
-        input.value = cityName;
-        handleInput();
-      }
-      cfBanner?.classList.add('hidden');
+    // CF city — fill input and search via API
+    if (input) {
+      input.value = cityName;
+      handleInput();
     }
+    cfBanner?.classList.add('hidden');
   });
 
   // Click on result item (event delegation)

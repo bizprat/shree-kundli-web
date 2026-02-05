@@ -357,12 +357,17 @@ export async function getUpcomingFestivals(
  */
 export async function searchCities(
   query: string,
-  country: string = 'IN',
-  limit: number = 8
+  options: { country?: string; priorityCountry?: string; limit?: number } = {}
 ): Promise<GeoSearchResult[]> {
+  const { country, priorityCountry, limit = 8 } = options;
+  const params: Record<string, string | number> = { city: query, limit };
+  if (country) params.country = country;
+  if (priorityCountry) params.priorityCountry = priorityCountry;
+  console.log('[searchCities] params:', JSON.stringify(params));
   const raw = await apiGet<ApiWrappedResponse<GeoRawResult[]>>(
-    '/geocode/search', { city: query, country, limit }, { root: true }
+    '/geocode/search', params, { root: true }
   );
+  console.log('[searchCities] raw response keys:', Object.keys(raw), 'data length:', raw.data?.length);
 
   return (raw.data || []).map((r) => ({
     id: r.locationId,
@@ -397,6 +402,40 @@ export async function reverseGeocode(
     longitude: r.longitude,
     timezone: r.timezone,
   };
+}
+
+/** Generate a URL slug from a city name */
+function toSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+}
+
+/**
+ * Resolve a city from a URL slug by querying the backend geocode API.
+ * Converts slug back to a city name and searches the API.
+ * Returns null if no matching city found.
+ */
+export async function resolveCityFromSlug(
+  slug: string,
+  priorityCountry?: string
+): Promise<GeoSearchResult | null> {
+  if (!slug) return null;
+
+  // Convert slug to search query: "new-delhi" → "new delhi"
+  const query = slug.replace(/-/g, ' ');
+
+  try {
+    const results = await searchCities(query, { priorityCountry, limit: 5 });
+    if (!results.length) return null;
+
+    // Prefer exact slug match
+    const exact = results.find((r) => toSlug(r.name) === slug);
+    return exact || results[0];
+  } catch {
+    return null;
+  }
 }
 
 /**

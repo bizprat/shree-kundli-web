@@ -15,10 +15,6 @@ import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import BottomNav from '../components/layout/BottomNav.astro';
 import CitySearchModal from '../components/islands/CitySearchModal.astro';
-import citiesData from '../data/cities-sample.json';
-import type { City } from '../lib/types';
-
-const localCities = citiesData as City[];
 
 interface Props {
   title: string;
@@ -50,15 +46,8 @@ let cfDetectedSlug: string | undefined;
 try {
   const cf = (Astro.locals as any).runtime?.cf;
   if (cf?.city) {
-    const matched = localCities.find(
-      (c) => c.name.toLowerCase() === cf.city.toLowerCase()
-    );
-    if (matched) {
-      cfDetectedCity = matched.name;
-      cfDetectedSlug = matched.slug;
-    } else {
-      cfDetectedCity = cf.city;
-    }
+    cfDetectedCity = cf.city;
+    cfDetectedSlug = cf.city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   }
 } catch { /* SSG build — no runtime context */ }
 

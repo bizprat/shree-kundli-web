@@ -12,19 +12,24 @@ export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
-import CitySelector from '../../components/CitySelector.astro';
-import type { BreadcrumbItem, City } from '../../lib/types';
+import { resolveCityFromSlug } from '../../lib/api-client';
+import type { BreadcrumbItem } from '../../lib/types';
 
-// Load city data for lookup
-import citiesData from '../../data/cities-sample.json';
-const cities = citiesData as City[];
-
-// Look up city from URL params
+// Resolve city from URL slug via backend geocode API
 const { city: citySlug } = Astro.params;
-const city = cities.find((c) => c.slug === citySlug);
-if (!city) {
+const priorityCountry = Astro.request.headers.get('CF-IPCountry') || undefined;
+const cityResult = await resolveCityFromSlug(citySlug || '', priorityCountry);
+if (!cityResult) {
   return Astro.redirect('/404');
 }
+
+const city = {
+  name: cityResult.name,
+  slug: citySlug!,
+  state: cityResult.state || '',
+  latitude: cityResult.latitude,
+  longitude: cityResult.longitude,
+};
 
 // Today's date and day
 const today = new Date();
@@ -137,27 +142,17 @@ const faqSchema = {
     <!-- Breadcrumb -->
     <Breadcrumb items={breadcrumbs} />
 
-    <!-- Header with City Selector -->
-    <header class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-      <div>
-        <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
-          Rahu Kaal in {city.name}
-        </h1>
-        <p class="text-lg text-neutral/70 mt-1">
-          {city.state}
-        </p>
-        <p class="text-sm text-neutral/50 mt-1">
-          <time datetime={todayIso}>{todayFormatted}</time>
-        </p>
-      </div>
-
-      <div class="w-full md:w-64">
-        <CitySelector
-          cities={cities}
-          currentCity={city}
-          baseUrl="/rahu-kaal"
-        />
-      </div>
+    <!-- Header -->
+    <header>
+      <h1 class="font-heading text-3xl md:text-4xl text-primary font-bold">
+        Rahu Kaal in {city.name}
+      </h1>
+      <p class="text-lg text-neutral/70 mt-1">
+        {city.state}
+      </p>
+      <p class="text-sm text-neutral/50 mt-1">
+        <time datetime={todayIso}>{todayFormatted}</time>
+      </p>
     </header>
 
     <!-- Quick Answer (AI Extraction Target) -->
